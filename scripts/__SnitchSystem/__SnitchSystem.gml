@@ -61,12 +61,18 @@ function __SnitchShowDebugMessage(_string)
 {
     if (SNITCH_HIJACK_SDM)
     {
-        Snitch(_string);
+        __SnitchInit();
+        
+        if (global.__snitchLogging)
+        {
+            var _file = file_text_open_append(global.__snitchZerothLogFile);
+            file_text_write_string(_file, _string);
+            file_text_writeln(_file);
+            file_text_close(_file);
+        }
     }
-    else
-    {
-        __show_debug_message__(_string);
-    }
+    
+    return __show_debug_message__(_string);
 }
 
 function __SnitchCrashSetGMHandler(_function)
