@@ -1,0 +1,40 @@
+function SnitchCrashCollect()
+{
+    __SnitchInit();
+    
+    if ((SNITCH_CRASH_LOG_NAME != "") && file_exists(SNITCH_CRASH_LOG_NAME))
+    {
+        __SnitchTrace("Crash file found (", SNITCH_CRASH_LOG_NAME, ")");
+        
+        var _buffer = buffer_load(SNITCH_CRASH_LOG_NAME);
+        var _string = buffer_read(_buffer, buffer_string);
+        buffer_delete(_buffer);
+        
+        __SnitchTrace("Found \"", _string, "\"");
+        
+        try
+        {
+            var _struct = json_parse(_string);
+        }
+        catch(_error)
+        {
+            __SnitchTrace("Error! Could not parse crash dump");
+            __SnitchTrace(_error);
+            
+            var _struct = {
+                message : "Unknown crash",
+                longMessage : "Unknown crash",
+                script : "Unknown origin",
+                line: 0,
+                stacktrace : ["Unknown origin"]
+            }
+        }
+        
+        file_delete(SNITCH_CRASH_LOG_NAME);
+        __SnitchTrace("Deleted crash file");
+        
+        return _struct;
+    }
+    
+    return undefined;
+}

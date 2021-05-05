@@ -1,0 +1,40 @@
+/// @param state
+
+function SnitchLogSet(_state)
+{
+    __SnitchInit();
+    
+    if (_state != global.__snitchLogging)
+    {
+        if (_state && (SNITCH_LOG_COUNT <= 0))
+        {
+            __SnitchTrace("Warning! SNITCH_LOG_COUNT = ", SNITCH_LOG_COUNT, ", logging cannot be enabled");
+        }
+        else
+        {
+            if (_state && global.__snitchFirstLoggingEnabled)
+            {
+                global.__snitchFirstLoggingEnabled = false;
+                
+                if (file_exists(string_replace(SNITCH_LOG_NAME, "%", SNITCH_LOG_COUNT))) file_delete(string_replace(SNITCH_LOG_NAME, "%", SNITCH_LOG_COUNT));
+                
+                var _i = SNITCH_LOG_COUNT;
+                repeat(SNITCH_LOG_COUNT)
+                {
+                    file_rename(string_replace(SNITCH_LOG_NAME, "%", _i-1), string_replace(SNITCH_LOG_NAME, "%", _i));
+                    --_i;
+                }
+                
+                var _file = file_text_open_append(global.__snitchZerothLogFile);
+                file_text_write_string(_file, date_datetime_string(date_current_datetime()));
+                file_text_writeln(_file);
+                file_text_close(_file);
+                
+                __SnitchTrace("Opened log file (", game_save_id, global.__snitchZerothLogFile, ")");
+            }
+            
+            global.__snitchLogging = _state;
+            __SnitchTrace("Logging set to ", global.__snitchLogging);
+        }
+    }
+}
