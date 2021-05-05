@@ -4,7 +4,7 @@ function SnitchCrashCollect()
     
     if ((SNITCH_CRASH_LOG_NAME != "") && file_exists(SNITCH_CRASH_LOG_NAME))
     {
-        __SnitchTrace("Crash file found (", SNITCH_CRASH_LOG_NAME, ")");
+        __SnitchTrace("Crash dump found (", game_save_id, SNITCH_CRASH_LOG_NAME, ")");
         
         var _buffer = buffer_load(SNITCH_CRASH_LOG_NAME);
         var _string = buffer_read(_buffer, buffer_string);
@@ -31,7 +31,7 @@ function SnitchCrashCollect()
         }
         
         file_delete(SNITCH_CRASH_LOG_NAME);
-        __SnitchTrace("Deleted crash file");
+        __SnitchTrace("Deleted crash dump");
         
         return _struct;
     }

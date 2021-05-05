@@ -30,6 +30,7 @@ function __SnitchInit()
         
         if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
         __SnitchTrace("Welcome to Snitch by @jujuadams! This is version ", __SNITCH_VERSION, ", ", __SNITCH_DATE);
+        __SnitchTrace("Log files can be found in ", game_save_id);
         
         if ((SNITCH_LOG_COUNT > 1) && (string_pos("%", SNITCH_LOG_NAME) <= 0))
         {
@@ -87,7 +88,7 @@ function __SnitchExceptionHandler(_struct)
         file_text_write_string(_file, _string);
         file_text_close(_file);
         
-        __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_LOG_NAME, "\"");
+        __SnitchTrace("Saved crash dump to \"", game_save_id, SNITCH_CRASH_LOG_NAME, "\"");
     }
     
     if (global.__snitchGMExceptionHandler != undefined) global.__snitchGMExceptionHandler(_struct);

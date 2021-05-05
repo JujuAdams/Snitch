@@ -10,9 +10,11 @@ function SnitchLogSet(_state)
         {
             __SnitchTrace("Warning! SNITCH_LOG_COUNT = ", SNITCH_LOG_COUNT, ", logging cannot be enabled");
         }
-        else
+        else if (_state)
         {
-            if (_state && global.__snitchFirstLoggingEnabled)
+            global.__snitchLogging = true;
+            
+            if (global.__snitchLogging && global.__snitchFirstLoggingEnabled)
             {
                 global.__snitchFirstLoggingEnabled = false;
                 
@@ -30,11 +32,18 @@ function SnitchLogSet(_state)
                 file_text_writeln(_file);
                 file_text_close(_file);
                 
+                __SnitchTrace("Logging turned on");
                 __SnitchTrace("Opened log file (", game_save_id, global.__snitchZerothLogFile, ")");
             }
-            
-            global.__snitchLogging = _state;
-            __SnitchTrace("Logging set to ", global.__snitchLogging);
+            else
+            {
+                __SnitchTrace("Logging turned on");
+            }
+        }
+        else
+        {
+            __SnitchTrace("Logging turned off");
+            global.__snitchLogging = false;
         }
     }
 }
