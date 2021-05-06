@@ -24,20 +24,19 @@ function __SnitchInit()
     {
         global.__snitchLogging               = false;
         global.__snitchFirstLoggingEnabled   = true;
-        global.__snitchZerothLogFile         = string_replace(SNITCH_LOG_NAME, "%", "0");
+        global.__snitchZerothLogFile         = string_replace(SNITCH_LOG_NAME, "#", "0");
         global.__snitchGMExceptionHandler    = undefined;
         global.__snitchExceptionHandlerArray = [];
         
         if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
         __SnitchTrace("Welcome to Snitch by @jujuadams! This is version ", __SNITCH_VERSION, ", ", __SNITCH_DATE);
-        __SnitchTrace("Log files can be found in ", game_save_id);
-        
-        if ((SNITCH_LOG_COUNT > 1) && (string_pos("%", SNITCH_LOG_NAME) <= 0))
-        {
-            __SnitchError("SNITCH_LOG_NAME must contain a % character");
-        }
         
         __exception_unhandled_handler__(__SnitchExceptionHandler);
+        
+        if ((SNITCH_LOG_COUNT > 1) && (string_pos("#", SNITCH_LOG_NAME) <= 0))
+        {
+            __SnitchError("SNITCH_LOG_NAME must contain a # character");
+        }
         
         if (SNITCH_ALLOW_LOG_PARAM && (os_type == os_windows))
         {
@@ -61,18 +60,12 @@ function __SnitchShowDebugMessage(_string)
 {
     if (SNITCH_HIJACK_SDM)
     {
-        __SnitchInit();
-        
-        if (global.__snitchLogging)
-        {
-            var _file = file_text_open_append(global.__snitchZerothLogFile);
-            file_text_write_string(_file, _string);
-            file_text_writeln(_file);
-            file_text_close(_file);
-        }
+        Snitch(_string);
     }
-    
-    return __show_debug_message__(_string);
+    else
+    {
+        return __show_debug_message__(_string);
+    }
 }
 
 function __SnitchCrashSetGMHandler(_function)
@@ -88,26 +81,77 @@ function __SnitchExceptionHandler(_struct)
     __SnitchTrace(_string);
     __SnitchTrace("----------------------------------------------------------------------------------------------------");
     
-    if (SNITCH_CRASH_LOG_NAME != "")
+    //Try saving out a file
+    try
     {
-        var _file = file_text_open_write(SNITCH_CRASH_LOG_NAME);
-        file_text_write_string(_file, _string);
-        file_text_close(_file);
-        
-        __SnitchTrace("Saved crash dump to \"", game_save_id, SNITCH_CRASH_LOG_NAME, "\"");
+        if (SNITCH_CRASH_LOG_NAME != "")
+        {
+            var _file = file_text_open_write(SNITCH_CRASH_LOG_NAME);
+            file_text_write_string(_file, _string);
+            file_text_close(_file);
+            
+            __SnitchTrace("Saved crash dump to \"", game_save_id, SNITCH_CRASH_LOG_NAME, "\"");
+        }
+    }
+    catch(_error)
+    {
+        __SnitchTrace("Exception in crash handler!");
+        __SnitchTrace(json_stringify(_error));
     }
     
-    if (global.__snitchGMExceptionHandler != undefined) global.__snitchGMExceptionHandler(_struct);
+    //Call the exception handler defined by the native exception_unhandled_handler() function
+    try
+    {
+        if (global.__snitchGMExceptionHandler != undefined) global.__snitchGMExceptionHandler(_struct);
+    }
+    catch(_error)
+    {
+        __SnitchTrace("Exception in crash handler!");
+        __SnitchTrace(json_stringify(_error));
+    }
     
+    //Call the (many?) exception handlers added by SnitchCrashAddHandler()
     var _array = global.__snitchExceptionHandlerArray;
     var _i = 0;
     repeat(array_length(_array))
     {
-        _array[_i](_struct);
+        try
+        {
+            _array[_i](_struct);
+        }
+        catch(_error)
+        {
+            __SnitchTrace("Exception in crash handler!");
+            __SnitchTrace(json_stringify(_error));
+        }
+        
         ++_i;
     }
     
-    if (SNITCH_CRASH_MESSAGE != "") show_message(SNITCH_CRASH_MESSAGE);
+    //Show a pop-up message
+    try
+    {
+        if (SNITCH_CRASH_MESSAGE != "")
+        {
+            if (SNITCH_CRASH_OFFER_CLIPBOARD)
+            {
+                if (show_question(SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE))
+                {
+                    clipboard_set_text(_string);
+                    show_message(SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE);
+                }
+            }
+            else
+            {
+                show_message(SNITCH_CRASH_MESSAGE);
+            }
+        }
+    }
+    catch(_error)
+    {
+        __SnitchTrace("Exception in crash handler!");
+        __SnitchTrace(json_stringify(_error));
+    }
 }
 
 function __SnitchTrace()

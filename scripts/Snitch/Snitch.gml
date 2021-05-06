@@ -10,13 +10,12 @@ function Snitch()
         ++_i;
     }
     
-    var _final_string = SNITCH_MESSAGE_PREFIX + _string;
-    __show_debug_message__(_final_string);
+    __show_debug_message__(_string);
     
     if (global.__snitchLogging)
     {
         var _file = file_text_open_append(global.__snitchZerothLogFile);
-        file_text_write_string(_file, _final_string);
+        file_text_write_string(_file, _string);
         file_text_writeln(_file);
         file_text_close(_file);
     }

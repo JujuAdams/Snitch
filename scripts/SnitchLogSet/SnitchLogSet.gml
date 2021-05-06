@@ -18,12 +18,12 @@ function SnitchLogSet(_state)
             {
                 global.__snitchFirstLoggingEnabled = false;
                 
-                if (file_exists(string_replace(SNITCH_LOG_NAME, "%", SNITCH_LOG_COUNT))) file_delete(string_replace(SNITCH_LOG_NAME, "%", SNITCH_LOG_COUNT));
+                if (file_exists(string_replace(SNITCH_LOG_NAME, "#", SNITCH_LOG_COUNT-1))) file_delete(string_replace(SNITCH_LOG_NAME, "#", SNITCH_LOG_COUNT-1));
                 
                 var _i = SNITCH_LOG_COUNT;
                 repeat(SNITCH_LOG_COUNT)
                 {
-                    file_rename(string_replace(SNITCH_LOG_NAME, "%", _i-1), string_replace(SNITCH_LOG_NAME, "%", _i));
+                    file_rename(string_replace(SNITCH_LOG_NAME, "#", _i-1), string_replace(SNITCH_LOG_NAME, "#", _i));
                     --_i;
                 }
                 
