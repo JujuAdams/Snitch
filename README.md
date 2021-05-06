@@ -14,7 +14,7 @@ Snitch is a logging and crash handling tool that helps smooth the debugging proc
 
 Snitch has only four functions:
 
-- `Snitch(value, [value], ...)` outputs debug messages (and can be renamed as you wish). If logging is turned on, these messages will be written to a file on disk
+- `Snitch(value, ...)` outputs debug messages (and can be renamed as you wish). If logging is turned on, these messages will be written to a file on disk
 - `SnitchCrashCollect()` reads the crash dump from disk and returns it, if any is found
 - `SnitchLogSet(state)` turns file logging on and off
 - `SnitchLogGet()` returns whether file logging is on or off
