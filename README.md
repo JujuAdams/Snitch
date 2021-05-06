@@ -10,7 +10,7 @@
 
 &nbsp;
 
-Snitch is a logging and crash handling tool that helps smooth the debugging process. Snitch allows you to capture crash information in a file on disk, as well as logging debug messages that the game creates. Additionally, the header for each log file contains a bunch of information about the player's machinem as well as details for the build of your game that they're running.
+Snitch is a logging and crash handling tool that helps smooth the debugging process. Snitch allows you to capture crash information in a file on disk, as well as logging debug messages that the game creates. Additionally, the header for each log file contains a bunch of information about the player's machine as well as details for the build of your game that they're running. Putting all this information together will greatly improve your chances of fixing bugs, especially bugs that have been discovered in the wild by players.
 
 Snitch has only four functions:
 
