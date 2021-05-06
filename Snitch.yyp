@@ -5,7 +5,6 @@
     {"id":{"name":"oInvalidObject","path":"objects/oInvalidObject/oInvalidObject.yy",},"order":1,},
     {"id":{"name":"oTest","path":"objects/oTest/oTest.yy",},"order":0,},
     {"id":{"name":"SnitchLogGet","path":"scripts/SnitchLogGet/SnitchLogGet.yy",},"order":3,},
-    {"id":{"name":"SnitchCrashAddHandler","path":"scripts/SnitchCrashAddHandler/SnitchCrashAddHandler.yy",},"order":5,},
     {"id":{"name":"Snitch","path":"scripts/Snitch/Snitch.yy",},"order":1,},
     {"id":{"name":"SnitchCrashCollect","path":"scripts/SnitchCrashCollect/SnitchCrashCollect.yy",},"order":4,},
     {"id":{"name":"__SnitchConfig","path":"scripts/__SnitchConfig/__SnitchConfig.yy",},"order":0,},

@@ -22,11 +22,10 @@ function __SnitchInit()
 {
     if (!variable_global_exists("__snitchLogging"))
     {
-        global.__snitchLogging               = false;
-        global.__snitchFirstLoggingEnabled   = true;
-        global.__snitchZerothLogFile         = string_replace(SNITCH_LOG_NAME, "#", "0");
-        global.__snitchGMExceptionHandler    = undefined;
-        global.__snitchExceptionHandlerArray = [];
+        global.__snitchLogging             = false;
+        global.__snitchFirstLoggingEnabled = true;
+        global.__snitchZerothLogFile       = string_replace(SNITCH_LOG_NAME, "#", "0");
+        global.__snitchGMExceptionHandler  = undefined;
         
         if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
         __SnitchTrace("Welcome to Snitch by @jujuadams! This is version ", __SNITCH_VERSION, ", ", __SNITCH_DATE);
@@ -125,24 +124,6 @@ function __SnitchExceptionHandler(_struct)
     {
         __SnitchTrace("Exception in crash handler!");
         __SnitchTrace(json_stringify(_error));
-    }
-    
-    //Call the (many?) exception handlers added by SnitchCrashAddHandler()
-    var _array = global.__snitchExceptionHandlerArray;
-    var _i = 0;
-    repeat(array_length(_array))
-    {
-        try
-        {
-            _array[_i](_struct);
-        }
-        catch(_error)
-        {
-            __SnitchTrace("Exception in crash handler!");
-            __SnitchTrace(json_stringify(_error));
-        }
-        
-        ++_i;
     }
     
     //Show a pop-up message
