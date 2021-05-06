@@ -62,6 +62,10 @@ function SnitchLogSet(_state)
                     file_text_writeln(_file);
                     file_text_write_string(_file, "config = " + string(os_get_config()));
                     file_text_writeln(_file);
+                    file_text_write_string(_file, "debug_mode = " + string(debug_mode));
+                    file_text_writeln(_file);
+                    file_text_write_string(_file, "code_is_compiled" + string(code_is_compiled()));
+                    file_text_writeln(_file);
                     file_text_write_string(_file, "GM_build_date = " + date_datetime_string(GM_build_date));
                     file_text_writeln(_file);
                     file_text_write_string(_file, "GM_version = " + string(GM_version));
