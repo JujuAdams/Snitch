@@ -1,4 +1,4 @@
-<h1 align="center">Snitch 1.0.0</h1>
+<h1 align="center">Snitch 1.1.1</h1>
 
 <p align="center">Logging and crash reporting system for GameMaker Studio 2.3.2</p>
 
