@@ -1,3 +1,9 @@
+/// Adds a function to be called when the game crashes
+/// 
+/// Multiple functions can be added and they are executed in the order that they're added
+/// Functions added with SnitchCrashAddHandler() are executed after the function added by
+/// the native exception_unhandled_handler() feature
+
 function SnitchCrashAddHandler(_function)
 {
     __SnitchInit();

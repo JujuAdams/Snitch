@@ -1,3 +1,9 @@
+/// Checks whether a crash happened the last time that the game was run
+/// 
+/// If so, this function returns the exception struct that was generated
+/// If the crash dump couldn't be parsed, this function will return a generic exception struct
+/// Otherwise, this function returns <undefined>
+
 function SnitchCrashCollect()
 {
     __SnitchInit();

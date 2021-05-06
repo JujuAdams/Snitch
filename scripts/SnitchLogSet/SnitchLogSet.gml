@@ -1,3 +1,5 @@
+/// Sets whether Snitch should log message to a file on disk (in game_save_id)
+///
 /// @param state
 
 function SnitchLogSet(_state)

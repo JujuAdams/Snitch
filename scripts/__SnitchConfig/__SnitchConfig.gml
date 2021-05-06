@@ -11,6 +11,7 @@
 
 //Whether to redirect all uses of show_debug_message() to the Snitch() logging function
 //This means show_debug_message() calls will be loggged to a file (provided Snitch is logging)
+//  N.B. This can cause slowdown if a lot of debug messages are being saved!
 #macro  SNITCH_HIJACK_SDM  true
 
 
@@ -21,7 +22,7 @@
 
 //Pop-up message to show when the game crashes
 //This message will only be shown if SNITCH_CRASH_OFFER_CLIPBOARD is set to <false>
-//N.B. If you don't get an error pop-up then you've got a syntax error somewhere in the macro. Check for typos!
+//  N.B. If you don't get an error pop-up then you've got a syntax error somewhere in the macro. Check for typos!
 #macro  SNITCH_CRASH_MESSAGE  ("Oh no! The game has crashed. Please reboot the game and try again.\n\nThe error was:\n\"" + string(_struct.message) + "\"\n" + string(_struct.stacktrace))
 
 //Whether to ask the user if they want to copy the error message to their clipboard
@@ -29,7 +30,7 @@
 #macro  SNITCH_CRASH_OFFER_CLIPBOARD  true
 
 //Messages to show when asking the player if they're like to copy their
-//N.B. Use \r rather than \n to work around a GameMaker bug in show_question() (2021-05-05)
+//  N.B. Use \r rather than \n to work around a GameMaker bug in show_question() (runtime GMS2.3.2.426, 2021-05-05)
 #macro  SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE  ("Oh no! The game has crashed. Please reboot the game and try again.\r\r\rThe error was:\r\"" + string(_struct.message) + "\"\r" + string(_struct.stacktrace) + "\r\r\rWould you like to copy the error message to your clipboard?")
 #macro  SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE   ("The error message has been copied to your clipboard.")
 
