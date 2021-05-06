@@ -3,13 +3,14 @@ _string += "Snitch by @jujuadams " + __SNITCH_VERSION + ", " + __SNITCH_DATE + "
 _string += "Log files can be found in " + game_save_id + "\n\n";
 _string += "Press 1 to log a message\n";
 _string += "Press 2 to call show_debug_message() (redirected to Snitch() by default)\n";
-_string += "Press 3 to call show_error()\n";
-_string += "Press 4 to crash the game for real\n";
+_string += "Press 3 to crash the game\n";
+_string += "Press 4 to call show_error()\n";
 _string += "Press L to toggle logging (currently = " + string(SnitchLogGet()) + ")\n";
 _string += "\n";
 _string += "\n";
 _string += "\n";
 
+//Display crash data if we have any
 if (is_struct(previousCrashData))
 {
     _string += "Previous crash data:\n";

@@ -7,7 +7,9 @@
 
 //Whether to boot the game with logging turned on or off
 //Logging can be turned on/off manually by calling SnitchLogSet()
-#macro  SNITCH_LOG_DEFAULT  true
+//Generally, you'll only want to set this to <true> if you're running dev/debug builds as logging messages to a file can be slow
+//See SNITCH_ALLOW_LOG_PARAM below for information on toggling logging on/off for production builds
+#macro  SNITCH_LOG_DEFAULT  false
 
 //Whether to redirect all uses of show_debug_message() to the Snitch() logging function
 //This means show_debug_message() calls will be loggged to a file (provided Snitch is logging)

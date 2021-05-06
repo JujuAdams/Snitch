@@ -60,12 +60,29 @@ function __SnitchShowDebugMessage(_string)
 {
     if (SNITCH_HIJACK_SDM)
     {
-        Snitch(_string);
+        __SnitchLogString(_string);
     }
     else
     {
         return __show_debug_message__(_string);
     }
+}
+
+function __SnitchLogString(_string)
+{
+    __SnitchInit();
+    
+    __show_debug_message__(_string);
+    
+    if (global.__snitchLogging)
+    {
+        var _file = file_text_open_append(global.__snitchZerothLogFile);
+        file_text_write_string(_file, _string);
+        file_text_writeln(_file);
+        file_text_close(_file);
+    }
+    
+    return _string;
 }
 
 function __SnitchCrashSetGMHandler(_function)
