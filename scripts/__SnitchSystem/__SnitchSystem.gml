@@ -162,17 +162,7 @@ function __SnitchTrace()
         ++_i;
     }
     
-    __show_debug_message__(_string);
-    
-    if (global.__snitchLogging)
-    {
-        var _file = file_text_open_append(global.__snitchZerothLogFile);
-        file_text_write_string(_file, _string);
-        file_text_writeln(_file);
-        file_text_close(_file);
-    }
-    
-    return _string;
+    return __SnitchLogString(_string);
 }
 
 function __SnitchError()
