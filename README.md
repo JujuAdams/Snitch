@@ -25,9 +25,9 @@ Snitch's behaviour can be adjusted by editing macros found in `__SnitchConfig()`
 
 ### Logging
 
-Logging can be set up to store messages from only a specific function - `Snitch()` - or to capture debug messages from all calls to `show_debug_message()`. Logging can be toggled with a function call, can be set to always be on (via `SNITCH_LOG_DEFAULT`), or can be activated when the game is booted using an execution parameter (`-log`). This last feature is especially useful for production builds as it allows logging to be activated by players.
+Logging can be set up to store messages from only a specific function - `Snitch()` - or to capture debug messages from all calls to `show_debug_message()`. Logging can be toggled with a function call, can be set to always be on (via `SNITCH_LOG_DEFAULT`), or can be activated when the game is booted using an execution parameter (`-log`). This last feature is especially useful for production builds as it allows logging to be activated by players. Because behaviour is controlled largely with macros, Snitch can be controlled by using GameMaker's configurations.
 
-**Please note** that because logging involves file access, this can incur a non-trivial performance penalty in your game.
+**Please note** that because logging involves file access, this can incur a non-trivial performance penalty in your game. It is recommended that you do not release production builds with logging forced on.
 
 &nbsp;
 
