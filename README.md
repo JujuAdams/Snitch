@@ -1,6 +1,6 @@
 <h1 align="center">Snitch 1.1.1</h1>
 
-<p align="center">Logging and crash reporting system for GameMaker Studio 2.3.2</p>
+<p align="center">Logging and crash handling system for GameMaker Studio 2.3.2</p>
 
 <p align="center"><b>@jujuadams</b></p>
 
