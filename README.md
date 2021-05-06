@@ -35,6 +35,6 @@ Logging can be set up to store messages from only a specific function - `Snitch(
 
 ### Crash Dumps
 
-Snitch will save a small file to disk whenever a crash happens - this is just the exception struct JSON encoded. When `SnitchCrashCollect()` is called, Snitch will scan for the crash dump file, attempt to decode it, delete the crash dump, then return the exception struct that was saved to the file (as a struct). You can then do whatever you want with that! A partially dedicated programmer might send that crash data off to a server automatically for later analysis.
+Snitch will save a small file to disk whenever a crash happens - this is just the exception struct JSON encoded. When `SnitchCrashCollect()` is called, Snitch will scan for the crash dump file, attempt to decode it, delete the crash dump, then return the exception struct that was saved to the file (as a struct). You can then do whatever you want with that! A partially programmer might send that crash data off to a server (such as [sentry.io](https://sentry.io/)) automatically for later analysis.
 
 Additionally, Snitch can be set up to prompt the user to copy the exception data to their clipboard. This is especially helpful for crash reporting as it reduces the friction for players to report issues with your game.
