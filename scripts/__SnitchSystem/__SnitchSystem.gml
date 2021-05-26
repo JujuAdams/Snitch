@@ -10,8 +10,8 @@
 
 
 
-#macro __SNITCH_VERSION  "1.1.1"
-#macro __SNITCH_DATE     "2021-05-06"
+#macro __SNITCH_VERSION  "1.1.2"
+#macro __SNITCH_DATE     "2021-05-26"
 
 
 
@@ -59,7 +59,7 @@ function __SnitchShowDebugMessage(_string)
 {
     if (SNITCH_HIJACK_SDM)
     {
-        __SnitchLogString(_string);
+        __SnitchLogString(string(_string));
     }
     else
     {
