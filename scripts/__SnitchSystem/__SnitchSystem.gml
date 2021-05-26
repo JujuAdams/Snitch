@@ -59,7 +59,7 @@ function __SnitchShowDebugMessage(_string)
 {
     if (SNITCH_HIJACK_SDM)
     {
-        __SnitchLogString(_string);
+        __SnitchLogString(string(_string));
     }
     else
     {
