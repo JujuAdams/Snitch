@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/JujuAdams/Snitch/master/LOGO.png" style="display:block; margin:auto; width:300px"></p>
+
 <h1 align="center">Snitch 1.1.3</h1>
 
 <p align="center">Logging and crash handling system for GameMaker Studio 2.3.2 by <b>@jujuadams</b></p>
