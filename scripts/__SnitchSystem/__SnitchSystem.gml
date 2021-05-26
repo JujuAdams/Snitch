@@ -30,7 +30,10 @@ function __SnitchInit()
         if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
         __SnitchTrace("Welcome to Snitch by @jujuadams! This is version ", __SNITCH_VERSION, ", ", __SNITCH_DATE);
         
-        __exception_unhandled_handler__(__SnitchExceptionHandler);
+        if (SNITCH_CRASH_CAPTURE)
+        {
+            __exception_unhandled_handler__(__SnitchExceptionHandler);
+        }
         
         if ((SNITCH_LOG_COUNT > 1) && (string_pos("#", SNITCH_LOG_NAME) <= 0))
         {

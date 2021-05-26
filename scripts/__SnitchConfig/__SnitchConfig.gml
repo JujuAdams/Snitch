@@ -18,6 +18,12 @@
 
 
 
+//Whether to capture crashes using an exception handler
+//This can make tracking down bugs a bit harder when you're running from the IDE
+//The default value here ("!debug_mode") will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F6)
+//Please make sure this macro is set to <true> for production builds!
+#macro  SNITCH_CRASH_CAPTURE  (!debug_mode)
+
 //Name of the crash dump file
 //This file contains the contents of the exception struct, encoded as JSON
 #macro  SNITCH_CRASH_LOG_NAME  "crash.txt"
@@ -31,7 +37,7 @@
 //This is useful in production to get crash data more easily from players
 #macro  SNITCH_CRASH_OFFER_CLIPBOARD  true
 
-//Messages to show when asking the player if they're like to copy their
+//Messages to show when asking the player if they'd like to copy the error message to their clipboard
 //  N.B. Use \r rather than \n to work around a GameMaker bug in show_question() (runtime GMS2.3.2.426, 2021-05-05)
 #macro  SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE  ("Oh no! The game has crashed. Please reboot the game and try again.\r\r\rThe error was:\r\"" + string(_struct.message) + "\"\r" + string(_struct.stacktrace) + "\r\r\rWould you like to copy the error message to your clipboard?")
 #macro  SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE   ("The error message has been copied to your clipboard.")
