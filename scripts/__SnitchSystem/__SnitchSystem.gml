@@ -10,7 +10,7 @@
 
 
 
-#macro __SNITCH_VERSION  "1.1.2"
+#macro __SNITCH_VERSION  "1.1.3"
 #macro __SNITCH_DATE     "2021-05-26"
 
 
