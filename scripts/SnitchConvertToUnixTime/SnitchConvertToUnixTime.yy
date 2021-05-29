@@ -6,7 +6,7 @@
     "path": "folders/Snitch/(System).yy",
   },
   "resourceVersion": "1.0",
-  "name": "__SnitchSystem",
+  "name": "SnitchConvertToUnixTime",
   "tags": [],
   "resourceType": "GMScript",
 }

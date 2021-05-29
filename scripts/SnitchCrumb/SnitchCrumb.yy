@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "(System)",
-    "path": "folders/Snitch/(System).yy",
+    "name": "Snitch",
+    "path": "folders/Snitch.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__SnitchSystem",
+  "name": "SnitchCrumb",
   "tags": [],
   "resourceType": "GMScript",
 }
