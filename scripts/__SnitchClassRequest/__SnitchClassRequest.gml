@@ -52,19 +52,6 @@ function __SnitchClassRequest(_uuid, _string) constructor
         return _string;
     }
     
-    static SaveAs = function(_filename)
-    {
-        //Create a new buffer and drop our content into it
-        var _buffer = buffer_create(string_byte_length(content), buffer_fixed, 1);
-        buffer_write(_buffer, buffer_text, content);
-        
-        //Do the save
-        buffer_save(_buffer, _filename);
-        
-        //Clean up!
-        buffer_delete(_buffer);
-    }
-    
     static SaveBackup = function()
     {
         //Don't bother saving a backup if there's no buffer to save. we've already saved a backup, or we never want to save any backups at all
@@ -84,7 +71,10 @@ function __SnitchClassRequest(_uuid, _string) constructor
         __SnitchRequestBackupSaveManifest();
         
         //Actually do the saving
-        SaveAs(__SnitchRequestBackupFilename(UUID));
+        var _buffer = buffer_create(string_byte_length(content), buffer_fixed, 1);
+        buffer_write(_buffer, buffer_text, content);
+        buffer_save(_buffer, __SnitchRequestBackupFilename(UUID));
+        buffer_delete(_buffer);
         
         savedBackup = true;
     }

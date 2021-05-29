@@ -14,18 +14,18 @@ _string += "\n";
 _string += "\n";
 
 //Display crash data if we have any
-//  N.B. This particular code expects SWITCH_CRASH_CLIPBOARD_MODE to be set to 1
-if (is_struct(previousCrashData))
+//  N.B. This particular code expects SWITCH_CRASH_DUMP_MODE to be set to 1
+if (is_struct(crashDump))
 {
     _string += "Previous crash data:\n";
     
     try
     {
-        _string += "message = \"" + string(previousCrashData.message) + "\"\n\n";
-        _string += "longMessage = \"" + string(previousCrashData.longMessage) + "\"\n\n";
-        _string += "script = \"" + string(previousCrashData.script) + "\"\n\n";
-        _string += "line = " + string(previousCrashData.line) + "\n\n";
-        _string += "stacktrace = " + string(previousCrashData.stacktrace) + "\n\n";
+        _string += "message = \"" + string(crashDump.message) + "\"\n\n";
+        _string += "longMessage = \"" + string(crashDump.longMessage) + "\"\n\n";
+        _string += "script = \"" + string(crashDump.script) + "\"\n\n";
+        _string += "line = " + string(crashDump.line) + "\n\n";
+        _string += "stacktrace = " + string(crashDump.stacktrace) + "\n\n";
     }
     catch(_)
     {

@@ -52,16 +52,23 @@
 //The default value here (!debug_mode) will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F6)
 #macro  SNITCH_CRASH_CAPTURE  (!debug_mode)
 
-//Name of the crash dump file. This file contains a JSON for the crash event
-//What exactly is reported in the crash event can be configured by editing __SnitchConfigEventData()
-//Set this macro to an empty string ("") to not save a crash event
-#macro  SNITCH_CRASH_EVENT_FILENAME  "crash.txt"
+//Name of the crash dump file
+//What exactly is reported in the crash event can be configured by changing SWITCH_CRASH_DUMP_MODE
+#macro  SNITCH_CRASH_DUMP_FILENAME  "crash.txt"
+
+//How much data to save to disk when the game crashes
+//There are 4 modes:
+//   0:  Don't save any crash data
+//   1:  Save the exception struct that GameMaker generates to the clipboard
+//   2:  Save the full event data to disk
+//   3:  Compress and base64 encode full crash event data, and save that
+#macro  SWITCH_CRASH_DUMP_MODE  1
 
 //Whether to ask the user if they want to copy the error message to their clipboard
 //This is useful in production to get crash data more easily from players
 //There are 4 modes:
 //   0:  Don't ask the player to copy crash data to their clipboard at all and just show the string defined by SNITCH_CRASH_NO_CLIPBOARD_MESSAGE
-//   1:  Allow the player to copy the exception struct that GameMaker generates to the clipboard. This is sufficient for basic debugging
+//   1:  Allow the player to copy the exception struct that GameMaker generates to the clipboard
 //   2:  Copy full event data to their clipboard as plaintext JSON
 //   3:  Compress and base64 encode full crash event data to the player's clipboard
 //All clipboard data is bookended with five hashes (##### content #####) to help make copy-pasting easier

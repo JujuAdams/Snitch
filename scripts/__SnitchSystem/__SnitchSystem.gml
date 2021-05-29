@@ -10,16 +10,17 @@
 
 
 
-#macro SNITCH_VERSION          "2.0.0"
-#macro SNITCH_DATE             "2021-05-29"
-#macro SNITCH_EVENT_DATA       global.__snitchSentryData
-#macro SNITCH_OS_NAME          global.__snitchOSName
-#macro SNITCH_OS_VERSION       global.__snitchOSVersion
-#macro SNITCH_DEVICE_NAME      global.__snitchDeviceName
-#macro SNITCH_BROWSER          global.__snitchBrowser
-#macro SNITCH_OS_INFO          global.__snitchOSInfo
-#macro SNITCH_BOOT_PARAMETERS  global.__snitchBootParameters
-#macro __SNITCH_HTTP_NEEDED    (SNITCH_SENTRY_PERMITTED)
+#macro SNITCH_VERSION               "2.0.0"
+#macro SNITCH_DATE                  "2021-05-29"
+#macro SNITCH_SHARED_EVENT_PAYLOAD  global.__snitchSharedEventPayload
+#macro SNITCH_OS_NAME               global.__snitchOSName
+#macro SNITCH_OS_VERSION            global.__snitchOSVersion
+#macro SNITCH_DEVICE_NAME           global.__snitchDeviceName
+#macro SNITCH_BROWSER               global.__snitchBrowser
+#macro SNITCH_OS_INFO               global.__snitchOSInfo
+#macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
+#macro __SNITCH_HTTP_NEEDED         (SNITCH_SENTRY_PERMITTED)
+
 
 
 //Initialize the library
@@ -207,8 +208,8 @@ function __SnitchInit()
         
         
             
-        //Build the event backbone
-        SNITCH_EVENT_DATA = __SnitchConfigEventDataOnBoot();
+        //Update the shared event data
+        SNITCH_SHARED_EVENT_PAYLOAD = __SnitchSharedEventPayload();
         
         
         
@@ -376,19 +377,33 @@ function __SnitchExceptionHandler(_struct)
         __SnitchTrace(json_stringify(_error));
     }
     
+    
+    
+    //Save out the crash dump
     try
     {
-        if (SNITCH_CRASH_EVENT_FILENAME != "")
+        var _text = "No data available";
+        switch(SWITCH_CRASH_DUMP_MODE)
         {
-            _request.SaveAs(SNITCH_CRASH_EVENT_FILENAME);
-            __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_EVENT_FILENAME, "\"");
+            case 1: _text = json_stringify(_struct);        break;
+            case 2: _text = _request.content;               break;
+            case 3: _text = _request.GetCompressedString(); break;
         }
+        
+        var _buffer = buffer_create(string_byte_length(_text), buffer_fixed, 1);
+        buffer_write(_buffer, buffer_text, _text);
+        buffer_save(_buffer, SNITCH_CRASH_DUMP_FILENAME);
+        buffer_delete(_buffer);
+        
+        __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_DUMP_FILENAME, "\"");
     }
     catch(_error)
     {
         __SnitchTrace("Exception in crash handler!");
         __SnitchTrace(json_stringify(_error));
     }
+    
+    
     
     //Show a pop-up message
     try
@@ -397,10 +412,11 @@ function __SnitchExceptionHandler(_struct)
         {
             if (show_question(SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE))
             {
+                var _text = "No data available";
                 switch(SWITCH_CRASH_CLIPBOARD_MODE)
                 {
-                    case 1: _text = json_stringify(_struct); break;
-                    case 2: _text = _request.content; break;
+                    case 1: _text = json_stringify(_struct);        break;
+                    case 2: _text = _request.content;               break;
                     case 3: _text = _request.GetCompressedString(); break;
                 }
                 

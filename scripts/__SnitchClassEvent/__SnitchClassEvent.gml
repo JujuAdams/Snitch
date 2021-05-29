@@ -6,8 +6,15 @@ function __SnitchClassEvent(_string) constructor
     forceRequest = false;
     callstack    = undefined;
     rawCallstack = undefined;
+    payload      = undefined;
     
     global.__snitchUnfinishedEvent = self;
+    
+    static Payload = function(_struct)
+    {
+        payload = _struct;
+        return self;
+    }
     
     static LogCallstack = function()
     {
@@ -158,17 +165,22 @@ function __SnitchClassEvent(_string) constructor
         }
         else
         {
-            //Update our event data
-            with(SNITCH_EVENT_DATA)
+            if (payload == undefined)
             {
-                __SnitchConfigEventDataUpdate(other.message,
-                                              other.level,
-                                              (is_array(other.callstack)? other.callstack : []),
-                                              global.__snitchBreadcrumbsArray);
+                payload = SNITCH_SHARED_EVENT_PAYLOAD;
+                
+                //Update our event data
+                with(SNITCH_SHARED_EVENT_PAYLOAD)
+                {
+                    __SnitchSharedEventPayloadUpdate(other.message,
+                                                  other.level,
+                                                  (is_array(other.callstack)? other.callstack : []),
+                                                  global.__snitchBreadcrumbsArray);
+                }
             }
             
             //Pull out our UUID
-            var _uuid = SNITCH_EVENT_DATA.event_id;
+            var _uuid = payload.event_id;
             
             //Log this momentous occasion
             var _logString = "[" + string(level) + " " + string(_uuid) + "] " + string(message);
@@ -176,7 +188,7 @@ function __SnitchClassEvent(_string) constructor
             __SnitchTrace(_logString);
             
             //Make a new request struct
-            var _request = new __SnitchClassRequest(_uuid, json_stringify(SNITCH_EVENT_DATA));
+            var _request = new __SnitchClassRequest(_uuid, json_stringify(payload));
             
             //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
             if (SnitchSentryGet())

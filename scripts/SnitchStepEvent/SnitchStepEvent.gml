@@ -46,11 +46,11 @@ function SnitchStepEvent()
     {
         if (SNITCH_UNFINISHED_EVENT_ERROR)
         {
-            __SnitchError("Event unfinished. Please call .Finish() at the end of every SnitchEvent()\nmessage = \"", message, "\"\nlogger = \"", logger, "\"\nlevel = \"", level, "\"\ncallstack = \"", callstack, "\"\n \n(Set SNITCH_UNFINISHED_EVENT_ERROR to <false> to hide this error)");
+            __SnitchError("Event unfinished. Please call .Finish() at the end of every SnitchEvent()\nmessage = \"", message, "\"\nlogger = \"", logger, "\"\nlevel = \"", level, "\"\ncallstack = \"", rawCallstack, "\"\n \n(Set SNITCH_UNFINISHED_EVENT_ERROR to <false> to hide this error)");
         }
         else
         {
-            __SnitchTrace("Event unfinished. Please call .Finish() at the end of every SnitchEvent(), message = \"", message, "\", logger = \"", logger, "\", level = \"", level, "\", callstack = \"", callstack, "\"");
+            __SnitchTrace("Event unfinished. Please call .Finish() at the end of every SnitchEvent(), message = \"", message, "\", logger = \"", logger, "\", level = \"", level, "\", callstack = \"", rawCallstack, "\"");
         }
     }
 }

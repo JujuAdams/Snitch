@@ -10,11 +10,11 @@ function SnitchCrashDumpCollect()
     
     var _struct = undefined;
     
-    if ((SNITCH_CRASH_EVENT_FILENAME != "") && file_exists(SNITCH_CRASH_EVENT_FILENAME))
+    if ((SNITCH_CRASH_DUMP_FILENAME != "") && file_exists(SNITCH_CRASH_DUMP_FILENAME))
     {
         try
         {
-            var _buffer = buffer_load(SNITCH_CRASH_EVENT_FILENAME);
+            var _buffer = buffer_load(SNITCH_CRASH_DUMP_FILENAME);
             var _string = buffer_read(_buffer, buffer_string);
             buffer_delete(_buffer);
             var _struct = json_parse(_string);
