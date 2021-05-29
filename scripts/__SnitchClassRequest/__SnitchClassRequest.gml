@@ -153,7 +153,7 @@ function __SnitchSentryHTTPRequest(_request)
 {
     //Set up the headers...
     global.__snitchHTTPHeaderMap[? "Content-Type" ] = "application/json";
-    global.__snitchHTTPHeaderMap[? "X-Sentry-Auth"] = global.__snitchAuthString + string(SnitchConvertToUnixTime(date_current_datetime()));
+    global.__snitchHTTPHeaderMap[? "X-Sentry-Auth"] = global.__snitchSentryAuthString + string(SnitchConvertToUnixTime(date_current_datetime()));
     
     //And fire off the request!
     //Good luck little packet

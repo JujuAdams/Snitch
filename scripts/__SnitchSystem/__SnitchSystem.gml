@@ -285,7 +285,7 @@ function __SnitchInit()
                     --_i;
                 }
                 
-                __SnitchTrace("Found ", array_length(global.__snitchRequestBackupOrder), " request backups (", _expected, " found in manifest, ", _missing, " missing)");
+                __SnitchTrace("Found ", array_length(global.__snitchRequestBackupOrder), " request backups (", _expected, " in manifest, of which ", _missing, " missing)");
             }
             
             __SnitchRequestBackupSaveManifest();
@@ -322,7 +322,7 @@ function __SnitchInit()
             
             //Build an auth string for later HTTP requests
             //We fill in the timestamp later when sending the request
-            global.__snitchAuthString = "Sentry sentry_version=7, sentry_client=" + game_project_name + "/" + GM_version + ", sentry_key=" + global.__snitchSentryPublicKey + ", sentry_timestamp=";
+            global.__snitchSentryAuthString = "Sentry sentry_version=7, sentry_client=Snitch/" + string(SNITCH_VERSION) + ", sentry_key=" + global.__snitchSentryPublicKey + ", sentry_timestamp=";
             
             if (debug_mode)
             {

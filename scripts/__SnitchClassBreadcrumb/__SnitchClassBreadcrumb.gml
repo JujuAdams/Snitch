@@ -29,7 +29,7 @@ function __SnitchClassBreadcrumb(_string) constructor
     static Warning = function()
     {
         level = "warning";
-        if (!variable_struct_exists(self, "type")) type = "error";
+        if (!variable_struct_exists(self, "type")) type = "warning";
         return self;
     }
     

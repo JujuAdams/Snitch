@@ -173,9 +173,9 @@ function __SnitchClassEvent(_string) constructor
                 with(SNITCH_SHARED_EVENT_PAYLOAD)
                 {
                     __SnitchSharedEventPayloadUpdate(other.message,
-                                                  other.level,
-                                                  (is_array(other.callstack)? other.callstack : []),
-                                                  global.__snitchBreadcrumbsArray);
+                                                     other.level,
+                                                     (is_array(other.callstack)? other.callstack : []),
+                                                     global.__snitchBreadcrumbsArray);
                 }
             }
             

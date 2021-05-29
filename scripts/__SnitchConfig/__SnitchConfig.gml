@@ -91,7 +91,7 @@
 #region ---------- Breadcrumbs ----------
 
 //Maximum number of breadcrumbs to store
-#macro  SNITCH_BREADCRUMB_LIMIT  100
+#macro  SNITCH_BREADCRUMB_LIMIT  50
 
 //Whether to output breadcrumbs to the console
 //If logging is enabled, this information will also be outputted to a log file
@@ -104,14 +104,19 @@
 #region ---------- Miscellaneous ----------
 
 //Events must have their .Finish() method called, and this macro controls whether to throw an error when Snitch detects an unfinished event
-//This macro should probably be set to <false> for production builds
+//This macro should probably be set to <false> for production builds to avoid unnecessary errors, but that's up to you
 #macro  SNITCH_UNFINISHED_EVENT_ERROR  true
+
+//Whether to output HTTP success to the console. This is handy for confirming HTTP requests are being processed properly
+//If logging is enabled, this information will also be outputted to the log file
+//   N.B. HTTP warnings/failures will always be reported
+#macro  SNITCH_OUTPUT_HTTP_SUCCESS  false
 
 #endregion
 
 
 
-#region ---------- HTTP ----------
+#region ---------- HTTP Request Backups ----------
 
 //Whether to allow backups to be made for HTTP requests
 //Any requests that fail will be reattempted at a later time
@@ -137,11 +142,6 @@
 //How long to wait after sequential failed backup resends before Snitch will try all over again
 //This value is in milliseconds, so 900000 is the same as 15 minutes
 #macro  SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT  900000
-
-//Whether to output HTTP success to the console. This is handy for confirming HTTP requests are being processed properly
-//If logging is enabled, this information will also be outputted to the log file
-//   N.B. HTTP warnings/failures will always be reported
-#macro  SNITCH_OUTPUT_HTTP_SUCCESS  true
 
 #endregion
 

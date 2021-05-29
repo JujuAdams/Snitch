@@ -20,7 +20,7 @@ if (keyboard_check_pressed(ord("5"))) SnitchEvent("Wow! A debug event").Debug().
 if (keyboard_check_pressed(ord("6"))) SnitchCrumb("Breadcrumb 6").Debug();
 
 //Trigger a debug event
-if (keyboard_check_pressed(ord("7"))) SnitchCrumb("Breadcrumb 7").Debug();
+if (keyboard_check_pressed(ord("7"))) SnitchCrumb("Breadcrumb 7").Warning();
 
 //Toggle logging on and off
 if (keyboard_check_pressed(ord("L"))) SnitchLogSet(!SnitchLogGet());
