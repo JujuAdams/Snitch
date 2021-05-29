@@ -24,6 +24,7 @@ function SnitchSentrySet(_state)
         }
         else
         {
+            global.__snitchSentryEnabled = false;
             __SnitchTrace("sentry.io integration turned off");
         }
     }

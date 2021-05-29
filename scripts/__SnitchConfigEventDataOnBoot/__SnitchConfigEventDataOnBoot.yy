@@ -6,7 +6,7 @@
     "path": "folders/Snitch/Configuration - edit these scripts!.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__SnitchConfig",
+  "name": "__SnitchConfigEventDataOnBoot",
   "tags": [],
   "resourceType": "GMScript",
 }

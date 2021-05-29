@@ -1,36 +1,12 @@
 function __SnitchClassRequest(_uuid, _string) constructor
 {
-    content          = _string;
-    UUID             = _uuid;
-    buffer           = -1;
-    compressedBuffer = -1;
-    savedBackup      = false;
+    content     = _string;
+    UUID        = _uuid;
+    savedBackup = false;
     
     asyncID      = -1;
     responseCode = 0;
     status       = 0;
-    
-    static MakeBuffer = function()
-    {
-        if (buffer < 0)
-        {
-            buffer = buffer_create(string_byte_length(content), buffer_fixed, 1);
-            buffer_write(buffer, buffer_text, content);
-        }
-        
-        return buffer;
-    }
-    
-    static Compress = function()
-    {
-        if (compressedBuffer < 0)
-        {
-            MakeBuffer();
-            compressedBuffer = buffer_compress(buffer, 0, buffer_get_size(buffer));
-        }
-        
-        return compressedBuffer;
-    }
     
     static Send = function(_url, _method, _headerMap, _compress)
     {
@@ -38,91 +14,55 @@ function __SnitchClassRequest(_uuid, _string) constructor
         {
             if (_compress)
             {
-                Compress();
-                asyncID = http_request(_url, _method, _headerMap, buffer_base64_encode(compressedBuffer, 0, buffer_get_size(compressedBuffer)));
+                //Fire off the HTTP request using the appropriate encoding
+                asyncID = http_request(_url, _method, _headerMap, GetCompressedString());
             }
             else
             {
-                MakeBuffer();
-                asyncID = http_request(_url, _method, _headerMap, buffer_base64_encode(buffer, 0, buffer_get_size(buffer)));
+                //If we don't want to compress our HTTP request, use the raw content
+                asyncID = http_request(_url, _method, _headerMap, content);
             }
             
             if (asyncID >= 0)
             {
+                //If the HTTP request is valid then link the returned ID to this struct for use later
                 global.__snitchHTTPRequests[$ string(asyncID)] = self;
             }
             else
             {
+                //Otherwise immediately trigger a failed HTTP response
                 HTTPResponse(-1, -1);
             }
         }
     }
     
-    static GetCompressedString = function(_autoCleanUp)
+    static GetCompressedString = function()
     {
-        if (compressedBuffer >= 0)
-        {
-            //We have a compressed buffer, return that base64 encoded
-            return buffer_base64_encode(compressedBuffer, 0, buffer_get_size(compressedBuffer));
-        }
-        else if (buffer >= 0)
-        {
-            //We don't have a compressed buffer but we do have a plaintext buffer
-            //Make a temporary compressed buffer and call this function again
-            Compress();
-            var _string = GetCompressedString(_autoCleanUp);
-            
-            if (_autoCleanUp)
-            {
-                buffer_delete(compressedBuffer);
-                compressedBuffer = -1;
-            }
-            
-            return _string;
-        }
-        else if (buffer >= 0)
-        {
-            //We don't have a compressed buffer nor do we have a plaintext buffer
-            //Make a temporary plaintext buffer and call this function again
-            MakeBuffer();
-            var _string = GetCompressedString(_autoCleanUp);
-            
-            if (_autoCleanUp)
-            {
-                buffer_delete(buffer);
-                buffer = -1;
-            }
-            
-            return _string;
-        }
-    }
-    
-    static GetRawString = function()
-    {
-        return content;
-    }
-    
-    static SaveAs = function(_filename, _autoCleanUp)
-    {
-        if (buffer >= 0)
-        {
-            buffer_save(buffer, _filename);
-        }
-        else
-        {
-            //We don't have a plaintext buffer
-            //Make a temporary one and call this function again
-            MakeBuffer();
-            SaveAs(_filename, _autoCleanUp);
-            
-            if (_autoCleanUp)
-            {
-                buffer_delete(buffer);
-                buffer = -1;
-            }
-        }
+        //If we want to compress the buffer, do the ol' swaperoo
+        var _buffer = buffer_create(string_byte_length(content), buffer_fixed, 1);
+        buffer_write(_buffer, buffer_text, content);
+        var _compressedBuffer = buffer_compress(_buffer, 0, buffer_get_size(_buffer));
         
-        return file_exists(_filename);
+        var _string = buffer_base64_encode(_compressedBuffer, 0, buffer_get_size(_compressedBuffer));
+        
+        //Clean up!
+        buffer_delete(_buffer);
+        buffer_delete(_compressedBuffer);
+        
+        return _string;
+    }
+    
+    static SaveAs = function(_filename)
+    {
+        //Create a new buffer and drop our content into it
+        var _buffer = buffer_create(string_byte_length(content), buffer_fixed, 1);
+        buffer_write(_buffer, buffer_text, content);
+        
+        //Do the save
+        buffer_save(_buffer, _filename);
+        
+        //Clean up!
+        buffer_delete(_buffer);
     }
     
     static SaveBackup = function()
@@ -144,7 +84,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
         __SnitchRequestBackupSaveManifest();
         
         //Actually do the saving
-        SaveAs(__SnitchRequestBackupFilename(UUID), true);
+        SaveAs(__SnitchRequestBackupFilename(UUID));
         
         savedBackup = true;
     }
@@ -156,24 +96,22 @@ function __SnitchClassRequest(_uuid, _string) constructor
         
         if (responseCode == 200)
         {
-            if (SNITCH_OUTPUT_HTTP_SUCCESS) SnitchCrumb("Request ", UUID, " complete (HTTP 200)").HTTP("sentry.io", "POST", responseCode);
+            if (SNITCH_OUTPUT_HTTP_SUCCESS) __SnitchTrace("Request ", UUID, " complete (HTTP 200)");
             Destroy();
             
             //Reset the failure count
             global.__snitchRequestBackupFailures = 0;
         }
-        else if (status == 0)
-        {
-            SnitchCrumb("Request ", UUID, " complete but may have been unsuccessful (HTTP ", responseCode, ")").Warning().HTTP("sentry.io", "POST", responseCode);
-            Destroy();
-            
-            //Don't touch the failure count as this state is indeterminate
-        }
         else if (status != 1)
         {
-            SnitchCrumb("Request ", UUID, " failed (HTTP ", responseCode, ")").Warning().HTTP("sentry.io", "POST", responseCode);
+            __SnitchTrace("Request ", UUID, " failed (HTTP ", responseCode, ")");
             
-            if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
+            if (responseCode == 400)
+            {
+                __SnitchTrace("Warning! Response was \"HTTP 400 - Bad Request\". Check your event payload");
+                Destroy();
+            }
+            else if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
             {
                 //Increment the failure count
                 global.__snitchRequestBackupFailures++;
@@ -190,27 +128,9 @@ function __SnitchClassRequest(_uuid, _string) constructor
         }
     }
     
-    static CleanUp = function()
-    {
-        //Delete the buffers we're holding internally
-        if (buffer >= 0)
-        {
-            buffer_delete(buffer);
-            buffer = -1;
-        }
-        
-        if (compressedBuffer >= 0)
-        {
-            buffer_delete(compressedBuffer);
-            compressedBuffer = -1;
-        }
-    }
-    
     static Destroy = function()
     {
-        //Delete the buffers we're holding internally
-        CleanUp();
-        
+        //Remove ourselves from the HTTP request lookup
         variable_struct_remove(global.__snitchHTTPRequests, asyncID);
         
         //Delete any backup on disk

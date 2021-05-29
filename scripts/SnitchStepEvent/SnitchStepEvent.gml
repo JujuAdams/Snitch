@@ -7,36 +7,6 @@ function SnitchStepEvent()
     
     if (SNITCH_SENTRY_PERMITTED)
     {
-        if (SNITCH_SENTRY_GET_USER_FROM_STEAM)
-        {
-            //Set the username/user ID to whatever Steam gives us, but only after Steam has initialised fully
-            if (!global.__snitchSteamInitialised && steam_initialised())
-            {
-                global.__snitchSteamInitialised = true;
-                
-                with(SNITCH_EVENT_DATA)
-                {
-                    var _set = false;
-                    if (variable_struct_exists(self, "user"))
-                    {
-                        if (is_struct(user)) _set = true;
-                    }
-                    else
-                    {
-                        user = {};
-                        _set = true;
-                    }
-                    
-                    if (_set)
-                    {
-                        user.username = steam_get_persona_name();
-                        user.id       = steam_get_user_account_id();
-                        __SnitchTrace("Set username = ", user.username, ", id = ", user.id);
-                    }
-                }
-            }
-        }
-        
         if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
         {
             if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)

@@ -262,10 +262,23 @@ function __SnitchInit()
                     }
                     else
                     {
-                        var _request = new __SnitchClassRequest(_uuid, buffer_load(_filename));
-                        _request.savedBackup = true;
-                    
-                        global.__snitchRequestBackups[$ _uuid] = _request;
+                        var _buffer = buffer_load(_filename);
+                        
+                        if (buffer_get_size(_buffer) <= 0)
+                        {
+                            //If the buffer is empty, delete the file on disk and report this event as missing
+                            _missing++;
+                            file_delete(_filename);
+                        }
+                        else
+                        {
+                            //Otherwise read out a string from the buffer and create a new request
+                            var _request = new __SnitchClassRequest(_uuid, buffer_read(_buffer, buffer_text));
+                            _request.savedBackup = true;
+                            global.__snitchRequestBackups[$ _uuid] = _request;
+                        }
+                        
+                        buffer_delete(_buffer);
                     }
                     
                     --_i;
@@ -343,11 +356,14 @@ function __SnitchCrashSetGMHandler(_function)
 function __SnitchExceptionHandler(_struct)
 {
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    __SnitchTrace("Unhandled exception!");
-    __SnitchTrace(json_stringify(_struct));
+    
+    //Generate a crash event and output it
+    //We guarantee that it returns a request struct, and we also indicate we want the callstack to be outputted as well for easier debugging
+    var _request = SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).LogCallstack().ForceRequest().Finish();
+    
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     
-    var _request = SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).Finish();
+    
     
     //Call the exception handler defined by the native exception_unhandled_handler() function
     try
@@ -364,15 +380,8 @@ function __SnitchExceptionHandler(_struct)
     {
         if (SNITCH_CRASH_EVENT_FILENAME != "")
         {
-            var _result = _request.SaveAs(SNITCH_CRASH_EVENT_FILENAME, true);
-            if (_result)
-            {
-                __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_EVENT_FILENAME, "\"");
-            }
-            else
-            {
-                __SnitchTrace("Warning! Was not able to save crash dump to \"", SNITCH_CRASH_EVENT_FILENAME, "\"");
-            }
+            _request.SaveAs(SNITCH_CRASH_EVENT_FILENAME);
+            __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_EVENT_FILENAME, "\"");
         }
     }
     catch(_error)
@@ -391,8 +400,8 @@ function __SnitchExceptionHandler(_struct)
                 switch(SWITCH_CRASH_CLIPBOARD_MODE)
                 {
                     case 1: _text = json_stringify(_struct); break;
-                    case 2: _text = _request.GetRawString(); break;
-                    case 3: _text = _request.GetCompressedString(true); break;
+                    case 2: _text = _request.content; break;
+                    case 3: _text = _request.GetCompressedString(); break;
                 }
                 
                 clipboard_set_text("#####" + _text + "#####"); break;
