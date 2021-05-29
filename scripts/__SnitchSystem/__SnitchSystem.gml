@@ -10,16 +10,16 @@
 
 
 
-#macro SNITCH_VERSION            "2.0.0"
-#macro SNITCH_DATE               "2021-05-28"
-#macro SNITCH_SENTRY_DATA        global.__snitchSentryData
-#macro SNITCH_BREADCRUMBS_ARRAY  global.__snitchBreadcrumbsArray
-#macro SNITCH_OS_NAME            global.__snitchOSName
-#macro SNITCH_OS_VERSION         global.__snitchOSVersion
-#macro SNITCH_DEVICE_NAME        global.__snitchDeviceName
-#macro SNITCH_BROWSER            global.__snitchBrowser
-#macro SNITCH_OS_INFO            global.__snitchOSInfo
-#macro SNITCH_BOOT_PARAMETERS    global.__snitchBootParameters
+#macro SNITCH_VERSION               "2.0.0"
+#macro SNITCH_DATE                  "2021-05-29"
+#macro SNITCH_SENTRY_DATA           global.__snitchSentryData
+#macro SNITCH_BREADCRUMBS_ARRAY     global.__snitchBreadcrumbsArray
+#macro SNITCH_OS_NAME               global.__snitchOSName
+#macro SNITCH_OS_VERSION            global.__snitchOSVersion
+#macro SNITCH_DEVICE_NAME           global.__snitchDeviceName
+#macro SNITCH_BROWSER               global.__snitchBrowser
+#macro SNITCH_OS_INFO               global.__snitchOSInfo
+#macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
 
 
 
@@ -33,13 +33,11 @@ function __SnitchInit()
         global.__snitchLogging             = false;
         global.__snitchFirstLoggingEnabled = true;
         global.__snitchZerothLogFile       = string_replace(SNITCH_LOG_NAME, "#", "0");
-        global.__snitchZerothCrashDump     = string_replace(SNITCH_CRASH_NAME, "#", "0");
         global.__snitchGMExceptionHandler  = undefined;
         global.__snitchUnfinishedEvent     = undefined;
         global.__snitchSentryEnabled       = false;
-        global.__snitchHTTPHeaderMap       = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
-        global.__snitchHTTPRequests        = {};
         global.__snitchSteamInitialised    = false;
+        global.__snitchBuffer              = buffer_create(SNITCH_LOG_BUFFER_START_SIZE, buffer_grow, 1);
         SNITCH_BREADCRUMBS_ARRAY           = [];
         
         //Build a string for the boot parameters
@@ -169,17 +167,28 @@ function __SnitchInit()
         
         
         
+        __show_debug_message__("Snitch: Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
         if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
-        __SnitchTrace("Welcome to Snitch by @jujuadams! This is version ", SNITCH_VERSION, ", ", SNITCH_DATE);
+        __SnitchLogString("Logger by @jujuadams, this is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
         
         if (SNITCH_CRASH_CAPTURE)
         {
             __exception_unhandled_handler__(__SnitchExceptionHandler);
         }
         
-        if ((SNITCH_LOG_COUNT > 1) && (string_pos("#", SNITCH_LOG_NAME) <= 0))
+        if (SNITCH_LOG_COUNT < 1)
+        {
+            __SnitchError("SNITCH_LOG_COUNT must be greater than zero");
+        }
+        
+        if (string_pos("#", SNITCH_LOG_NAME) <= 0)
         {
             __SnitchError("SNITCH_LOG_NAME must contain a # character");
+        }
+        
+        if (SNITCH_REQUEST_BACKUP_COUNT < 1)
+        {
+            __SnitchError("SNITCH_REQUEST_BACKUP_COUNT must be greater than zero");
         }
         
         if (SNITCH_ALLOW_LOG_BOOT_PARAMETER && (os_type == os_windows))
@@ -190,7 +199,7 @@ function __SnitchInit()
                 if (parameter_string(_i) == "-log")
                 {
                     SnitchLogSet(true);
-                    if (global.__snitchLogging && (SNITCH_LOG_PARAM_MESSAGE != "")) show_message(SNITCH_LOG_PARAM_MESSAGE);
+                    if (SnitchLogGet() && (SNITCH_LOG_BOOT_PARAMETER_CONFIRMATION != "")) show_message(SNITCH_LOG_BOOT_PARAMETER_CONFIRMATION);
                     break;
                 }
                 
@@ -198,8 +207,81 @@ function __SnitchInit()
             }
         }
         
+        
+        
+        global.__snitchHTTPHeaderMap               = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
+        global.__snitchHTTPRequests                = {};
+        global.__snitchRequestBackups              = {};
+        global.__snitchRequestBackupOrder          = [];
+        global.__snitchRequestBackupManifestBuffer = buffer_create(512, buffer_grow, 1);
+        global.__snitchRequestBackupResendTime     = -SNITCH_REQUEST_BACKUP_RESEND_DELAY; //Try to send a request backup immediately on boot
+        global.__snitchRequestBackupResendIndex    = 0;
+        global.__snitchRequestBackupFailures       = 0;
+        
+        
+        if (SNITCH_REQUEST_BACKUP_ENABLE)
+        {
+            var _lsoadedManifest = false;
+            try
+            {
+                var _buffer = buffer_load(SNITCH_REQUEST_BACKUP_MANIFEST_NAME);
+                _loadedManifest = true;
+                
+                var _json = buffer_read(_buffer, buffer_string);
+                global.__snitchRequestBackupOrder = json_parse(_json);
+            }
+            catch(_)
+            {
+                if (!_loadedManifest)
+                {
+                    __SnitchTrace("Could not find request backup manifest");
+                }
+                else
+                {
+                    __SnitchTrace("Request backup manifest was corrupted");
+                }
+            }
+            
+            if (_loadedManifest)
+            {
+                var _expected = array_length(global.__snitchRequestBackupOrder);
+                var _missing = 0;
+                
+                var _i = _expected - 1;
+                repeat(_expected)
+                {
+                    var _uuid = global.__snitchRequestBackupOrder[_i];
+                    
+                    var _filename = __SnitchRequestBackupFilename(_uuid);
+                    if (!file_exists(_filename))
+                    {
+                        _missing++;
+                        array_delete(global.__snitchRequestBackupOrder, _i, 1);
+                    }
+                    else
+                    {
+                        var _request = new __SnitchClassRequest(_uuid, buffer_load(_filename));
+                        _request.savedBackup = true;
+                    
+                        global.__snitchRequestBackups[$ _uuid] = _request;
+                    }
+                    
+                    --_i;
+                }
+                
+                __SnitchTrace("Found ", array_length(global.__snitchRequestBackupOrder), " request backups (", _expected, " found in manifest, ", _missing, " missing)");
+            }
+            
+            __SnitchRequestBackupSaveManifest();
+        }
+        
+        
+        
         if (SNITCH_SENTRY_PERMITTED)
         {
+            //Force a network connection if possible
+            os_is_network_connected(true);
+            
             var _DSN = SNITCH_SENTRY_DSN_URL;
             
             var _protocolPosition = string_pos("://", _DSN);
@@ -240,31 +322,18 @@ function __SnitchInit()
 
 function __SnitchShowDebugMessage(_string)
 {
-    if (SNITCH_HIJACK_SDM)
-    {
-        __SnitchLogString(string(_string));
-    }
-    else
-    {
-        return __show_debug_message__(_string);
-    }
+    if (SNITCH_HIJACK_SDM) __SnitchLogString(string(_string));
+    __show_debug_message__(_string);
 }
 
 function __SnitchLogString(_string)
 {
-    __SnitchInit();
-    
-    __show_debug_message__(_string);
-    
-    if (global.__snitchLogging)
+    if (SnitchLogGet())
     {
-        var _file = file_text_open_append(global.__snitchZerothLogFile);
-        file_text_write_string(_file, _string);
-        file_text_writeln(_file);
-        file_text_close(_file);
+        buffer_write(global.__snitchBuffer, buffer_text, _string);
+        buffer_write(global.__snitchBuffer, buffer_u8, 10);
+        buffer_save_ext(global.__snitchBuffer, global.__snitchZerothLogFile, 0, buffer_tell(global.__snitchBuffer));
     }
-    
-    return _string;
 }
 
 function __SnitchCrashSetGMHandler(_function)
@@ -294,21 +363,9 @@ function __SnitchExceptionHandler(_struct)
     {
         if (SNITCH_CRASH_NAME != "")
         {
-            ////Delete the nth crash dump
-            //if (file_exists(string_replace(SNITCH_CRASH_NAME, "#", SNITCH_CRASH_COUNT-1))) file_delete(string_replace(SNITCH_CRASH_NAME, "#", SNITCH_CRASH_COUNT-1));
-            //
-            ////Iterate over other crash dumps and increment their index
-            //var _i = SNITCH_CRASH_COUNT;
-            //repeat(SNITCH_CRASH_COUNT)
-            //{
-            //    file_rename(string_replace(SNITCH_CRASH_NAME, "#", _i-1), string_replace(SNITCH_CRASH_NAME, "#", _i));
-            //    --_i;
-            //}
-            
-            var _filename = SNITCH_CRASH_NAME;
-            var _file = file_text_open_write(_filename);
-            file_text_write_string(_file, _string);
-            file_text_close(_file);
+            var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
+            buffer_write(_buffer, buffer_text, _string);
+            buffer_save(_buffer, SNITCH_CRASH_NAME);
             
             __SnitchTrace("Saved crash dump");
         }
@@ -332,7 +389,7 @@ function __SnitchExceptionHandler(_struct)
     
     try
     {
-        if (SnitchSentryGet() && SNITCH_SENTRY_SEND_CRASH) SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).Finish();
+        if (SnitchSentryGet() && SNITCH_SENTRY_AUTO_CRASH_EVENT) SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).Finish();
     }
     catch(_error)
     {
@@ -368,7 +425,7 @@ function __SnitchExceptionHandler(_struct)
 
 function __SnitchTrace()
 {
-    var _string = "Snitch: ";
+    var _string = "";
     var _i = 0;
     repeat(argument_count)
     {
@@ -376,7 +433,8 @@ function __SnitchTrace()
         ++_i;
     }
     
-    return __SnitchLogString(_string);
+    __SnitchLogString(_string);
+    __show_debug_message__("Snitch: " + _string);
 }
 
 function __SnitchError()
@@ -390,5 +448,4 @@ function __SnitchError()
     }
     
     show_error("Snitch:\n" + _string + "\n ", true);
-    return _string;
 }

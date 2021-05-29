@@ -2,8 +2,8 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "(System)",
-    "path": "folders/Snitch/(System).yy",
+    "name": "THE SNITCH SEES ALL",
+    "path": "folders/Snitch/(System)/THE SNITCH SEES ALL.yy",
   },
   "resourceVersion": "1.0",
   "name": "SnitchFormatTimestamp",

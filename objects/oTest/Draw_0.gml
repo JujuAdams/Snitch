@@ -1,5 +1,5 @@
 var _string = "";
-_string += "Snitch by @jujuadams " + __SNITCH_VERSION + ", " + __SNITCH_DATE + "\n";
+_string += "Snitch by @jujuadams " + SNITCH_VERSION + ", " + SNITCH_DATE + "\n";
 _string += "Log files can be found in " + game_save_id + "\n\n";
 _string += "Press 1 to log a message\n";
 _string += "Press 2 to call show_debug_message() (redirected to Snitch() by default)\n";

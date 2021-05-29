@@ -6,7 +6,7 @@
     "path": "folders/Snitch/(System)/THE SNITCH SEES ALL.yy",
   },
   "resourceVersion": "1.0",
-  "name": "SnitchConvertToUnixTime",
+  "name": "__SnitchClassRequest",
   "tags": [],
   "resourceType": "GMScript",
 }

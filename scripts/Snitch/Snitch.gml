@@ -9,6 +9,8 @@
 
 function Snitch()
 {
+    __SnitchInit();
+    
     var _string = "";
     var _i = 0;
     repeat(argument_count)
@@ -17,5 +19,6 @@ function Snitch()
         ++_i;
     }
     
-    return __SnitchLogString(_string);
+    __SnitchLogString(_string);
+    __show_debug_message__(_string);
 }
