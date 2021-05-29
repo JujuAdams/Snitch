@@ -11,7 +11,7 @@ function SnitchLogSet(_state)
     {
         if (_state) //If we're turning logging on...
         {
-            if (SNITCH_LOG_PERMITTED)
+            if (!SNITCH_LOG_PERMITTED)
             {
                 __SnitchTrace("Logging cannot be turned on as SNITCH_LOG_PERMITTED is set to <false>");
             }
@@ -25,13 +25,13 @@ function SnitchLogSet(_state)
                     global.__snitchFirstLoggingEnabled = false;
                     
                     //Delete the nth log file
-                    if (file_exists(string_replace(SNITCH_LOG_NAME, "#", SNITCH_LOG_COUNT-1))) file_delete(string_replace(SNITCH_LOG_NAME, "#", SNITCH_LOG_COUNT-1));
+                    if (file_exists(string_replace(SNITCH_LOG_FILENAME, "#", SNITCH_LOG_COUNT-1))) file_delete(string_replace(SNITCH_LOG_FILENAME, "#", SNITCH_LOG_COUNT-1));
                     
                     //Iterate over other log files and increment their index
                     var _i = SNITCH_LOG_COUNT;
                     repeat(SNITCH_LOG_COUNT)
                     {
-                        file_rename(string_replace(SNITCH_LOG_NAME, "#", _i-1), string_replace(SNITCH_LOG_NAME, "#", _i));
+                        file_rename(string_replace(SNITCH_LOG_FILENAME, "#", _i-1), string_replace(SNITCH_LOG_FILENAME, "#", _i));
                         --_i;
                     }
                     
@@ -76,9 +76,9 @@ function SnitchLogSet(_state)
                     {
                         __SnitchTrace("Opened log file (", game_save_id, global.__snitchZerothLogFile, ")");
                     }
+                    
+                    __SnitchTrace("Logging turned on");
                 }
-                
-                __SnitchTrace("Logging turned on");
             }
         }
         else

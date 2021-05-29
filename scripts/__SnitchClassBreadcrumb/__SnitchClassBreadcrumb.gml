@@ -2,9 +2,9 @@ function __SnitchClassBreadcrumb(_string) constructor
 {
     message = _string;
     
-    array_push(SNITCH_BREADCRUMBS_ARRAY, self);
-    var _count = array_length(SNITCH_BREADCRUMBS_ARRAY) - SNITCH_BREADCRUMB_LIMIT;
-    if (_count > 0) array_delete(SNITCH_BREADCRUMBS_ARRAY, 0, _count);
+    array_push(global.__snitchBreadcrumbsArray, self);
+    var _count = array_length(global.__snitchBreadcrumbsArray) - SNITCH_BREADCRUMB_LIMIT;
+    if (_count > 0) array_delete(global.__snitchBreadcrumbsArray, 0, _count);
     
     static Category = function(_string)
     {

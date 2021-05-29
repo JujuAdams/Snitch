@@ -11,14 +11,23 @@ _string += "\n";
 _string += "\n";
 
 //Display crash data if we have any
+//  N.B. This particular code expects SWITCH_CRASH_CLIPBOARD_MODE to be set to 1
 if (is_struct(previousCrashData))
 {
     _string += "Previous crash data:\n";
-    _string += "message = \"" + string(previousCrashData.message) + "\"\n\n";
-    _string += "longMessage = \"" + string(previousCrashData.longMessage) + "\"\n\n";
-    _string += "script = \"" + string(previousCrashData.script) + "\"\n\n";
-    _string += "line = " + string(previousCrashData.line) + "\n\n";
-    _string += "stacktrace = " + string(previousCrashData.stacktrace) + "\n\n";
+    
+    try
+    {
+        _string += "message = \"" + string(previousCrashData.message) + "\"\n\n";
+        _string += "longMessage = \"" + string(previousCrashData.longMessage) + "\"\n\n";
+        _string += "script = \"" + string(previousCrashData.script) + "\"\n\n";
+        _string += "line = " + string(previousCrashData.line) + "\n\n";
+        _string += "stacktrace = " + string(previousCrashData.stacktrace) + "\n\n";
+    }
+    catch(_)
+    {
+        _string += "(Crash data in unexpected format)";
+    }
 }
 else
 {

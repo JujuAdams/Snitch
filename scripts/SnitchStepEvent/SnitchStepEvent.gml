@@ -14,7 +14,7 @@ function SnitchStepEvent()
             {
                 global.__snitchSteamInitialised = true;
                 
-                with(SNITCH_SENTRY_DATA)
+                with(SNITCH_EVENT_DATA)
                 {
                     var _set = false;
                     if (variable_struct_exists(self, "user"))

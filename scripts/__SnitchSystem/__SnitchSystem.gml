@@ -10,17 +10,16 @@
 
 
 
-#macro SNITCH_VERSION               "2.0.0"
-#macro SNITCH_DATE                  "2021-05-29"
-#macro SNITCH_SENTRY_DATA           global.__snitchSentryData
-#macro SNITCH_BREADCRUMBS_ARRAY     global.__snitchBreadcrumbsArray
-#macro SNITCH_OS_NAME               global.__snitchOSName
-#macro SNITCH_OS_VERSION            global.__snitchOSVersion
-#macro SNITCH_DEVICE_NAME           global.__snitchDeviceName
-#macro SNITCH_BROWSER               global.__snitchBrowser
-#macro SNITCH_OS_INFO               global.__snitchOSInfo
-#macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
-
+#macro SNITCH_VERSION          "2.0.0"
+#macro SNITCH_DATE             "2021-05-29"
+#macro SNITCH_EVENT_DATA       global.__snitchSentryData
+#macro SNITCH_OS_NAME          global.__snitchOSName
+#macro SNITCH_OS_VERSION       global.__snitchOSVersion
+#macro SNITCH_DEVICE_NAME      global.__snitchDeviceName
+#macro SNITCH_BROWSER          global.__snitchBrowser
+#macro SNITCH_OS_INFO          global.__snitchOSInfo
+#macro SNITCH_BOOT_PARAMETERS  global.__snitchBootParameters
+#macro __SNITCH_HTTP_NEEDED    (SNITCH_SENTRY_PERMITTED)
 
 
 //Initialize the library
@@ -32,13 +31,13 @@ function __SnitchInit()
     {
         global.__snitchLogging             = false;
         global.__snitchFirstLoggingEnabled = true;
-        global.__snitchZerothLogFile       = string_replace(SNITCH_LOG_NAME, "#", "0");
+        global.__snitchZerothLogFile       = string_replace(SNITCH_LOG_FILENAME, "#", "0");
         global.__snitchGMExceptionHandler  = undefined;
         global.__snitchUnfinishedEvent     = undefined;
         global.__snitchSentryEnabled       = false;
         global.__snitchSteamInitialised    = false;
         global.__snitchBuffer              = buffer_create(SNITCH_LOG_BUFFER_START_SIZE, buffer_grow, 1);
-        SNITCH_BREADCRUMBS_ARRAY           = [];
+        global.__snitchBreadcrumbsArray           = [];
         
         //Build a string for the boot parameters
         if (parameter_count() <= 0)
@@ -167,9 +166,8 @@ function __SnitchInit()
         
         
         
-        __show_debug_message__("Snitch: Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
         if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
-        __SnitchLogString("Logger by @jujuadams, this is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
+        __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
         
         if (SNITCH_CRASH_CAPTURE)
         {
@@ -181,9 +179,9 @@ function __SnitchInit()
             __SnitchError("SNITCH_LOG_COUNT must be greater than zero");
         }
         
-        if (string_pos("#", SNITCH_LOG_NAME) <= 0)
+        if (string_pos("#", SNITCH_LOG_FILENAME) <= 0)
         {
-            __SnitchError("SNITCH_LOG_NAME must contain a # character");
+            __SnitchError("SNITCH_LOG_FILENAME must contain a # character");
         }
         
         if (SNITCH_REQUEST_BACKUP_COUNT < 1)
@@ -208,6 +206,11 @@ function __SnitchInit()
         }
         
         
+            
+        //Build the event backbone
+        SNITCH_EVENT_DATA = __SnitchConfigEventDataOnBoot();
+        
+        
         
         global.__snitchHTTPHeaderMap               = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
         global.__snitchHTTPRequests                = {};
@@ -218,13 +221,12 @@ function __SnitchInit()
         global.__snitchRequestBackupResendIndex    = 0;
         global.__snitchRequestBackupFailures       = 0;
         
-        
-        if (SNITCH_REQUEST_BACKUP_ENABLE)
+        if (SNITCH_REQUEST_BACKUP_ENABLE && __SNITCH_HTTP_NEEDED)
         {
             var _lsoadedManifest = false;
             try
             {
-                var _buffer = buffer_load(SNITCH_REQUEST_BACKUP_MANIFEST_NAME);
+                var _buffer = buffer_load(SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME);
                 _loadedManifest = true;
                 
                 var _json = buffer_read(_buffer, buffer_string);
@@ -313,9 +315,6 @@ function __SnitchInit()
                 __SnitchTrace("Sentry public key = \"", global.__snitchSentryPublicKey, "\"");
                 __SnitchTrace("Sentry endpoint = \"", global.__snitchSentryEndpoint, "\"");
             }
-            
-            //Build the event backbone
-            SNITCH_SENTRY_DATA = __SnitchConfigSentryData();
         }
     }
 }
@@ -341,40 +340,14 @@ function __SnitchCrashSetGMHandler(_function)
     global.__snitchGMExceptionHandler = _function;
 }
 
-function __SnitchUUID4String()
-{
-    //FIXME - Do this without using MD5
-    var _UUID = md5_string_utf8(string(current_time) + string(date_current_datetime()) + string(random(1000000)));
-    _UUID = string_set_byte_at(_UUID, 13, ord("4"));
-    _UUID = string_set_byte_at(_UUID, 17, ord(choose("8", "9", "a", "b")));
-    return _UUID;
-}
-
 function __SnitchExceptionHandler(_struct)
 {
-    var _string = json_stringify(_struct);
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     __SnitchTrace("Unhandled exception!");
-    __SnitchTrace(_string);
+    __SnitchTrace(json_stringify(_struct));
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     
-    //Try saving out a file
-    try
-    {
-        if (SNITCH_CRASH_NAME != "")
-        {
-            var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
-            buffer_write(_buffer, buffer_text, _string);
-            buffer_save(_buffer, SNITCH_CRASH_NAME);
-            
-            __SnitchTrace("Saved crash dump");
-        }
-    }
-    catch(_error)
-    {
-        __SnitchTrace("Exception in crash handler!");
-        __SnitchTrace(json_stringify(_error));
-    }
+    var _request = SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).Finish();
     
     //Call the exception handler defined by the native exception_unhandled_handler() function
     try
@@ -389,7 +362,18 @@ function __SnitchExceptionHandler(_struct)
     
     try
     {
-        if (SnitchSentryGet() && SNITCH_SENTRY_AUTO_CRASH_EVENT) SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).Finish();
+        if (SNITCH_CRASH_EVENT_FILENAME != "")
+        {
+            var _result = _request.SaveAs(SNITCH_CRASH_EVENT_FILENAME, true);
+            if (_result)
+            {
+                __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_EVENT_FILENAME, "\"");
+            }
+            else
+            {
+                __SnitchTrace("Warning! Was not able to save crash dump to \"", SNITCH_CRASH_EVENT_FILENAME, "\"");
+            }
+        }
     }
     catch(_error)
     {
@@ -400,20 +384,24 @@ function __SnitchExceptionHandler(_struct)
     //Show a pop-up message
     try
     {
-        if (SNITCH_CRASH_MESSAGE != "")
+        if (SWITCH_CRASH_CLIPBOARD_MODE > 0)
         {
-            if (SNITCH_CRASH_OFFER_CLIPBOARD)
+            if (show_question(SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE))
             {
-                if (show_question(SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE))
+                switch(SWITCH_CRASH_CLIPBOARD_MODE)
                 {
-                    clipboard_set_text(_string);
-                    show_message(SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE);
+                    case 1: _text = json_stringify(_struct); break;
+                    case 2: _text = _request.GetRawString(); break;
+                    case 3: _text = _request.GetCompressedString(true); break;
                 }
+                
+                clipboard_set_text("#####" + _text + "#####"); break;
+                show_message(SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE);
             }
-            else
-            {
-                show_message(SNITCH_CRASH_MESSAGE);
-            }
+        }
+        else if (SNITCH_CRASH_NO_CLIPBOARD_MESSAGE != "")
+        {
+            show_message(SNITCH_CRASH_NO_CLIPBOARD_MESSAGE);
         }
     }
     catch(_error)
@@ -425,7 +413,7 @@ function __SnitchExceptionHandler(_struct)
 
 function __SnitchTrace()
 {
-    var _string = "";
+    var _string = "Snitch: ";
     var _i = 0;
     repeat(argument_count)
     {
@@ -434,7 +422,7 @@ function __SnitchTrace()
     }
     
     __SnitchLogString(_string);
-    __show_debug_message__("Snitch: " + _string);
+    __show_debug_message__(_string);
 }
 
 function __SnitchError()

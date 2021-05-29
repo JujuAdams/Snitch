@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Snitch",
-    "path": "folders/Snitch.yy",
+    "name": "THE SNITCH SEES ALL",
+    "path": "folders/Snitch/(System)/THE SNITCH SEES ALL.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__SnitchConfigSentryData",
+  "name": "SnitchGenerateUUID4String",
   "tags": [],
   "resourceType": "GMScript",
 }

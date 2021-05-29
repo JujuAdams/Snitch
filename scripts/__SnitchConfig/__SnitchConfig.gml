@@ -8,7 +8,7 @@
 //Controls whether logging should be allowed at all
 //   N.B. Logging will initially be set to disabled even if SNITCH_LOG_PERMITTED is <true>
 //        Either call SnitchLogSet(true), or set SNITCH_LOG_DEFAULT to <true>, to enable logging
-#macro  SNITCH_LOG_PERMITTED  false
+#macro  SNITCH_LOG_PERMITTED  true
 
 //Whether to boot the game with logging turned on or off. Logging can be turned on/off manually by calling SnitchLogSet()
 //Generally, you'll only want to set this to <true> if you're running dev/debug builds as logging messages to a file can be slow
@@ -28,7 +28,7 @@
 #macro  SNITCH_HIJACK_SDM  true
 
 //Name of the log files to save. Use a # symbol for number position
-#macro  SNITCH_LOG_NAME  "log_#.txt"
+#macro  SNITCH_LOG_FILENAME  "log_#.txt"
 
 //Number of log files to store on disk
 //A new log file is created every time the game is run. The 0th log file is always the most recent
@@ -44,25 +44,33 @@
 
 #region ---------- Crashes ----------
 
-//Whether to capture crashes using Snitch's own exception handler. The crash handler can save a crash dump (see below) and/or send a sentry.io event (see way below)
+//SNITCH_CRASH_CAPTURE controls whether to capture crashes using Snitch's own exception handler
 //Snitch's exception handler is *not* mutually exclusive with exception_unhandled_handler() (Snitch hijacks calls to that function and executes the handler itself)
+//The crash handler can save a crash dump, can prompt the user to copy error data onto their clipboard, and can immediately send a sentry.io event
+//
 //Whilst Snitch's crash handler is really snazzy, it can make tracking down bugs a bit harder when you're running from the IDE during development
-//The default value here ("!debug_mode") will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F6)
-//Please make sure this macro is set to <true> for production builds!
+//The default value here (!debug_mode) will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F6)
 #macro  SNITCH_CRASH_CAPTURE  (!debug_mode)
 
-//Name of the crash dump file. Set this to an empty string to not save a crash dump
-//This file contains the contents of the exception struct, encoded as JSON
-#macro  SNITCH_CRASH_NAME  "crash.txt"
-
-//Pop-up message to show when the game crashes
-//This message will only be shown if SNITCH_CRASH_OFFER_CLIPBOARD is set to <false>
-//   N.B. If you don't get an error pop-up then you've got a syntax error somewhere in the macro. Check for typos!
-#macro  SNITCH_CRASH_MESSAGE  ("Oh no! The game has crashed. Please reboot the game and try again.\n\nThe error was:\n\"" + string(_struct.message) + "\"\n" + string(_struct.stacktrace))
+//Name of the crash dump file. This file contains a JSON for the crash event
+//What exactly is reported in the crash event can be configured by editing __SnitchConfigEventData()
+//Set this macro to an empty string ("") to not save a crash event
+#macro  SNITCH_CRASH_EVENT_FILENAME  "crash.txt"
 
 //Whether to ask the user if they want to copy the error message to their clipboard
 //This is useful in production to get crash data more easily from players
-#macro  SNITCH_CRASH_OFFER_CLIPBOARD  false
+//There are 4 modes:
+//   0:  Don't ask the player to copy crash data to their clipboard at all and just show the string defined by SNITCH_CRASH_NO_CLIPBOARD_MESSAGE
+//   1:  Allow the player to copy the exception struct that GameMaker generates to the clipboard. This is sufficient for basic debugging
+//   2:  Copy full event data to their clipboard as plaintext JSON
+//   3:  Compress and base64 encode full crash event data to the player's clipboard
+//All clipboard data is bookended with five hashes (##### content #####) to help make copy-pasting easier
+#macro  SWITCH_CRASH_CLIPBOARD_MODE  1
+
+//Pop-up message to show the player when the game crashes
+//This message will only be shown if SNITCH_CRASH_OFFER_CLIPBOARD is set to 0
+//   N.B. If you don't get an error pop-up then you've got a syntax error somewhere in the macro. Check for typos!
+#macro  SNITCH_CRASH_NO_CLIPBOARD_MESSAGE  ("Oh no! The game has crashed. Please reboot the game and try again.\n\nThe error was:\n\"" + string(_struct.message) + "\"\n" + string(_struct.stacktrace))
 
 //Messages to show when asking the player if they'd like to copy the error message to their clipboard
 //   N.B. Use \r rather than \n to work around a GameMaker bug in show_question() (runtime GMS2.3.2.426, 2021-05-05)
@@ -104,10 +112,10 @@
 
 //Name of the request backup manifest
 //This file records how many request backups exist and where to find them on disk
-#macro  SNITCH_REQUEST_BACKUP_MANIFEST_NAME  "request_backup_manifest.dat"
+#macro  SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME  "event_manifest.dat"
 
 //Name of request backup files. Use a # symbol for UUID position
-#macro  SNITCH_REQUEST_BACKUP_NAME  "request_backup_#.dat"
+#macro  SNITCH_REQUEST_BACKUP_FILENAME  "event_#.dat"
 
 //How many request backups to keep
 #macro  SNITCH_REQUEST_BACKUP_COUNT  10
@@ -116,10 +124,10 @@
 #macro  SNITCH_REQUEST_BACKUP_RESEND_DELAY  5000
 
 //How many sequential HTTP request failures before Snitch decides to not try to resend request backups for a while
-//This is useful behaviour for mobile games where the player may lose their connection for some reason
+//This is useful behaviour for mobile games where the player may lose their connection for some unpredictable reason
 #macro  SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES  5
 
-//How long to wait after multiple failed backup resends before Snitch will try resending HTTP request backups
+//How long to wait after sequential failed backup resends before Snitch will try all over again
 //This value is in milliseconds, so 900000 is the same as 15 minutes
 #macro  SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT  900000
 
@@ -137,21 +145,13 @@
 //Controls whether sentry.io communication should be allowed at all
 //   N.B. The sentry.io integration will default to being disabled even if SNITCH_SENTRY_PERMITTED is <true>
 //        SnitchSentrySet(true) should be called to enable it, preferably after asking for user consent
-#macro  SNITCH_SENTRY_PERMITTED  true
+#macro  SNITCH_SENTRY_PERMITTED  false
 
 //The endpoint to use for sentry.io
-#macro  SNITCH_SENTRY_DSN_URL  "https://77614a06f703442781754e59aa3816d2@o732552.ingest.sentry.io/5784362"
-
-//Whether to create a "fatal" event automatically when the game crashes
-//This requires SNITCH_SENTRY_PERMITTED to be set to <true> and SnitchSentrySet(true) having been called
-//   N.B. This feature will not work is SNITCH_CRASH_CAPTURE is set to <false> (see above)
-#macro  SNITCH_SENTRY_AUTO_CRASH_EVENT  true
-
-//Default name of the sentry.io logger to use
-#macro  SNITCH_SENTRY_DEFAULT_LOGGER  "logger"
+#macro  SNITCH_SENTRY_DSN_URL  ""
 
 //Tries to get user data from Steam if possible
-//This will overwrite SNITCH_SENTRY_DATA.user.username and SNITCH_SENTRY_DATA.user.id
+//This will overwrite SNITCH_EVENT_DATA.user.username and SNITCH_EVENT_DATA.user.id
 #macro SNITCH_SENTRY_GET_USER_FROM_STEAM  true
 
 #endregion

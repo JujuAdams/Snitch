@@ -19,11 +19,7 @@ function SnitchCrumb()
         ++_i;
     }
     
-    if (SNITCH_OUTPUT_BREADCRUMBS)
-    {
-        __SnitchLogString("[crumb]  " + string(_string));
-        __show_debug_message__("[crumb]  " + string(_string));
-    }
+    if (SNITCH_OUTPUT_BREADCRUMBS) __SnitchTrace("[crumb]  " + string(_string));
     
     return new __SnitchClassBreadcrumb(_string);
 }

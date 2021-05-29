@@ -1,7 +1,6 @@
 function __SnitchClassEvent(_string) constructor
 {
     message      = _string;
-    logger       = SNITCH_SENTRY_DEFAULT_LOGGER;
     level        = "info";
     logCallstack = false;
     callstack    = undefined;
@@ -131,31 +130,45 @@ function __SnitchClassEvent(_string) constructor
     
     static Finish = function()
     {
+        //Reset our unfinished event tracker
         if (global.__snitchUnfinishedEvent == self) global.__snitchUnfinishedEvent = undefined;
         
-        if (!SnitchSentryGet())
+        //We need a callstack if we're logging it
+        if (logCallstack && (rawCallstack == undefined))
         {
-            var _logString = "[" + string(level) + "]  " + string(message);
-            
-            if (logCallstack)
-            {
-                if (callstack == undefined)
-                {
-                    rawCallstack = debug_get_callstack();
-                    array_delete(rawCallstack, array_length(rawCallstack)-1, 1);
-                }
-                
-                _logString += "   " + string(rawCallstack);
-            }
-            
-            __SnitchLogString(_logString);
-            __show_debug_message__(_logString);
-            
-            return new __SnitchClassRequest("?", -1);
+            rawCallstack = debug_get_callstack();
+            array_delete(rawCallstack, array_length(rawCallstack)-1, 1);
         }
-        else
+        
+        //Update our event data
+        with(SNITCH_EVENT_DATA)
         {
-            return __SnitchSentryEventFinish();
+            __SnitchConfigEventDataUpdate(other.message,
+                                          other.level,
+                                          (is_array(other.callstack)? other.callstack : []),
+                                          global.__snitchBreadcrumbsArray);
         }
+        
+        var _uuid = SNITCH_EVENT_DATA.event_id;
+        
+        //Log this momentous occasion
+        var _logString = "[" + string(level) + " " + string(_uuid) + "]  " + string(message);
+        if (logCallstack) _logString += "   " + string(rawCallstack);
+        __SnitchTrace(_logString);
+        
+        //Make a new request struct
+        var _request = new __SnitchClassRequest(_uuid, json_stringify(SNITCH_EVENT_DATA));
+        
+        //If we have sentry.io enabled...
+        if (SnitchSentryGet())
+        {
+            //...send the request...
+            __SnitchSentryHTTPRequest(_request);
+            
+            //...and save a backup of the request
+            _request.SaveBackup();
+        }
+        
+        return _request;
     }
 }
