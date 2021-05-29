@@ -208,7 +208,7 @@ function __SnitchInit()
         
         
             
-        //Update the shared event data
+        //Create the shared event payload
         SNITCH_SHARED_EVENT_PAYLOAD = __SnitchSharedEventPayload();
         
         
@@ -360,7 +360,12 @@ function __SnitchExceptionHandler(_struct)
     
     //Generate a crash event and output it
     //We guarantee that it returns a request struct, and we also indicate we want the callstack to be outputted as well for easier debugging
-    var _request = SnitchEvent(_struct.message).Fatal().Callstack(_struct.stacktrace).LogCallstack().ForceRequest().Finish();
+    var _request = SnitchEvent()
+                   .Fatal()
+                   .Exception(_struct)
+                   .LogCallstack()
+                   .ForceRequest()
+                   .Finish();
     
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     

@@ -1,6 +1,7 @@
 function __SnitchClassEvent(_string) constructor
 {
     message      = _string;
+    longMessage  = undefined;
     level        = "info";
     logCallstack = false;
     forceRequest = false;
@@ -13,6 +14,25 @@ function __SnitchClassEvent(_string) constructor
     static Payload = function(_struct)
     {
         payload = _struct;
+        return self;
+    }
+    
+    static LongMessage = function(_string)
+    {
+        longMessage = _string;
+        return self;
+    }
+    
+    static Exception = function(_struct)
+    {
+        //Extract information from the GameMaker exception struct we were given
+        message = _struct.message;
+        longMessage = _struct.longMessage;
+        Callstack(_struct.stacktrace);
+        
+        //Ensure we're at at least an "error" level of severity
+        if (level != "fatal") level = "error";
+        
         return self;
     }
     
@@ -165,22 +185,79 @@ function __SnitchClassEvent(_string) constructor
         }
         else
         {
-            if (payload == undefined)
+            var _payload = payload;
+            if (_payload == undefined)
             {
-                payload = SNITCH_SHARED_EVENT_PAYLOAD;
+                _payload = SNITCH_SHARED_EVENT_PAYLOAD;
                 
-                //Update our event data
-                with(SNITCH_SHARED_EVENT_PAYLOAD)
+                //Update our event payload
+                with(SNITCH_SHARED_EVENT_PAYLOAD) __SnitchSharedEventPayloadUpdate();
+            }
+            
+            with(_payload)
+            {
+                //Create a unique UUID and give the event a Unix timestamp
+                event_id  = SnitchGenerateUUID4String();
+                timestamp = SnitchConvertToUnixTime(date_current_datetime());
+                
+                //Set the message level
+                level = other.level;
+                
+                //aaaand update the breadcrumbs too
+                breadcrumbs = { values: global.__snitchBreadcrumbsArray };
+                
+                if ((level != "error") && (level != "fatal"))
                 {
-                    __SnitchSharedEventPayloadUpdate(other.message,
-                                                     other.level,
-                                                     (is_array(other.callstack)? other.callstack : []),
-                                                     global.__snitchBreadcrumbsArray);
+                    if (is_array(other.callstack))
+                    {
+                        //Set the callstack if we have one
+                        stacktrace = { frames: other.callstack };
+                    }
+                    else
+                    {
+                        //Otherwise made double-sure we don't have this attribute
+                        variable_struct_remove(self, "stacktrace");
+                    }
+                    
+                    //...janky
+                    //Only way to set this key though unfortunately
+                    self[$ "sentry.interfaces.Message"] = { formatted: other.message };
+                    
+                    //Also make sure we don't have any exception data lingering
+                    variable_struct_remove(self, "exception");
+                }
+                else
+                {
+                    //Build an exception struct to send
+                    var _exceptionData =  { type: other.message };
+                    
+                    if (other.longMessage != undefined)
+                    {
+                        _exceptionData.value = other.longMessage;
+                    }
+                    else
+                    {
+                        _exceptionData.value = other.message;
+                    }
+                    
+                    //Only add callstack/module information if we have it
+                    if (is_array(other.callstack))
+                    {
+                        if (array_length(other.callstack) > 0) _exceptionData.module = other.callstack[0].module;
+                        _exceptionData.stacktrace = { frames: other.callstack };
+                    }
+                    
+                    //Pack the error data in such a way that sentry.io will understand it
+                    exception = { values: [_exceptionData] };
+                    
+                    //Also make sure we don't have any non-exception data lingering
+                    variable_struct_remove(self, "sentry.interfaces.Message");
+                    variable_struct_remove(self, "stacktrace");
                 }
             }
             
             //Pull out our UUID
-            var _uuid = payload.event_id;
+            var _uuid = _payload.event_id;
             
             //Log this momentous occasion
             var _logString = "[" + string(level) + " " + string(_uuid) + "] " + string(message);
@@ -188,7 +265,19 @@ function __SnitchClassEvent(_string) constructor
             __SnitchTrace(_logString);
             
             //Make a new request struct
-            var _request = new __SnitchClassRequest(_uuid, json_stringify(payload));
+            var _request = new __SnitchClassRequest(_uuid, json_stringify(_payload));
+            
+            //Clean up our payload
+            with(_payload)
+            {
+                variable_struct_remove(self, "event_id");
+                variable_struct_remove(self, "timestamp");
+                variable_struct_remove(self, "level");
+                variable_struct_remove(self, "breadcrumbs");
+                variable_struct_remove(self, "stacktrace");
+                variable_struct_remove(self, "sentry.interfaces.Message");
+                variable_struct_remove(self, "exception");
+            }
             
             //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
             if (SnitchSentryGet())

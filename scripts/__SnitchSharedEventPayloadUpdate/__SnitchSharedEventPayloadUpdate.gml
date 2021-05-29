@@ -1,5 +1,5 @@
-/// This function modifies the event data struct created by __SnitchSharedEventPayload()
-/// Event data is used for 1) saving crash dumps 2) sending events to sentry.io (if sentry.io is set up in Snitch)
+/// This function modifies the event payload struct created by __SnitchSharedEventPayload()
+/// The event payload struct is used for 1) saving crash dumps 2) sending events to sentry.io (if sentry.io is set up in Snitch)
 /// __SnitchSharedEventPayloadUpdate() will always be called in the scope of the struct created by __SnitchSharedEventPayload()
 ///
 ///   N.B. The struct modified by this function is reused by every event
@@ -9,10 +9,25 @@
 /// If you're using sentry.io, this JSON packets need to meet their Event Payload specification
 /// More information can be found here: https://develop.sentry.dev/sdk/event-payloads/
 
-function __SnitchSharedEventPayloadUpdate(_message, _level, _callstack, _breadcrumbs)
+function __SnitchSharedEventPayloadUpdate()
 {
-    //Set the username/user ID to whatever Steam gives us, but only after Steam has initialised fully
-    //This code is for demonstration purposes and you might want to remove this in production
+    //Snitch will always automatically overwrite the following attributes:
+    //  .event_id           = A UUID to identify the event (and HTTP request)
+    //  .timestamp          = Number of seconds since the Unix epoch
+    //  .level              = The message level
+    //  .breadcrumbs.values = Breadcrumbs currently added to Snitch (up to the limit defined by SNITCH_BREADCRUMB_LIMIT)
+    //
+    //For non-errors, Snitch will overwrite:
+    //  .stacktrace.frames           = The callstack for the event. If no callstack was provided then this attribute will be omitted
+    //  ."sentry.interfaces.Message" = The message set when creating the event
+    //
+    //For errors, Snitch will overwrite:
+    //  .exception = Exception data
+    
+    
+    
+    //We set the username/user ID to whatever Steam gives us only after Steam has fully initialised
+    //  N.B. This code is for demonstration purposes and you might want to remove this in production owing to user data privacy
     if (steam_initialised())
     {
         user.username = steam_get_persona_name();
@@ -29,28 +44,4 @@ function __SnitchSharedEventPayloadUpdate(_message, _level, _callstack, _breadcr
     
     //Update whether we're hooked up to Steam successfully
     contexts.app.steam = bool(steam_initialised());
-    
-    
-    
-    #region Internal stuff, don't fiddle with this until you've read the sentry.io documentation
-    
-    //Create a unique UUID and give the event a Unix timestamp
-    event_id  = SnitchGenerateUUID4String();
-    timestamp = SnitchConvertToUnixTime(date_current_datetime());
-    
-    //Set the message level
-    level = _level;
-    
-    //Update the callstack
-    //If no callstack was provided, the "_callstack" argument will be an empty array
-    stacktrace.frames = _callstack;
-    
-    //aaaand update the breadcrumbs too
-    breadcrumbs.values = _breadcrumbs;
-    
-    //...janky
-    //Only way to set this key though unfortunately
-    self[$ "sentry.interfaces.Message"] = { formatted: _message };
-    
-    #endregion
 }

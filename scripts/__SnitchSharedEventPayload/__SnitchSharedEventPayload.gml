@@ -1,5 +1,5 @@
-/// This script defines the base event data that'll be used throughout Snitch's operation
-/// Event data is used for 1) saving crash dumps 2) sending events to sentry.io (if sentry.io is set up in Snitch)
+/// This script defines the base event payload struct that'll be used throughout Snitch's operation
+/// The event payload struct is used for 1) saving crash dumps 2) sending events to sentry.io (if sentry.io is set up in Snitch)
 ///
 ///   N.B. The struct modified by this function is reused by every event
 ///        This removes the need to copy tons of data around whenever an event is created which is a big performance boost
@@ -12,13 +12,6 @@ function __SnitchSharedEventPayload()
 {
     return {
         release: GM_version, //Game version
-        
-        //User identification. Obviously be careful with what data you're tracking here
-        //This code is for demonstration purposes and you might want to remove this in production
-        user:  {
-            username: "?", //--- Updated via __SnitchSharedEventPayloadUpdate()
-            id: 0,         //--- Updated via __SnitchSharedEventPayloadUpdate()
-        },
         
         //Extra bits of data you might want to send off to sentry.io
         extra: {
@@ -56,7 +49,7 @@ function __SnitchSharedEventPayload()
             
             //What version of GameMaker are you using?
             runtime: {
-                //name: "GameMaker Studio", //You can specify a name here but... that feels a bit redundant
+                name: "GameMaker Studio",
                 version: GM_runtime_version,
             },
             
@@ -71,25 +64,6 @@ function __SnitchSharedEventPayload()
                 parameters:     SNITCH_BOOT_PARAMETERS,
                 steam:          bool(steam_initialised()), //--- Updated via __SnitchSharedEventPayloadUpdate()
             },
-        },
-        
-        
-        
-        #region Internal stuff, don't fiddle with this until you've read the sentry.io documentation
-        
-        platform:  "other", //Confusingly, this is the programming language that we're using. GML isn't supported (of course) so we just say "other"
-        
-        event_id: "?", //--- Updated via __SnitchSharedEventPayloadUpdate()
-        timestamp: 0,  //--- Updated via __SnitchSharedEventPayloadUpdate()
-        
-        breadcrumbs: {
-            values: [], //--- Updated via __SnitchSharedEventPayloadUpdate()
-        },
-        
-        stacktrace: {
-            frames: [], //--- Updated via __SnitchSharedEventPayloadUpdate()
-        },
-        
-        #endregion
+        }
     }
 };
