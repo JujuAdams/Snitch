@@ -155,10 +155,7 @@
 #macro  SNITCH_SENTRY_PERMITTED  false
 
 //The endpoint to use for sentry.io
+//This can be found via Settings -> Client Keys (under the SDK SETUP header on the left-hand side)
 #macro  SNITCH_SENTRY_DSN_URL  ""
-
-//Tries to get user data from Steam if possible
-//This will overwrite SNITCH_EVENT_DATA.user.username and SNITCH_EVENT_DATA.user.id
-#macro SNITCH_SENTRY_GET_USER_FROM_STEAM  true
 
 #endregion
