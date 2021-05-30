@@ -348,7 +348,7 @@ function __SnitchExceptionHandler(_struct)
     
     //Generate a crash event and output it
     //We guarantee that it returns a request struct, and we also indicate we want the callstack to be outputted as well for easier debugging
-    var _request = SnitchEvent()
+    var _request = (new __SnitchClassEvent(""))
                    .Fatal()
                    .Exception(_struct)
                    .LogCallstack()
