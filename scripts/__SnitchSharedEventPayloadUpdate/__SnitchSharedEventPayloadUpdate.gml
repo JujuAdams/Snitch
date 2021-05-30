@@ -22,7 +22,9 @@
 ///   ."sentry.interfaces.Message" = The message set when creating the event
 /// 
 /// For errors, Snitch will overwrite:
-///   .exception = Exception data
+///   .exception.values[0].type       = Exception struct's .message variable if provided, otherwise
+///   .exception.values[0].value      = Exception struct's .longMessage variable if provided, otherwise a copy of .exception.values[0].type
+///   .exception.values[0].stacktrace = The callstack for the exception, based on the exception struct's .stacktrace variable if provided
 /// 
 /// 
 /// 
