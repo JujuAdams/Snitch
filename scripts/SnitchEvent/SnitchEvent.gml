@@ -4,6 +4,8 @@
 /// Event structs have a few methods that can be used to contextualise data
 ///   N.B. The .Finish() method must be called on each and every event struct
 /// 
+/// You can (and maybe should?) rename this function to whatever you want e.g. debugEvent()
+/// 
 /// @param value
 /// @param [value]...
 

@@ -1,7 +1,9 @@
-/// Creates a new breadcrumb, adds it to an internal breadcrumb array, and returns the breadcrumb struct itself
-/// Breadcrumbs will be attached to any sentry.io events to help you debug your game
+/// Creates a new breadcrumb, adds it to Snitch's internal breadcrumb array, and returns the breadcrumb struct itself
+/// Breadcrumbs will be attached to any events to help you debug your game
 /// If SNITCH_OUTPUT_BREADCRUMBS is set to <true>, the breadcrumb will also be outputted to the console (and can also be logged to file)
-/// This function is mostly intended to be used with the sentry.io integration but can also be used offline
+/// 
+/// You can (and maybe should?) rename this function to whatever you want e.g. crumb()
+/// 
 /// Breadcrumb structs have a few methods that can be used to contextualise data
 /// 
 /// @param value

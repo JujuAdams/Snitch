@@ -36,25 +36,16 @@ function __SnitchInit()
         global.__snitchGMExceptionHandler  = undefined;
         global.__snitchUnfinishedEvent     = undefined;
         global.__snitchSentryEnabled       = false;
-        global.__snitchSteamInitialised    = false;
         global.__snitchBuffer              = buffer_create(SNITCH_LOG_BUFFER_START_SIZE, buffer_grow, 1);
         global.__snitchBreadcrumbsArray           = [];
         
-        //Build a string for the boot parameters
-        if (parameter_count() <= 0)
+        //Build an array for the boot parameters
+        SNITCH_BOOT_PARAMETERS = [];
+        var _i = 0;
+        repeat(parameter_count())
         {
-            SNITCH_BOOT_PARAMETERS = "(none)";
-        }
-        else
-        {
-            SNITCH_BOOT_PARAMETERS = "";
-            var _i = 0;
-            repeat(parameter_count())
-            {
-                SNITCH_BOOT_PARAMETERS += "\"" + parameter_string(_i) + "\"";
-                if (_i < parameter_count() - 1) SNITCH_BOOT_PARAMETERS += ", ";
-                ++_i;
-            }
+            array_push(SNITCH_BOOT_PARAMETERS,  parameter_string(_i));
+            ++_i;
         }
         
         
@@ -149,7 +140,8 @@ function __SnitchInit()
             case browser_safari_mobile: SNITCH_BROWSER = "Safari";            break;
             case browser_opera:         SNITCH_BROWSER = "Opera";             break;
         }
-            
+        
+        //If we're on a browser, use the browser's name instead
         if (os_browser != browser_not_a_browser) SNITCH_DEVICE_NAME = SNITCH_BROWSER;
             
         //Turn the os_get_info() map into a struct for serialization

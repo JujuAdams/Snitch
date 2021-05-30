@@ -53,13 +53,13 @@ function SnitchLogSet(_state)
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
                     buffer_write(global.__snitchBuffer, buffer_text, "GM runtime = " + string(GM_runtime_version));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
-                    buffer_write(global.__snitchBuffer, buffer_text, "boot parameters = " + SNITCH_BOOT_PARAMETERS);
+                    buffer_write(global.__snitchBuffer, buffer_text, "boot parameters = " + string(SNITCH_BOOT_PARAMETERS));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
-                    buffer_write(global.__snitchBuffer, buffer_text, "browser = " + SNITCH_BROWSER);
+                    buffer_write(global.__snitchBuffer, buffer_text, "browser = " + string(SNITCH_BROWSER));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
-                    buffer_write(global.__snitchBuffer, buffer_text, "os type = " + SNITCH_OS_NAME);
+                    buffer_write(global.__snitchBuffer, buffer_text, "os type = " + string(SNITCH_OS_NAME));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
-                    buffer_write(global.__snitchBuffer, buffer_text, "os version = " + SNITCH_OS_VERSION);
+                    buffer_write(global.__snitchBuffer, buffer_text, "os version = " + string(SNITCH_OS_VERSION));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
                     buffer_write(global.__snitchBuffer, buffer_text, "os language = " + string(os_get_language()));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
