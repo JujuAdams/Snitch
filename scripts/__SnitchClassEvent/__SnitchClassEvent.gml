@@ -64,71 +64,6 @@ function __SnitchClassEvent(_string) constructor
         rawCallstack = array_create(array_length(_callstack) - _trim);
         array_copy(rawCallstack, 0, _callstack, _trim, array_length(_callstack) - _trim);
         
-        callstack = [];
-        
-        var _i = array_length(_callstack) - 1;
-        repeat(array_length(_callstack) - _trim)
-        {
-            var _script = _callstack[_i];
-            if (is_real(_script))
-            {
-                --_i;
-                continue;
-            }
-            
-            var _lineText = "";
-            var _linePos = string_pos(":", _script);
-            if (_linePos > 0)
-            {
-                _lineText = string_copy(_script, _linePos + 1, string_length(_script) - _linePos);
-            }
-            else
-            {
-                _linePos = string_pos(" (line ", _script);
-                if (_linePos > 0) _lineText = string_copy(_script, _linePos + 7, string_length(_script) - (_linePos + 7));
-            }
-            
-            if (_linePos > 0)
-            {
-                var _func = string_copy(_script, 1, _linePos - 1);
-                
-                try
-                {
-                    var _lineNumber = real(_lineText);
-                }
-                catch(_)
-                {
-                    var _lineNumber = 0;
-                }
-                
-                var _frame = {};
-                
-                if (string_pos("gml_Script_", _func) == 1)
-                {
-                    _func = string_delete(_func, 1, 11);
-                    _frame.module = _func;
-                }
-                else if (string_pos("gml_Object_", _func) == 1)
-                {
-                    _func = string_delete(_func, 1, 11);
-                    
-                    var _pos = string_last_pos("_", _func);
-                    _pos = string_last_pos_ext("_", _func, _pos - 1);
-                    
-                    var _module = string_delete(_func, 1, _pos);
-                    _func = string_copy(_func, 1, _pos - 1);
-                    _frame.module = _module;
-                }
-                
-                _frame[$ "function"] = _func; //ლ(ಠ_ಠლ)
-                _frame.lineno = _lineNumber;
-                
-                array_push(callstack, _frame);
-            }
-            
-            --_i;
-        }
-        
         return self;
     }
     
@@ -170,8 +105,7 @@ function __SnitchClassEvent(_string) constructor
         //Ensure we have a callstack if we weren't passed one by a call to .Callstack()
         if (logCallstack && (rawCallstack == undefined))
         {
-            rawCallstack = debug_get_callstack();
-            array_delete(rawCallstack, array_length(rawCallstack)-1, 1);
+            Callstack(rawCallstack, 1);
         }
         
         if (!forceRequest && !SnitchSentryGet())
@@ -185,6 +119,9 @@ function __SnitchClassEvent(_string) constructor
         }
         else
         {
+            //Process the raw callstack, if we have it
+            if (is_array(rawCallstack)) callstack = __SnitchProcessRawCallstack(rawCallstack);
+            
             var _payload = payload;
             if (_payload == undefined)
             {
@@ -289,4 +226,74 @@ function __SnitchClassEvent(_string) constructor
             return _request;
         }
     }
+}
+
+function __SnitchProcessRawCallstack(_rawCallstack)
+{
+    var _callstack = [];
+    
+    var _i = array_length(_rawCallstack) - 1;
+    repeat(array_length(_rawCallstack))
+    {
+        var _script = _rawCallstack[_i];
+        if (is_real(_script))
+        {
+            --_i;
+            continue;
+        }
+        
+        var _lineText = "";
+        var _linePos = string_pos(":", _script);
+        if (_linePos > 0)
+        {
+            _lineText = string_copy(_script, _linePos + 1, string_length(_script) - _linePos);
+        }
+        else
+        {
+            _linePos = string_pos(" (line ", _script);
+            if (_linePos > 0) _lineText = string_copy(_script, _linePos + 7, string_length(_script) - (_linePos + 7));
+        }
+        
+        if (_linePos > 0)
+        {
+            var _func = string_copy(_script, 1, _linePos - 1);
+            
+            try
+            {
+                var _lineNumber = real(_lineText);
+            }
+            catch(_)
+            {
+                var _lineNumber = 0;
+            }
+            
+            var _frame = {};
+            
+            if (string_pos("gml_Script_", _func) == 1)
+            {
+                _func = string_delete(_func, 1, 11);
+                _frame.module = _func;
+            }
+            else if (string_pos("gml_Object_", _func) == 1)
+            {
+                _func = string_delete(_func, 1, 11);
+                
+                var _pos = string_last_pos("_", _func);
+                _pos = string_last_pos_ext("_", _func, _pos - 1);
+                
+                var _module = string_delete(_func, 1, _pos);
+                _func = string_copy(_func, 1, _pos - 1);
+                _frame.module = _module;
+            }
+            
+            _frame[$ "function"] = _func; //ლ(ಠ_ಠლ)
+            _frame.lineno = _lineNumber;
+            
+            array_push(_callstack, _frame);
+        }
+        
+        --_i;
+    }
+    
+    return _callstack;
 }
