@@ -1,5 +1,5 @@
 /// Sets whether Snitch should log message to a file on disk (in game_save_id)
-///
+/// 
 /// @param state
 
 function SnitchLogSet(_state)
@@ -35,7 +35,7 @@ function SnitchLogSet(_state)
                         --_i;
                     }
                     
-                    //Build a string for the OS info
+                    //Output lots of data to the log
                     buffer_write(global.__snitchBuffer, buffer_text, "date = " + date_datetime_string(date_current_datetime()));
                     buffer_write(global.__snitchBuffer, buffer_u8, 10);
                     buffer_write(global.__snitchBuffer, buffer_text, "config = " + string(os_get_config()));

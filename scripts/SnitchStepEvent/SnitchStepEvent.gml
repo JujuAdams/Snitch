@@ -24,7 +24,7 @@ function SnitchStepEvent()
                         //...and if we're not waiting for a response for this particular request, resend it
                         if (asyncID < 0)
                         {
-                            __SnitchTrace("Trying to resend event ", _uuid);
+                            if (SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT) __SnitchTrace("Trying to resend event ", _uuid);
                             __SnitchSentryHTTPRequest(self);
                             global.__snitchRequestBackupResendTime = current_time;
                         }
@@ -42,6 +42,7 @@ function SnitchStepEvent()
         }
     }
     
+    //Check for any unfinished events
     if (global.__snitchUnfinishedEvent != undefined)
     {
         if (SNITCH_UNFINISHED_EVENT_ERROR)

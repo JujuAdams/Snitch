@@ -1,7 +1,7 @@
 /// Sets whether Snitch should send data to a sentry.io endpoint
 ///   N.B. sentry.io communication cannot be enabled if SNITCH_SENTRY_PERMITTED is set to <false>
 /// Details of the sentry.io integration, including the HTTP endpoint to use, can be set in __SnitchConfig()
-///
+/// 
 /// @param state
 
 function SnitchSentrySet(_state)

@@ -1,4 +1,4 @@
-/// Deletes the last crash dump from disk
+/// Deletes the crash dump from disk, if one exists
 
 function SnitchCrashDumpDelete()
 {

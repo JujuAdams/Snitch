@@ -143,6 +143,11 @@
 //This value is in milliseconds, so 900000 is the same as 15 minutes
 #macro  SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT  900000
 
+//Whether to output request backup send attempts to the console
+//This is handy for confirming request backups are being processed properly
+//If logging is enabled, this information will also be outputted to the log file
+#macro  SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT  false
+
 #endregion
 
 

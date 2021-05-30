@@ -1,8 +1,7 @@
-/// Checks whether a crash happened the last time that the game was run
+/// Checks whether a crash dump exists on disk and returns it if so
 /// 
-/// If so, this function returns the exception struct that was generated
-/// If the crash dump couldn't be parsed, this function will return a generic exception struct
-/// Otherwise, this function returns <undefined>
+/// If an crash dump exists, this function returns the exception struct that was generated
+/// If the crash dump couldn't be parsed or no crash dump exists, this function returns <undefined>
 
 function SnitchCrashDumpCollect()
 {
