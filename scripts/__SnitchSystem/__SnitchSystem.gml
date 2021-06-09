@@ -66,7 +66,7 @@ function __SnitchShowDebugMessage(_string)
     }
     else
     {
-        return __show_debug_message__(_string);
+        __show_debug_message__(_string);
     }
 }
 
