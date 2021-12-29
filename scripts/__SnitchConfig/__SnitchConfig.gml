@@ -36,7 +36,7 @@
 
 //Starting size of the Snitch logging buffer, in bytes. 1024*1024 bytes is 1 megabyte
 //This buffer is a "buffer_grow" type and will dynamically resize as more data is added
-#macro  SNITCH_LOG_BUFFER_START_SIZE  1024*1024
+#macro  SNITCH_LOG_BUFFER_START_SIZE  (1024*1024)
 
 #endregion
 
@@ -50,7 +50,7 @@
 //
 //Whilst Snitch's crash handler is really snazzy, it can make tracking down bugs a bit harder when you're running from the IDE during development
 //The default value here (!debug_mode) will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F6)
-#macro  SNITCH_CRASH_CAPTURE  true //(!debug_mode)
+#macro  SNITCH_CRASH_CAPTURE  (!debug_mode)
 
 //Name of the crash dump file
 //What exactly is reported in the crash event can be configured by changing SWITCH_CRASH_DUMP_MODE
@@ -152,10 +152,29 @@
 
 
 
+#region ---------- UDP ----------
+
+//Controls whether UDP broadcast should be allowed at all
+//This very likely should be turned off for production as you don't want to be broadcasting UDP packets unnecessarily
+//   N.B. UDP broadcast will default on boot to being disabled even if SNITCH_UDP_PERMITTED is <true>
+//        SnitchUDPSet(true) should be called to enable it only if the game is running in a development or debugging mode
+#macro SNITCH_UDP_PERMITTED  false
+
+//Default port to use to broadcast UDP packets. This can be overridden with SnitchUDPSet()
+#macro SNITCH_UDP_DEFAULT_PORT  9991
+
+//Default IP address to send UDP packets to for receiving. This can be overridden with SnitchUDPSet()
+//Set his macro to <undefined> to broadcast packets over LAN. Any device listning for packets on the correct port will be able to receive them
+#macro SNITCH_UDP_DEFAULT_IP  undefined
+
+#endregion
+
+
+
 #region ---------- sentry.io ----------
 
 //Controls whether sentry.io communication should be allowed at all
-//   N.B. The sentry.io integration will default to being disabled even if SNITCH_SENTRY_PERMITTED is <true>
+//   N.B. The sentry.io integration will default on boot to being disabled even if SNITCH_SENTRY_PERMITTED is <true>
 //        SnitchSentrySet(true) should be called to enable it, preferably after asking for user consent
 #macro  SNITCH_SENTRY_PERMITTED  false
 

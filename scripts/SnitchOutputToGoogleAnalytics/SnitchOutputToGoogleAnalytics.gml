@@ -1,7 +1,7 @@
 /// @param data      Value to write to the log file
 /// @param [format]  Format to use for the data. If not specified, the input data is stringified
 
-function SnitchOutputToFile(_data, _format = undefined)
+function SnitchOutputToGoogleAnalytics(_data, _format = undefined)
 {
     if (argument_count == 0) __SnitchError("SnitchOutputToFile() must be given data to output");
     
