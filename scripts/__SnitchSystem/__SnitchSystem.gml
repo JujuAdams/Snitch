@@ -49,6 +49,11 @@ function __SnitchInit()
         global.__snitchRequestBackupResendIndex    = 0;
         global.__snitchRequestBackupFailures       = 0;
         
+        global.__snitchMessageBuffer    = buffer_create(1024, buffer_grow, 1);
+        global.__snitchMessageTellArray = [];
+        global.__snitchMessageRead      = false;
+        global.__snitchMessageString    = "";
+        
         //Build an array for the boot parameters
         SNITCH_BOOT_PARAMETERS = [];
         var _i = 0;
@@ -454,4 +459,36 @@ function __SnitchError()
     }
     
     show_error("Snitch:\n" + _string + "\n ", true);
+}
+
+#macro SnitchMessageStartArgument  __SnitchInit();\
+                                  var _snitchMessageBuffer    = global.__snitchMessageBuffer;\
+                                  var _snitchMessageTellArray = global.__snitchMessageTellArray;\
+                                  global.__snitchMessageRead = false;\
+                                  buffer_seek(_snitchMessageBuffer, buffer_seek_start, 0);\
+                                  array_resize(_snitchMessageTellArray, 0);\\
+                                  var _i = 0;\
+                                  repeat(argument_count)\
+                                  {\
+                                      array_push(_snitchMessageTellArray, buffer_tell(_snitchMessageBuffer));\
+                                      buffer_write(_snitchMessageBuffer, buffer_text, argument[_i]);\
+                                      ++_i;\
+                                  }\
+                                  buffer_write(_snitchMessageBuffer, buffer_u8, 0x00);\
+                                  var _snitchMessageStartIndex
+
+#macro SnitchMessage  __SnitchMessageString(_snitchMessageStartIndex)
+
+function __SnitchMessageString(_startIndex)
+{
+    __SnitchInit();
+    
+    if (!global.__snitchMessageRead)
+    {
+        global.__snitchMessageRead = true;
+        buffer_seek(global.__snitchMessageBuffer, buffer_seek_start, global.__snitchMessageTellArray[_startIndex]);
+        global.__snitchMessageString = buffer_read(global.__snitchMessageBuffer, buffer_string);
+    }
+    
+    return global.__snitchMessageString;
 }
