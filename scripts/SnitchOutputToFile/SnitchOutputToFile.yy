@@ -3,10 +3,10 @@
   "isCompatibility": false,
   "parent": {
     "name": "Snitch",
-    "path": "Snitch.yyp",
+    "path": "folders/Snitch.yy",
   },
   "resourceVersion": "1.0",
-  "name": "SnitchEventStart",
+  "name": "SnitchOutputToFile",
   "tags": [],
   "resourceType": "GMScript",
 }
