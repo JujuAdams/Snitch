@@ -1,4 +1,4 @@
-/// Returns whether communication with sentry.io is enabled
+/// Returns whether the sentry.io integration is enabled
 /// This function will always return <false> is SNITCH_SENTRY_PERMITTED is set to <false>
 
 function SnitchSentryGet()

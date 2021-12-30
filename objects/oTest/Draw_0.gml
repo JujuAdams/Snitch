@@ -6,8 +6,7 @@ _string += "Press 2 to call show_debug_message() (redirected to Snitch() by defa
 _string += "Press 3 to crash the game\n";
 _string += "Press 4 to call show_error()\n";
 _string += "Press 5 to trigger a debug event\n";
-_string += "Press 6/7 to add breadcrumbs\n";
-_string += "Press L to toggle logging (currently = " + string(SnitchLogGet()) + ")\n";
+_string += "Press L to toggle logging (currently = " + string(SnitchLogFileGet()) + ")\n";
 _string += "Press S to toggle sentry.io (currently = " + string(SnitchSentryGet()) + ")\n";
 _string += "\n";
 _string += "\n";

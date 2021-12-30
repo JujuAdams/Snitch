@@ -8,14 +8,14 @@ function __SnitchClassRequest(_uuid, _string) constructor
     responseCode = 0;
     status       = 0;
     
-    static Send = function(_url, _method, _headerMap, _compress)
+    static __Send = function(_url, _method, _headerMap, _compress)
     {
         if (os_is_network_connected(false))
         {
             if (_compress)
             {
                 //Fire off the HTTP request using the appropriate encoding
-                asyncID = http_request(_url, _method, _headerMap, GetCompressedString());
+                asyncID = http_request(_url, _method, _headerMap, __GetCompressedString());
             }
             else
             {
@@ -31,12 +31,12 @@ function __SnitchClassRequest(_uuid, _string) constructor
             else
             {
                 //Otherwise immediately trigger a failed HTTP response
-                HTTPResponse(-1, -1);
+                __HTTPResponse(-1, -1);
             }
         }
     }
     
-    static GetCompressedString = function()
+    static __GetCompressedString = function()
     {
         //If we want to compress the buffer, do the ol' swaperoo
         var _buffer = buffer_create(string_byte_length(content), buffer_fixed, 1);
@@ -52,7 +52,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
         return _string;
     }
     
-    static SaveBackup = function()
+    static __SaveBackup = function()
     {
         //Don't bother saving a backup if there's no buffer to save. we've already saved a backup, or we never want to save any backups at all
         if (savedBackup || !SNITCH_REQUEST_BACKUP_ENABLE) return undefined;
@@ -64,7 +64,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
         //If we've exceeded our maximum number of backups, delete a few until we're back within limits
         repeat(array_length(global.__snitchRequestBackupOrder) - SNITCH_REQUEST_BACKUP_COUNT)
         {
-            global.__snitchRequestBackupOrder[0].Destroy();
+            global.__snitchRequestBackupOrder[0].__Destroy();
         }
         
         //Make sure the manifest is updated on disk
@@ -79,7 +79,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
         savedBackup = true;
     }
     
-    static HTTPResponse = function(_responseCode, _status)
+    static __HTTPResponse = function(_responseCode, _status)
     {
         responseCode = _responseCode;
         status       = _status;
@@ -87,7 +87,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
         if (responseCode == 200)
         {
             if (SNITCH_OUTPUT_HTTP_SUCCESS) __SnitchTrace("Request ", UUID, " complete (HTTP 200)");
-            Destroy();
+            __Destroy();
             
             //Reset the failure count
             global.__snitchRequestBackupFailures = 0;
@@ -99,7 +99,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
             if (responseCode == 400)
             {
                 __SnitchTrace("Warning! Response was \"HTTP 400 - Bad Request\". Check your event payload");
-                Destroy();
+                __Destroy();
             }
             else if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
             {
@@ -118,7 +118,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
         }
     }
     
-    static Destroy = function()
+    static __Destroy = function()
     {
         //Remove ourselves from the HTTP request lookup
         variable_struct_remove(global.__snitchHTTPRequests, asyncID);
@@ -157,7 +157,7 @@ function __SnitchSentryHTTPRequest(_request)
     
     //And fire off the request!
     //Good luck little packet
-    _request.Send(global.__snitchSentryEndpoint, "POST", global.__snitchHTTPHeaderMap, true);
+    _request.__Send(global.__snitchSentryEndpoint, "POST", global.__snitchHTTPHeaderMap, true);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }

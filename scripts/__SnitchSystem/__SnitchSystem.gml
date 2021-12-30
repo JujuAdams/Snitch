@@ -11,8 +11,8 @@
 
 
 
-#macro SNITCH_VERSION               "2.0.0"
-#macro SNITCH_DATE                  "2021-05-29"
+#macro SNITCH_VERSION               "3.0.0"
+#macro SNITCH_DATE                  "2021-12-30"
 #macro SNITCH_SHARED_EVENT_PAYLOAD  global.__snitchSharedEventPayload
 #macro SNITCH_OS_NAME               global.__snitchOSName
 #macro SNITCH_OS_VERSION            global.__snitchOSVersion
@@ -20,7 +20,7 @@
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
-#macro __SNITCH_HTTP_NEEDED         (SNITCH_SENTRY_PERMITTED)
+#macro __SNITCH_HTTP_NEEDED         (SNITCH_GOOGLE_ANALYTICS_PERMITTED || SNITCH_SENTRY_PERMITTED || SNITCH_GAMEANALYTICS_PERMITTED)
 
 
 
@@ -30,16 +30,20 @@ __SnitchInit();
 function __SnitchInit()
 {
     //Don't initialize twice
-    if (variable_global_exists("__snitchLogging")) return;
+    if (variable_global_exists("__snitchLogToFileEnabled")) return;
     
-    global.__snitchLogging             = false;
-    global.__snitchFirstLoggingEnabled = true;
-    global.__snitchZerothLogFile       = string_replace(SNITCH_LOG_FILENAME, "#", "0");
-    global.__snitchGMExceptionHandler  = undefined;
-    global.__snitchUnfinishedEvent     = undefined;
-    global.__snitchSentryEnabled       = false;
-    global.__snitchBuffer              = buffer_create(SNITCH_LOG_BUFFER_START_SIZE, buffer_grow, 1);
-    global.__snitchBreadcrumbsArray    = [];
+    global.__snitchGMExceptionHandler = undefined;
+    
+    global.__snitchLogToFileEnabled       = false;
+    global.__snitchGoogleAnalyticsEnabled = false;
+    global.__snitchSentryEnabled          = false;
+    global.__snitchGameAnalyticsEnabled   = false;
+    global.__snitchUDPEnabled             = false;
+    
+    //Log files
+    global.__snitchWroteLogFileHeader = false;
+    global.__snitchZerothLogFile      = string_replace(SNITCH_LOG_FILE_FILENAME, "#", "0");
+    global.__snitchLogFileBuffer      = buffer_create(SNITCH_LOG_FILE_BUFFER_START_SIZE, buffer_grow, 1);
     
     //HTTP-related tracking
     global.__snitchHTTPHeaderMap               = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
@@ -55,6 +59,8 @@ function __SnitchInit()
     global.__snitchMessageTellArray = [];
     global.__snitchMessageRead      = false;
     global.__snitchMessageString    = "";
+    
+    
     
     //Build an array for the boot parameters
     SNITCH_BOOT_PARAMETERS = [];
@@ -176,7 +182,7 @@ function __SnitchInit()
     
     
     
-    if (SNITCH_LOG_DEFAULT) SnitchLogSet(true);
+    if (SNITCH_LOG_FILE_ON_BOOT) SnitchLogFileSet(true);
     __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
     
     if (SNITCH_CRASH_CAPTURE)
@@ -184,30 +190,20 @@ function __SnitchInit()
         __exception_unhandled_handler__(__SnitchExceptionHandler);
     }
     
-    if (SNITCH_LOG_COUNT < 1)
-    {
-        __SnitchError("SNITCH_LOG_COUNT must be greater than zero");
-    }
-    
-    if (string_pos("#", SNITCH_LOG_FILENAME) <= 0)
-    {
-        __SnitchError("SNITCH_LOG_FILENAME must contain a # character");
-    }
-    
     if (SNITCH_REQUEST_BACKUP_COUNT < 1)
     {
         __SnitchError("SNITCH_REQUEST_BACKUP_COUNT must be greater than zero");
     }
     
-    if (SNITCH_ALLOW_LOG_BOOT_PARAMETER && (os_type == os_windows))
+    if (SNITCH_ALLOW_LOG_FILE_BOOT_PARAMETER && (os_type == os_windows))
     {
         var _i = 0;
         repeat(parameter_count())
         {
             if (parameter_string(_i) == "-log")
             {
-                SnitchLogSet(true);
-                if (SnitchLogGet() && (SNITCH_LOG_BOOT_PARAMETER_CONFIRMATION != "")) show_message(SNITCH_LOG_BOOT_PARAMETER_CONFIRMATION);
+                SnitchLogFileSet(true);
+                if (SnitchLogFileGet() && (SNITCH_LOG_FILE_BOOT_PARAMETER_CONFIRMATION != "")) show_message(SNITCH_LOG_FILE_BOOT_PARAMETER_CONFIRMATION);
                 break;
             }
             
@@ -215,12 +211,21 @@ function __SnitchInit()
         }
     }
     
+    
+    
+    if (SNITCH_GOOGLE_ANALYTICS_PERMITTED + SNITCH_SENTRY_PERMITTED + SNITCH_GAMEANALYTICS_PERMITTED > 1)
+    {
+        __SnitchError("Only one monitoring integration can be enabled at a time\nSNITCH_GOOGLE_ANALYTICS_PERMITTED = ", SNITCH_GOOGLE_ANALYTICS_PERMITTED, "\nSNITCH_SENTRY_PERMITTED = ", SNITCH_SENTRY_PERMITTED, "\nSNITCH_GAMEANALYTICS_PERMITTED = ", SNITCH_GAMEANALYTICS_PERMITTED);
+    }
+    
+    
+    
     //Create the shared event payload
-    SNITCH_SHARED_EVENT_PAYLOAD = __SnitchSharedEventPayload();
+    SNITCH_SHARED_EVENT_PAYLOAD = __SnitchSentrySharedEventPayload();
     
     if (SNITCH_REQUEST_BACKUP_ENABLE && __SNITCH_HTTP_NEEDED)
     {
-        var _lsoadedManifest = false;
+        var _loadedManifest = false;
         try
         {
             var _buffer = buffer_load(SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME);
@@ -229,7 +234,7 @@ function __SnitchInit()
             var _json = buffer_read(_buffer, buffer_string);
             global.__snitchRequestBackupOrder = json_parse(_json);
         }
-        catch(_)
+        catch(_error)
         {
             if (!_loadedManifest)
             {
@@ -239,6 +244,10 @@ function __SnitchInit()
             {
                 __SnitchTrace("Request backup manifest was corrupted");
             }
+        }
+        finally
+        {
+            if (_loadedManifest) buffer_delete(_buffer);
         }
         
         if (_loadedManifest)
@@ -281,7 +290,7 @@ function __SnitchInit()
                 --_i;
             }
             
-            __SnitchTrace("Found ", array_length(global.__snitchRequestBackupOrder), " request backups (", _expected, " in manifest, of which ", _missing, " missing)");
+            __SnitchTrace("Found ", array_length(global.__snitchRequestBackupOrder), " request backups (", _expected, " in manifest, of which ", _missing, " were missing)");
         }
         
         __SnitchRequestBackupSaveManifest();
@@ -326,108 +335,15 @@ function __SnitchInit()
             __SnitchTrace("Sentry endpoint = \"", global.__snitchSentryEndpoint, "\"");
         }
     }
-}
-
-function __SnitchLogString(_string)
-{
-    if (SnitchLogGet())
-    {
-        buffer_write(global.__snitchBuffer, buffer_text, _string);
-        buffer_write(global.__snitchBuffer, buffer_u8, 10);
-        buffer_save_ext(global.__snitchBuffer, global.__snitchZerothLogFile, 0, buffer_tell(global.__snitchBuffer));
-    }
+    
+    if (SNITCH_GOOGLE_ANALYTICS_ON_BOOT) SnitchGoogleAnalyticsSet(true);
+    if (SNITCH_SENTRY_ON_BOOT) SnitchSentrySet(true);
+    if (SNITCH_GAMEANALYTICS_ON_BOOT) SnitchGameAnalyticsSet(true);
 }
 
 function __SnitchCrashSetGMHandler(_function)
 {
     global.__snitchGMExceptionHandler = _function;
-}
-
-function __SnitchExceptionHandler(_struct)
-{
-    __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    
-    //Generate a crash event and output it
-    //We guarantee that it returns a request struct, and we also indicate we want the callstack to be outputted as well for easier debugging
-    var _request = (new __SnitchClassEvent(""))
-                   .Fatal()
-                   .Exception(_struct)
-                   .LogCallstack()
-                   .ForceRequest()
-                   .Finish();
-    
-    __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    
-    
-    
-    //Call the exception handler defined by the native exception_unhandled_handler() function
-    try
-    {
-        if (global.__snitchGMExceptionHandler != undefined) global.__snitchGMExceptionHandler(_struct);
-    }
-    catch(_error)
-    {
-        __SnitchTrace("Exception in crash handler!");
-        __SnitchTrace(json_stringify(_error));
-    }
-    
-    
-    
-    //Save out the crash dump
-    try
-    {
-        var _text = "No data available";
-        switch(SWITCH_CRASH_DUMP_MODE)
-        {
-            case 1: _text = json_stringify(_struct);        break;
-            case 2: _text = _request.content;               break;
-            case 3: _text = _request.GetCompressedString(); break;
-        }
-        
-        var _buffer = buffer_create(string_byte_length(_text), buffer_fixed, 1);
-        buffer_write(_buffer, buffer_text, _text);
-        buffer_save(_buffer, SNITCH_CRASH_DUMP_FILENAME);
-        buffer_delete(_buffer);
-        
-        __SnitchTrace("Saved crash dump to \"", SNITCH_CRASH_DUMP_FILENAME, "\"");
-    }
-    catch(_error)
-    {
-        __SnitchTrace("Exception in crash handler!");
-        __SnitchTrace(json_stringify(_error));
-    }
-    
-    
-    
-    //Show a pop-up message
-    try
-    {
-        if (SWITCH_CRASH_CLIPBOARD_MODE > 0)
-        {
-            if (show_question(SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE))
-            {
-                var _text = "No data available";
-                switch(SWITCH_CRASH_CLIPBOARD_MODE)
-                {
-                    case 1: _text = json_stringify(_struct);        break;
-                    case 2: _text = _request.content;               break;
-                    case 3: _text = _request.GetCompressedString(); break;
-                }
-                
-                clipboard_set_text("#####" + _text + "#####"); break;
-                show_message(SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE);
-            }
-        }
-        else if (SNITCH_CRASH_NO_CLIPBOARD_MESSAGE != "")
-        {
-            show_message(SNITCH_CRASH_NO_CLIPBOARD_MESSAGE);
-        }
-    }
-    catch(_error)
-    {
-        __SnitchTrace("Exception in crash handler!");
-        __SnitchTrace(json_stringify(_error));
-    }
 }
 
 function __SnitchTrace()
@@ -440,7 +356,7 @@ function __SnitchTrace()
         ++_i;
     }
     
-    __SnitchLogString(_string);
+    SnitchSendStringToLogFile(_string);
     show_debug_message(_string);
 }
 

@@ -14,16 +14,10 @@ if (keyboard_check_pressed(ord("3"))) oInvalidObject.x += 1;
 if (keyboard_check_pressed(ord("4"))) show_error("Pressed the 4 key", true);
 
 //Trigger a debug event
-if (keyboard_check_pressed(ord("5"))) SnitchEvent("Wow! A debug event").Debug().Callstack().Finish();
-
-//Trigger a debug event
-if (keyboard_check_pressed(ord("6"))) SnitchCrumb("Breadcrumb 6").Debug();
-
-//Trigger a debug event
-if (keyboard_check_pressed(ord("7"))) SnitchCrumb("Breadcrumb 7").Warning();
+if (keyboard_check_pressed(ord("5"))) SnitchEvent().Message("Wow! A debug event!").Debug().Callstack().Send();
 
 //Toggle logging on and off
-if (keyboard_check_pressed(ord("L"))) SnitchLogSet(!SnitchLogGet());
+if (keyboard_check_pressed(ord("L"))) SnitchLogFileSet(!SnitchLogFileGet());
 
 //Toggle sentry.io on and off
 if (keyboard_check_pressed(ord("S"))) SnitchSentrySet(!SnitchSentryGet());

@@ -1,5 +1,5 @@
 //Start logging messages to a disk on disk
-SnitchLogSet(true);
+SnitchLogFileSet(true);
 
 //Try to start sentry.io communication
 //This'll only work if the relevant information has been set up in __SnitchConfig()
