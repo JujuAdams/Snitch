@@ -1,3 +1,9 @@
+// GameAnalytics - https://restapidocs.gameanalytics.com/
+// Google Analytics - https://developers.google.com/analytics/devguides/collection/protocol/v1/
+// Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
+// sentry.io - https://develop.sentry.dev/sdk/overview/    https://develop.sentry.dev/sdk/event-payloads/https://develop.sentry.dev/sdk/event-payloads/
+// Yandex AppMetrica - https://appmetrica.yandex.com/docs/mobile-api/post/post-import-events.html
+
 //Redirect exception_unhandled_handler() to our own internal function
 //The bound exception handler will still be executed
 #macro  exception_unhandled_handler      __SnitchCrashSetGMHandler
