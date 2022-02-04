@@ -6,7 +6,7 @@
     "path": "folders/Snitch/Service Toggles.yy",
   },
   "resourceVersion": "1.0",
-  "name": "SnitchSentrySet",
+  "name": "SnitchIntegrationGet",
   "tags": [],
   "resourceType": "GMScript",
 }

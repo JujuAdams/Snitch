@@ -6,7 +6,7 @@
     "path": "folders/Snitch/Service Toggles.yy",
   },
   "resourceVersion": "1.0",
-  "name": "SnitchGameAnalyticsGet",
+  "name": "SnitchIntegrationSet",
   "tags": [],
   "resourceType": "GMScript",
 }

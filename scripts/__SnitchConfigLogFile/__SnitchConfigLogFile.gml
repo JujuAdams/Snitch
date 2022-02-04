@@ -22,9 +22,6 @@
 //A new log file is created every time the game is run. The 0th log file is always the most recent
 #macro  SNITCH_LOG_FILE_COUNT  10
 
-//0 = plaintext, 1 = JSON, 2 = XML
-#macro  SNITCH_LOG_FILE_FORMAT  0
-
 //Starting size of the Snitch logging buffer, in bytes. 1024*1024 bytes is 1 megabyte
 //This buffer is a "buffer_grow" type and will dynamically resize as more data is added
 #macro  SNITCH_LOG_FILE_BUFFER_START_SIZE  (1024*1024)

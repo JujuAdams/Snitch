@@ -20,7 +20,6 @@
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
-#macro __SNITCH_HTTP_NEEDED         (SNITCH_GOOGLE_ANALYTICS_PERMITTED || SNITCH_SENTRY_PERMITTED || SNITCH_GAMEANALYTICS_PERMITTED)
 
 
 
@@ -34,11 +33,8 @@ function __SnitchInit()
     
     global.__snitchGMExceptionHandler = undefined;
     
-    global.__snitchLogToFileEnabled       = false;
-    global.__snitchGoogleAnalyticsEnabled = false;
-    global.__snitchSentryEnabled          = false;
-    global.__snitchGameAnalyticsEnabled   = false;
-    global.__snitchUDPEnabled             = false;
+    global.__snitchLogToFileEnabled   = false;
+    global.__snitchIntegrationEnabled = false;
     
     //Log files
     global.__snitchWroteLogFileHeader = false;
@@ -169,14 +165,17 @@ function __SnitchInit()
     
     //Turn the os_get_info() map into a struct for serialization
     SNITCH_OS_INFO = {};
-    var _infoMap = os_get_info();
-    var _key = ds_map_find_first(_infoMap);
-    repeat(ds_map_size(_infoMap))
+    if (os_type != os_switch) //TODO - Workaround for a crash on Switch (runtime 2.3.6   2022-02-04)
     {
-        SNITCH_OS_INFO[$ _key] = _infoMap[? _key];
-        _key = ds_map_find_next(_infoMap, _key);
+        var _infoMap = os_get_info();
+        var _key = ds_map_find_first(_infoMap);
+        repeat(ds_map_size(_infoMap))
+        {
+            SNITCH_OS_INFO[$ _key] = _infoMap[? _key];
+            _key = ds_map_find_next(_infoMap, _key);
+        }
+        ds_map_destroy(_infoMap);
     }
-    ds_map_destroy(_infoMap);
     
     #endregion
     
@@ -213,17 +212,10 @@ function __SnitchInit()
     
     
     
-    if (SNITCH_GOOGLE_ANALYTICS_PERMITTED + SNITCH_SENTRY_PERMITTED + SNITCH_GAMEANALYTICS_PERMITTED > 1)
-    {
-        __SnitchError("Only one monitoring integration can be enabled at a time\nSNITCH_GOOGLE_ANALYTICS_PERMITTED = ", SNITCH_GOOGLE_ANALYTICS_PERMITTED, "\nSNITCH_SENTRY_PERMITTED = ", SNITCH_SENTRY_PERMITTED, "\nSNITCH_GAMEANALYTICS_PERMITTED = ", SNITCH_GAMEANALYTICS_PERMITTED);
-    }
-    
-    
-    
     //Create the shared event payload
     SNITCH_SHARED_EVENT_PAYLOAD = __SnitchSentrySharedEventPayload();
     
-    if (SNITCH_REQUEST_BACKUP_ENABLE && __SNITCH_HTTP_NEEDED)
+    if (SNITCH_REQUEST_BACKUP_ENABLE && (SNITCH_INTEGRATION_MODE > 0))
     {
         var _loadedManifest = false;
         try
@@ -298,47 +290,47 @@ function __SnitchInit()
     
     
     
-    if (SNITCH_SENTRY_PERMITTED)
+    switch(SNITCH_INTEGRATION_MODE)
     {
-        //Force a network connection if possible
-        os_is_network_connected(true);
-        
-        var _DSN = SNITCH_SENTRY_DSN_URL;
-        
-        var _protocolPosition = string_pos("://", _DSN);
-        if (_protocolPosition == 0) __SnitchError("No protocol found in DSN string");
-        var _protocol = string_copy(_DSN, 1, _protocolPosition-1);
-        
-        var _atPosition = string_pos("@", _DSN);
-        if (_atPosition == 0) __SnitchError("No @ found in DSN string");
-        
-        global.__snitchSentryPublicKey = string_copy(_DSN, _protocolPosition + 3, _atPosition - (_protocolPosition + 3));
-        if (global.__snitchSentryPublicKey == "") __SnitchError("No public key found in DSN string");
-        
-        var _slashPosition = string_last_pos("/", _DSN);
-        
-        var _DSNHostPath = string_copy(_DSN, _atPosition + 1, _slashPosition - (_atPosition + 1));
-        if (_DSNHostPath == "") __SnitchError("No host/path found in DSN string");
-        
-        var _DSNProject = string_copy(_DSN, _slashPosition + 1, string_length(_DSN) - _slashPosition);
-        if (_DSNProject == "") __SnitchError("No project found in DSN string");
-        
-        global.__snitchSentryEndpoint = _protocol + "://" + _DSNHostPath + "/api/" + _DSNProject + "/store/";
-        
-        //Build an auth string for later HTTP requests
-        //We fill in the timestamp later when sending the request
-        global.__snitchSentryAuthString = "Sentry sentry_version=7, sentry_client=Snitch/" + string(SNITCH_VERSION) + ", sentry_key=" + global.__snitchSentryPublicKey + ", sentry_timestamp=";
-        
-        if (debug_mode)
-        {
-            __SnitchTrace("Sentry public key = \"", global.__snitchSentryPublicKey, "\"");
-            __SnitchTrace("Sentry endpoint = \"", global.__snitchSentryEndpoint, "\"");
-        }
+        case 2:
+            //Force a network connection if possible
+            os_is_network_connected(true);
+            
+            var _DSN = SNITCH_SENTRY_DSN_URL;
+            
+            var _protocolPosition = string_pos("://", _DSN);
+            if (_protocolPosition == 0) __SnitchError("No protocol found in DSN string");
+            var _protocol = string_copy(_DSN, 1, _protocolPosition-1);
+            
+            var _atPosition = string_pos("@", _DSN);
+            if (_atPosition == 0) __SnitchError("No @ found in DSN string");
+            
+            global.__snitchSentryPublicKey = string_copy(_DSN, _protocolPosition + 3, _atPosition - (_protocolPosition + 3));
+            if (global.__snitchSentryPublicKey == "") __SnitchError("No public key found in DSN string");
+            
+            var _slashPosition = string_last_pos("/", _DSN);
+            
+            var _DSNHostPath = string_copy(_DSN, _atPosition + 1, _slashPosition - (_atPosition + 1));
+            if (_DSNHostPath == "") __SnitchError("No host/path found in DSN string");
+            
+            var _DSNProject = string_copy(_DSN, _slashPosition + 1, string_length(_DSN) - _slashPosition);
+            if (_DSNProject == "") __SnitchError("No project found in DSN string");
+            
+            global.__snitchSentryEndpoint = _protocol + "://" + _DSNHostPath + "/api/" + _DSNProject + "/store/";
+            
+            //Build an auth string for later HTTP requests
+            //We fill in the timestamp later when sending the request
+            global.__snitchSentryAuthString = "Sentry sentry_version=7, sentry_client=Snitch/" + string(SNITCH_VERSION) + ", sentry_key=" + global.__snitchSentryPublicKey + ", sentry_timestamp=";
+            
+            if (debug_mode)
+            {
+                __SnitchTrace("Sentry public key = \"", global.__snitchSentryPublicKey, "\"");
+                __SnitchTrace("Sentry endpoint = \"", global.__snitchSentryEndpoint, "\"");
+            }
+        break;
     }
     
-    if (SNITCH_GOOGLE_ANALYTICS_ON_BOOT) SnitchGoogleAnalyticsSet(true);
-    if (SNITCH_SENTRY_ON_BOOT) SnitchSentrySet(true);
-    if (SNITCH_GAMEANALYTICS_ON_BOOT) SnitchGameAnalyticsSet(true);
+    if ((SNITCH_INTEGRATION_MODE > 0) && SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
 }
 
 function __SnitchCrashSetGMHandler(_function)

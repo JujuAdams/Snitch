@@ -6,7 +6,7 @@
     "path": "folders/Snitch/Configuration - Please edit these scripts!.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__SnitchConfigGameAnalytics",
+  "name": "__SnitchConfigIntegrations",
   "tags": [],
   "resourceType": "GMScript",
 }

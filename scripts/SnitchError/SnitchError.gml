@@ -1,110 +1,48 @@
 /// Creates a new Snitch event that can be formatted and logged/broadcast/transmitted in multiple ways
 /// If an API integration is enabled then the event will be sent to the remote logging server when
-/// .Send() is called. You can (and maybe should?) rename this function to whatever you want e.g. DebugEvent()
+/// .SendIntegration() or .SendAll() is called
 /// 
 /// 
 /// 
 /// Event structs have a number of methods that can be chained together in a "fluent interface" i.e.:
 /// 
-///   SnitchEvent("Player is outside the level?!").Debug().Callstack().Send();
+///   SnitchError("Player is outside the level?!").Callstack().Send();
 /// 
 /// Events won't do anything unless a "send method" is called. Send methods for events include:
 /// 
-///   .SendToConsole()     - Outputs the event to the debug console (i.e. calls show_debug_message())
-///   .SendToLogFile()     - Writes the event to the log file, if enabled
-///   .SendToUDP()         - Broadcasts the event over UDP, if enabled
-///   .SendToIntegration() - Transmits the event over HTTP to whichever API integration is enabled (if any)
-///   .Send()              - Sends the event to all of the above
+///   .SendConsole()     - Outputs the event to the debug console (i.e. calls show_debug_message())
+///   .SendLogFile()     - Writes the event to the log file, if enabled
+///   .SendUDP()         - Broadcasts the event over UDP, if enabled
+///   .SendIntegration() - Transmits the event over HTTP to whichever API integration is enabled (if any)
+///                        If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
+///   .SendAll()         - Sends the event to all of the below
+///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendUDP()
 /// 
 /// Event methods are used to set properties for the event, such as message level or callstack logging
-/// These are as follows:
-///     
-/// .Message(string)
-///     Sets the event's "longMessage" property. This is used for error-level and fatal-level events to add extra context
 ///     
 /// .LongMessage(string)
-///     Sets the event's "longMessage" property. This is used for error-level and fatal-level events to add extra context
-/// 
-/// .Info()
-///     Sets the event level to "info", the lowest event level
-///     
-/// .Debug()
-///     Sets the event level to "debug"
-///     
-/// .Warning()
-///     Sets the event level to "warning"
-///     
-/// .Error()
-///     Sets the event level to "error"
-///     
-/// .Fatal()
-///     Sets the event level to "fatal", the highest event level
-///     
-/// .Exception(exceptionStruct)
-///     Sets a number of attributes based on a standard GameMaker exception struct
-///     This function overwrites values set by .LongMessage() and .Callstack()
-///     Additionally, any message set when creating the event will be overwritten by the .message variable in the exception struct
+///     Sets the event's "longMessage" property. This is used to add extra context
 ///     
 /// .Callstack([callstackArray], [trimCount])
 ///     Sets the event's callstack. If no arguments are provided then the callstack is generated from where this function was called
 ///     The optional [trimCount] argument allows for the given number of callstack levels to be removed
-///     
-/// .SendToConsole()
-///     Outputs the event to the debug console (i.e. calls show_debug_message())
-///     
-/// .SendToLogFile()
-///     Writes the event to the log file, if enabled
-///     
-/// .SendToUDP()
-///     Broadcasts the event over UDP, if enabled
-///     
-/// .SendToIntegration()
-///     Transmits the event over HTTP to whichever API integration is enabled (if any)
-///     If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
-///     
-/// .Send()
-///     Sends the event to all of the above i.e. calls SendToConsole(), SendToLogFile(), SendToUDP(), and SendToIntegration()
-/// 
-/// .GetString()
-///     Returns a human-readable string representation of the event
-/// 
-/// .GetCompressedString()
-///     Returns a compressed and base64-encoded representation of the event
-/// 
-/// .GetRequest()
-///      Return the HTTP request struct that's created by sending to event to an integration
-///      If no request has been made, this function returns <undefined>
 
-function SnitchEvent()
+function SnitchError()
 {
-    return new __SnitchClassEvent();
+    SnitchMessageStartArgument = 0;
+    return new __SnitchClassError(SnitchMessage);
 }
 
-function __SnitchClassEvent() constructor
+function __SnitchClassError(_message) constructor
 {
-    
-    __message           = "";
+    __message           = _message;
     longMessage         = undefined;
-    level               = "info";
+    level               = "error";
     __addCallstack      = false;
-    forceRequest        = false;
     callstack           = undefined;
     __rawCallstackArray = undefined;
     payload             = undefined;
     __request           = undefined;
-    
-    static Message = function()
-    {
-        var _i = 0;
-        __message = "";
-        repeat(argument_count)
-        {
-            __message += string(argument[_i]);
-            ++_i;
-        }
-        
-        return self;
-    }
     
     static LongMessage = function(_string)
     {
@@ -119,111 +57,84 @@ function __SnitchClassEvent() constructor
         return self;
     }
     
-    static Exception = function(_exceptionStruct)
-    {
-        //Extract information from the GameMaker exception struct we were given
-        __message = _exceptionStruct.message;
-        longMessage = _exceptionStruct.longMessage;
-        SetCallstack(_exceptionStruct.stacktrace, 0);
-        
-        //Ensure we're at at least an "error" level of severity
-        if (level != "fatal") level = "error";
-        
-        return self;
-    }
-    
     static Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
     {
+        __addCallstack = true;
         __rawCallstackArray = array_create(array_length(_callstack) - _trim);
         array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
+        return self;
+    }
+    
+    static SendAll = function()
+    {
+        SendConsole();
+        SendLogFile();
+        SendUDP();
+        SendIntegration();
         
         return self;
     }
     
-    static Info = function()
+    static SendLocal = function()
     {
-        level = "info";
-        return self;
-    }
-    
-    static Debug = function()
-    {
-        level = "debug";
-        return self;
-    }
-    
-    static Warning = function()
-    {
-        level = "warning";
-        return self;
-    }
-    
-    static Error = function()
-    {
-        level = "error";
-        return self;
-    }
-    
-    static Fatal = function()
-    {
-        level = "fatal";
-        return self;
-    }
-    
-    static Send = function()
-    {
-        SendToConsole();
-        SendToLogFile();
-        SendToUDP();
-        SendToIntegration();
+        SendConsole();
+        SendLogFile();
+        SendUDP();
         
         return self;
     }
     
-    static SendToConsole = function()
+    static SendConsole = function()
     {
         //We don't need to make a request. Log some basic data and return nothing
-        var _logString = "[" + string(level) + "] " + string(__message);
+        var _logString = __message;
         if (__addCallstack) _logString += "   " + string(__rawCallstackArray);
         show_debug_message(_logString);
         
         return self;
     }
     
-    static SendToLogFile = function()
+    static SendLogFile = function()
     {
+        SnitchSendStringToLogFile(__GetString());
         return self;
     }
     
-    static SendToUDP = function()
+    static SendUDP = function()
     {
+        SnitchSendStringToUDP(__GetString());
         return self;
     }
     
-    static SendToIntegration = function()
+    static SendIntegration = function()
     {
-        if (SNITCH_GOOGLE_ANALYTICS_PERMITTED)
+        switch(SNITCH_INTEGRATION_MODE)
         {
-            __SendToGoogleAnalytics();
-        }
-        else if (SNITCH_SENTRY_PERMITTED)
-        {
-            __SendToSentry();
-        }
-        else if (SNITCH_GAMEANALYTICS_PERMITTED)
-        {
-            __SendToGameAnalytics();
+            case 1: __SendGoogleAnalytics(); break;
+            case 2: __SendSentry();          break;
+            case 3: __SendGameAnalytics();   break;
         }
         
         return self;
     }
     
-    static __SendToGoogleAnalytics = function()
+    static __Exception = function(_exceptionStruct)
+    {
+        //Extract information from the GameMaker exception struct we were given
+        __message = _exceptionStruct.message;
+        longMessage = _exceptionStruct.longMessage;
+        Callstack(_exceptionStruct.stacktrace, 0);
+        level = "fatal";
+        
+        return self;
+    }
+    
+    static __SendGoogleAnalytics = function()
     {
         return self;
     }
     
-    static __SendToSentry = function()
+    static __SendSentry = function()
     {
         //Process the raw callstack, if we have it
         if (is_array(__rawCallstackArray)) callstack = __SnitchProcessRawCallstack(__rawCallstackArray);
@@ -319,7 +230,7 @@ function __SnitchClassEvent() constructor
         }
             
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
-        if (SnitchSentryGet())
+        if ((SNITCH_INTEGRATION_MODE == 2) && SnitchIntegrationGet())
         {
             __SnitchSentryHTTPRequest(__request);
             __request.__SaveBackup();
@@ -328,25 +239,20 @@ function __SnitchClassEvent() constructor
         return self;
     }
     
-    static __SendToGameAnalytics = function()
+    static __SendGameAnalytics = function()
     {
         return self;
     }
     
-    static GetRequest = function()
-    {
-        return __request;
-    }
-    
-    static GetString = function()
+    static __GetString = function()
     {
         return json_stringify(payload);
     }
     
-    static GetCompressedString = function()
+    static __GetCompressedString = function()
     {
         //If we want to compress the buffer, do the ol' swaperoo
-        var _string = GetString();
+        var _string = __GetString();
         var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
         buffer_write(_buffer, buffer_text, _string);
         var _compressedBuffer = buffer_compress(_buffer, 0, buffer_get_size(_buffer));

@@ -6,7 +6,7 @@
     "path": "folders/Snitch.yy",
   },
   "resourceVersion": "1.0",
-  "name": "SnitchObjectEventHook",
+  "name": "SnitchEventHook",
   "tags": [],
   "resourceType": "GMScript",
 }

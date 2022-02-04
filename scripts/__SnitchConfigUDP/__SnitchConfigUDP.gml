@@ -8,5 +8,5 @@
 #macro SNITCH_UDP_DEFAULT_PORT  9991
 
 //Default IP address to send UDP packets to for receiving. This can be overridden with SnitchUDPSet()
-//Set his macro to <undefined> to broadcast packets over LAN. Any device listning for packets on the correct port will be able to receive them
+//Set his macro to <undefined> to broadcast packets over LAN. Any device listening for packets on the correct port will be able to receive them
 #macro SNITCH_UDP_DEFAULT_IP  undefined

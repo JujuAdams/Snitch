@@ -2,8 +2,8 @@ function __SnitchExceptionHandler(_struct)
 {
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     
-    var _event = (new SnitchEvent()).Exception(_struct).SetCallstack(_struct.callstack).SendToConsole().SendToLogFile().SendToUDP();
-    if (SNITCH_CRASH_SEND_EVENT_TO_INTEGRATION) _event.SendToIntegration();
+    var _event = (new SnitchError()).__Exception(_struct).Callstack(_struct.callstack).SendLocal();
+    if (SNITCH_CRASH_SEND_EVENT_TO_INTEGRATION) _event.SendIntegration();
     
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     
@@ -30,9 +30,9 @@ function __SnitchExceptionHandler(_struct)
             var _text = "No data available";
             switch(SWITCH_CRASH_DUMP_MODE)
             {
-                case 1: _text = json_stringify(_struct);      break;
-                case 2: _text = _event.GetString();           break;
-                case 3: _text = _event.GetCompressedString(); break;
+                case 1: _text = json_stringify(_struct);        break;
+                case 2: _text = _event.__GetString();           break;
+                case 3: _text = _event.__GetCompressedString(); break;
             }
             
             var _buffer = buffer_create(string_byte_length(_text), buffer_fixed, 1);
@@ -61,9 +61,9 @@ function __SnitchExceptionHandler(_struct)
                 var _text = "No data available";
                 switch(SWITCH_CRASH_CLIPBOARD_MODE)
                 {
-                    case 1: _text = json_stringify(_struct);      break;
-                    case 2: _text = _event.GetString();           break;
-                    case 3: _text = _event.GetCompressedString(); break;
+                    case 1: _text = json_stringify(_struct);        break;
+                    case 2: _text = _event.__GetString();           break;
+                    case 3: _text = _event.__GetCompressedString(); break;
                 }
                 
                 clipboard_set_text("#####" + _text + "#####"); break;

@@ -7,13 +7,13 @@
 /// this function must also be called in an Async HTTP event every frame. Again, this is
 /// typically done in a persistent instance that is never deactivated.
 
-function SnitchObjectEventHook()
+function SnitchEventHook()
 {
     __SnitchInit();
     
     if ((event_type == ev_step) || (event_type == ev_draw))
     {
-        if (SNITCH_SENTRY_PERMITTED)
+        if (SNITCH_INTEGRATION_MODE == 2)
         {
             if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
             {
