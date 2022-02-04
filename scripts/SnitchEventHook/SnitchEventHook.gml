@@ -13,40 +13,44 @@ function SnitchEventHook()
     
     if ((event_type == ev_step) || (event_type == ev_draw))
     {
-        if (SNITCH_INTEGRATION_MODE == 2)
+        if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
         {
-            if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
+            if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)
             {
-                if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)
+                var _backupCount = array_length(global.__snitchRequestBackupOrder);
+                if (_backupCount > 0)
                 {
-                    var _backupCount = array_length(global.__snitchRequestBackupOrder);
-                    if (_backupCount > 0)
+                    //Step round the request backup array
+                    global.__snitchRequestBackupResendIndex = (global.__snitchRequestBackupResendIndex + 1) mod _backupCount;
+                    
+                    //Pull out a backup...
+                    var _uuid = global.__snitchRequestBackupOrder[global.__snitchRequestBackupResendIndex];
+                    with(global.__snitchRequestBackups[$ _uuid])
                     {
-                        //Step round the request backup array
-                        global.__snitchRequestBackupResendIndex = (global.__snitchRequestBackupResendIndex + 1) mod _backupCount;
-                        
-                        //Pull out a backup...
-                        var _uuid = global.__snitchRequestBackupOrder[global.__snitchRequestBackupResendIndex];
-                        with(global.__snitchRequestBackups[$ _uuid])
+                        //...and if we're not waiting for a response for this particular request, resend it
+                        if (asyncID < 0)
                         {
-                            //...and if we're not waiting for a response for this particular request, resend it
-                            if (asyncID < 0)
+                            if (SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT) __SnitchTrace("Trying to resend event ", _uuid);
+                            
+                            switch(SNITCH_INTEGRATION_MODE)
                             {
-                                if (SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT) __SnitchTrace("Trying to resend event ", _uuid);
-                                __SnitchSentryHTTPRequest(self);
-                                global.__snitchRequestBackupResendTime = current_time;
+                                case 1: __SnitchGoogleAnalyticsHTTPRequest(self); break;
+                                case 2: __SnitchSentryHTTPRequest(self);          break;
+                                case 3: __SnitchGameAnalyticsHTTPRequest(self);   break;
                             }
+                            
+                            global.__snitchRequestBackupResendTime = current_time;
                         }
                     }
                 }
             }
-            else
+        }
+        else
+        {
+            if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT)
             {
-                if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT)
-                {
-                    global.__snitchRequestBackupFailures = 0;
-                    __SnitchTrace("Retrying backup resending");
-                }
+                global.__snitchRequestBackupFailures = 0;
+                __SnitchTrace("Retrying backup resending");
             }
         }
     }
@@ -61,6 +65,6 @@ function SnitchEventHook()
     }
     else
     {
-        __SnitchError("Snitch object event hook should only be placed in a Step event or an HTTP Async event");
+        __SnitchError("Snitch event hook should only be placed in a Step event or an HTTP Async event");
     }
 }

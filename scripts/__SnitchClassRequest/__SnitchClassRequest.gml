@@ -149,6 +149,11 @@ function __SnitchRequestBackupSaveManifest()
     buffer_save_ext(global.__snitchRequestBackupManifestBuffer, SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME, 0, buffer_tell(global.__snitchRequestBackupManifestBuffer));
 }
 
+function __SnitchGoogleAnalyticsHTTPRequest(_request)
+{
+    
+}
+
 function __SnitchSentryHTTPRequest(_request)
 {
     //Set up the headers...
@@ -160,4 +165,9 @@ function __SnitchSentryHTTPRequest(_request)
     _request.__Send(global.__snitchSentryEndpoint, "POST", global.__snitchHTTPHeaderMap, true);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
+}
+
+function __SnitchGameAnalyticsHTTPRequest(_request)
+{
+    
 }
