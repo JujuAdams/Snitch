@@ -289,13 +289,30 @@ function __SnitchInit()
     }
     
     
+    if (SNITCH_INTEGRATION_MODE > 0)
+    {
+        //Force a network connection if possible
+        os_is_network_connected(true);
+    }
     
     switch(SNITCH_INTEGRATION_MODE)
     {
-        case 2:
-            //Force a network connection if possible
-            os_is_network_connected(true);
+        //Google Analytics
+        case 1:
+            global.__snitchGoogleAnalyticsClientID = SnitchGenerateUUID4String(true);
+            global.__snitchGoogleAnalyticsUserID   = md5_string_utf8(global.__snitchGoogleAnalyticsClientID);
+            global.__snitchGoogleAnalyticsEndpoint = "https://www.google-analytics.com/mp/collect?measurement_id=" + SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID + "&api_secret=" + SNITCH_GOOGLE_ANALYTICS_API_SECRET;
             
+            if (debug_mode)
+            {
+                __SnitchTrace("Google Analytics measurement ID = \"", SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID, "\"");
+                __SnitchTrace("Google Analytics API secret = \"", SNITCH_GOOGLE_ANALYTICS_API_SECRET, "\"");
+                __SnitchTrace("Google Analytics endpoint = \"", global.__snitchGoogleAnalyticsEndpoint, "\"");
+            }
+        break;
+        
+        //sentry.io
+        case 2:
             var _DSN = SNITCH_SENTRY_DSN_URL;
             
             var _protocolPosition = string_pos("://", _DSN);
@@ -328,6 +345,10 @@ function __SnitchInit()
                 __SnitchTrace("Sentry endpoint = \"", global.__snitchSentryEndpoint, "\"");
             }
         break;
+        
+        //GameAnalytics
+        case 3:
+        break;
     }
     
     if ((SNITCH_INTEGRATION_MODE > 0) && SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
@@ -349,6 +370,7 @@ function __SnitchTrace()
     }
     
     SnitchSendStringToLogFile(_string);
+    SnitchSendStringToUDP(_string);
     show_debug_message(_string);
 }
 

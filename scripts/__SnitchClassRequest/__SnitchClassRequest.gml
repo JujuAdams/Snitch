@@ -84,9 +84,9 @@ function __SnitchClassRequest(_uuid, _string) constructor
         responseCode = _responseCode;
         status       = _status;
         
-        if (responseCode == 200)
+        if ((responseCode == 200) || (responseCode == 204))
         {
-            if (SNITCH_OUTPUT_HTTP_SUCCESS) __SnitchTrace("Request ", UUID, " complete (HTTP 200)");
+            if (SNITCH_OUTPUT_HTTP_SUCCESS) __SnitchTrace("Request ", UUID, " complete (HTTP ", responseCode, ")");
             __Destroy();
             
             //Reset the failure count
@@ -151,7 +151,12 @@ function __SnitchRequestBackupSaveManifest()
 
 function __SnitchGoogleAnalyticsHTTPRequest(_request)
 {
+    //Set up the header...
+    global.__snitchHTTPHeaderMap[? "Content-Type"] = "application/json";
     
+    _request.__Send(global.__snitchGoogleAnalyticsEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    
+    ds_map_clear(global.__snitchHTTPHeaderMap);
 }
 
 function __SnitchSentryHTTPRequest(_request)

@@ -2,7 +2,7 @@
 /// @param [port=SNITCH_UDP_DEFAULT_PORT]
 /// @paarm [IP=SNITCH_UDP_DEFAULT_IP]
 
-function SnitchSentrySet(_state, _port = SNITCH_UDP_DEFAULT_PORT, _ip = SNITCH_UDP_DEFAULT_IP)
+function SnitchUDPSet(_state, _port = SNITCH_UDP_DEFAULT_PORT, _ip = SNITCH_UDP_DEFAULT_IP)
 {
     __SnitchInit();
     

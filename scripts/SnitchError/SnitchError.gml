@@ -36,13 +36,14 @@ function SnitchError()
 function __SnitchClassError(_message) constructor
 {
     __message           = _message;
-    longMessage         = undefined;
-    level               = "error";
+    __longMessage       = undefined;
+    __fatal             = false;
     __addCallstack      = false;
-    callstack           = undefined;
+    __callstack         = undefined;
     __rawCallstackArray = undefined;
-    payload             = undefined;
+    __payload           = undefined;
     __request           = undefined;
+    __uuid              = SnitchGenerateUUID4String();
     
     static LongMessage = function(_string)
     {
@@ -60,8 +61,13 @@ function __SnitchClassError(_message) constructor
     static Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
     {
         __addCallstack = true;
+        
         __rawCallstackArray = array_create(array_length(_callstack) - _trim);
         array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
+        
+        //Process the raw callstack, if we have it
+        if (is_array(__rawCallstackArray)) __callstack = __SnitchProcessRawCallstack(__rawCallstackArray);
+        
         return self;
     }
     
@@ -87,7 +93,7 @@ function __SnitchClassError(_message) constructor
     static SendConsole = function()
     {
         //We don't need to make a request. Log some basic data and return nothing
-        var _logString = __message;
+        var _logString = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
         if (__addCallstack) _logString += "   " + string(__rawCallstackArray);
         show_debug_message(_logString);
         
@@ -122,24 +128,81 @@ function __SnitchClassError(_message) constructor
     {
         //Extract information from the GameMaker exception struct we were given
         __message = _exceptionStruct.message;
-        longMessage = _exceptionStruct.longMessage;
+        __longMessage = _exceptionStruct.longMessage;
+        __fatal = true;
         Callstack(_exceptionStruct.stacktrace, 0);
-        level = "fatal";
         
         return self;
     }
     
     static __SendGoogleAnalytics = function()
     {
+        if (__payload == undefined) __payload = {};
+        
+        var _paramsStruct = {
+            message: string(__message),
+            fatal: __fatal? "true" : "false",
+            debug_mode: true,
+        };
+        
+        if (is_array(__callstack))
+        {
+            var _arrayIndex = array_length(__callstack)-1;
+            var _count = min(25 - variable_struct_names_count(_paramsStruct), array_length(__callstack));
+            var _callstackIndex = 0;
+            repeat(_count)
+            {
+                var _callstackStage = __callstack[_arrayIndex];
+                
+                var _stageString = _callstackStage[$ "function"];
+                if (_stageString != _callstackStage.module) _stageString += " " + _callstackStage.module;
+                
+                var _lineNumber = " L" + string(_callstackStage.lineno);
+                var _maxLength = 100 -1 - string_length(_lineNumber);
+                
+                if (string_length(_stageString) > _maxLength)
+                {
+                    _maxLength -= 1;
+                    _stageString = string_copy(_stageString, 1, floor(_maxLength/2)) + "…" + string_copy(_stageString, string_length(_stageString) + 1 - floor(_maxLength/2), ceil(_maxLength/2));
+                }
+                
+                _paramsStruct[$ "callstack" + string(_callstackIndex)] = _stageString + _lineNumber;
+                
+                --_arrayIndex;
+                ++_callstackIndex;
+            }
+        }
+        
+        with(__payload) //TODO - Optimize by building this string manually without needing to allocate a struct that is then immediately JSONified
+        {
+            client_id            = global.__snitchGoogleAnalyticsClientID;
+            //TODO - Add user_properties
+            non_personalized_ads = true;
+            timestamp_micros     = floor(1000000*SnitchConvertToUnixTime(date_current_datetime()));
+            events               = [
+                {
+                    name: "snitch",
+                    params: _paramsStruct,
+                }
+            ];
+        };
+        
+        //Make a new request struct
+        __request = new __SnitchClassRequest(SnitchGenerateUUID4String(), json_stringify(__payload));
+        
+        //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
+        if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
+        {
+            __SnitchGoogleAnalyticsHTTPRequest(__request);
+            __request.__SaveBackup();
+        }
+        
         return self;
     }
     
     static __SendSentry = function()
     {
-        //Process the raw callstack, if we have it
-        if (is_array(__rawCallstackArray)) callstack = __SnitchProcessRawCallstack(__rawCallstackArray);
-        
-        var _payload = payload;
+        var _payload = __payload;
         if (_payload == undefined)
         {
             _payload = SNITCH_SHARED_EVENT_PAYLOAD;
@@ -151,74 +214,44 @@ function __SnitchClassError(_message) constructor
         with(_payload)
         {
             //Create a unique UUID and give the event a Unix timestamp
-            event_id  = SnitchGenerateUUID4String();
+            event_id  = other.__uuid;
             timestamp = SnitchConvertToUnixTime(date_current_datetime());
             
             //Set the message level
-            level = other.level;
+            level = other.__fatal? "fatal" : "error";
             
-            if ((level != "error") && (level != "fatal"))
+            //Build an exception struct to send
+            var _exceptionData =  { type: other.__message };
+            
+            if (other.__longMessage != undefined)
             {
-                if (is_array(other.callstack))
-                {
-                    //Set the callstack if we have one
-                    stacktrace = { frames: other.callstack };
-                }
-                else
-                {
-                    //Otherwise make sure we don't have this attribute
-                    variable_struct_remove(self, "stacktrace");
-                }
-                
-                //...janky
-                //Only way to set this key though unfortunately
-                self[$ "sentry.interfaces.Message"] = { formatted: other.message };
-                    
-                //Also make sure we don't have any exception data lingering
-                variable_struct_remove(self, "exception");
+                _exceptionData.value = other.__longMessage;
             }
             else
             {
-                //Build an exception struct to send
-                var _exceptionData =  { type: other.message };
-                    
-                if (other.longMessage != undefined)
-                {
-                    _exceptionData.value = other.longMessage;
-                }
-                else
-                {
-                    _exceptionData.value = other.message;
-                }
-                    
-                //Only add callstack/module information if we have it
-                if (is_array(other.callstack))
-                {
-                    if (array_length(other.callstack) > 0) _exceptionData.module = other.callstack[0].module;
-                    _exceptionData.stacktrace = { frames: other.callstack };
-                }
-                    
-                //Pack the error data in such a way that sentry.io will understand it
-                exception = { values: [_exceptionData] };
-                    
-                //Also make sure we don't have any non-exception data lingering
-                variable_struct_remove(self, "sentry.interfaces.Message");
-                variable_struct_remove(self, "stacktrace");
+                _exceptionData.value = other.__message;
             }
+            
+            //Only add callstack/module information if we have it
+            if (is_array(other.__callstack))
+            {
+                if (array_length(other.__callstack) > 0) _exceptionData.module = other.__callstack[0].module;
+                _exceptionData.stacktrace = { frames: other.__callstack };
+            }
+            
+            //Pack the error data in such a way that sentry.io will understand it
+            exception = { values: [_exceptionData] };
+            
+            //Also make sure we don't have any non-exception data lingering
+            variable_struct_remove(self, "sentry.interfaces.Message");
+            variable_struct_remove(self, "stacktrace");
         }
-            
-        //Pull out our UUID
-        var _uuid = _payload.event_id;
-            
-        //Log this momentous occasion
-        var _logString = "[" + string(level) + " " + string(_uuid) + "] " + string(message);
-        if (__addCallstack) _logString += "   " + string(__rawCallstackArray);
-        __SnitchTrace(_logString);
-            
+        
         //Make a new request struct
-        __request = new __SnitchClassRequest(_uuid, json_stringify(_payload));
-            
+        __request = new __SnitchClassRequest(__uuid, json_stringify(_payload));
+        
         //Clean up our payload
+        //TODO - Do we need to do this?
         with(_payload)
         {
             variable_struct_remove(self, "event_id");
@@ -228,25 +261,26 @@ function __SnitchClassError(_message) constructor
             variable_struct_remove(self, "sentry.interfaces.Message");
             variable_struct_remove(self, "exception");
         }
-            
+        
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 2) && SnitchIntegrationGet())
         {
             __SnitchSentryHTTPRequest(__request);
             __request.__SaveBackup();
         }
-            
+        
         return self;
     }
     
     static __SendGameAnalytics = function()
     {
+        //TODO
         return self;
     }
     
     static __GetString = function()
     {
-        return json_stringify(payload);
+        return json_stringify(__payload);
     }
     
     static __GetCompressedString = function()
