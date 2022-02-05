@@ -11,6 +11,16 @@
 //It is recommended that this macro is set to <false> and you ask for user consent before enabling it
 #macro  SNITCH_INTEGRATION_ON_BOOT  true
 
+//The API secret for your property
+//This is set up in the admin section of the Google Analytics backend
+//https://developers.google.com/analytics/devguides/collection/protocol/ga4/
+#macro SNITCH_GOOGLE_ANALYTICS_API_SECRET  ""
+
+//The measurement ID that's generataed for your property
+//This can be found in the admin section of the Google Analytics backend
+//https://support.google.com/analytics/answer/9539598
+#macro SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID  ""
+
 //The endpoint to use for sentry.io
 //This can be found via Settings -> Client Keys (under the SDK SETUP header on the left-hand side)
 #macro  SNITCH_SENTRY_DSN_URL  ""
