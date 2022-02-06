@@ -119,6 +119,7 @@ function __SnitchClassError(_message) constructor
             case 1: __SendGoogleAnalytics(); break;
             case 2: __SendSentry();          break;
             case 3: __SendGameAnalytics();   break;
+            case 4: __SendBugsnag();         break;
         }
         
         return self;
@@ -274,6 +275,43 @@ function __SnitchClassError(_message) constructor
     static __SendGameAnalytics = function()
     {
         //TODO
+        return self;
+    }
+    
+    static __SendBugsnag = function()
+    {
+        __payload = {
+            apiKey: SNITCH_BUGSNAG_API_KEY,
+            payloadVersion: "5",
+            notifier: {
+                name: "Snitch",
+                version: SNITCH_VERSION,
+                url: "https://github.com/jujuAdams/snitch",
+            },
+            events: [
+                {
+                    exceptions: [
+                        {
+                            errorClass: __message,
+                            message: __longMessage
+                            stacktrace: [],
+                        },
+                    ],
+                    severity: __fatal? "error" : "warning",
+                },
+            ],
+        };
+        
+        //Make a new request struct
+        __request = new __SnitchClassRequest(SnitchGenerateUUID4String(), json_stringify(__payload));
+        
+        //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
+        if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
+        {
+            __SnitchBugsnagHTTPRequest(__request);
+            __request.__SaveBackup();
+        }
+        
         return self;
     }
     

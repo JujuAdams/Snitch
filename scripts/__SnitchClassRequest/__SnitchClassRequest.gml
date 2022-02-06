@@ -172,6 +172,18 @@ function __SnitchSentryHTTPRequest(_request)
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
 
+function __SnitchBugsnagHTTPRequest(_request)
+{
+    //Set up the header...
+    global.__snitchHTTPHeaderMap[? "Content-Type"           ] = "application/json";
+    global.__snitchHTTPHeaderMap[? "Bugsnag-Api-Key"        ] = SNITCH_BUGSNAG_API_KEY;
+    global.__snitchHTTPHeaderMap[? "Bugsnag-Payload-Version"] = "5";
+    
+    _request.__Send("https://notify.bugsnag.com", "POST", global.__snitchHTTPHeaderMap, false);
+    
+    ds_map_clear(global.__snitchHTTPHeaderMap);
+}
+
 function __SnitchGameAnalyticsHTTPRequest(_request)
 {
     

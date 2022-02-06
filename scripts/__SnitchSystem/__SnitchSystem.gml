@@ -349,6 +349,14 @@ function __SnitchInit()
         //GameAnalytics
         case 3:
         break;
+        
+        //Bugsnag
+        case 4:
+            if (debug_mode)
+            {
+                __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_API_KEY, "\"");
+            }
+        break;
     }
     
     if ((SNITCH_INTEGRATION_MODE > 0) && SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
