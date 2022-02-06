@@ -293,7 +293,7 @@ function __SnitchClassError(_message) constructor
                     exceptions: [
                         {
                             errorClass: __message,
-                            message: __longMessage
+                            message: __longMessage,
                             stacktrace: [],
                         },
                     ],
@@ -306,7 +306,7 @@ function __SnitchClassError(_message) constructor
         __request = new __SnitchClassRequest(SnitchGenerateUUID4String(), json_stringify(__payload));
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
+        if ((SNITCH_INTEGRATION_MODE == 4) && SnitchIntegrationGet())
         {
             __SnitchBugsnagHTTPRequest(__request);
             __request.__SaveBackup();
