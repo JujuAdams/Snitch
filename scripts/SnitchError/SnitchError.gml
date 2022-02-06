@@ -24,7 +24,7 @@
 ///     Sets the event's "longMessage" property. This is used to add extra context
 ///     
 /// .Callstack([callstackArray], [trimCount])
-///     Sets the event's callstack. If no arguments are provided then the callstack is generated from where this function was called
+///     Sets the event's callstack. If no arguments are provid.Callstacked then the callstack is generated from where this function was called
 ///     The optional [trimCount] argument allows for the given number of callstack levels to be removed
 
 function SnitchError()
@@ -58,10 +58,13 @@ function __SnitchClassError(_message) constructor
         return self;
     }
     
-    static Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
+    static __GuaranteeCallstack = function()
     {
-        __addCallstack = true;
-        
+        if (!is_array(__rawCallstackArray)) __Callstack(undefined, 3);
+    }
+    
+    static __Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
+    {
         __rawCallstackArray = array_create(array_length(_callstack) - _trim);
         array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
         
@@ -73,6 +76,7 @@ function __SnitchClassError(_message) constructor
     
     static SendAll = function()
     {
+        __GuaranteeCallstack();
         SendConsole();
         SendLogFile();
         SendUDP();
@@ -83,6 +87,7 @@ function __SnitchClassError(_message) constructor
     
     static SendLocal = function()
     {
+        __GuaranteeCallstack();
         SendConsole();
         SendLogFile();
         SendUDP();
@@ -92,6 +97,8 @@ function __SnitchClassError(_message) constructor
     
     static SendConsole = function()
     {
+        __GuaranteeCallstack();
+        
         //We don't need to make a request. Log some basic data and return nothing
         var _logString = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
         if (__addCallstack) _logString += "   " + string(__rawCallstackArray);
@@ -102,18 +109,22 @@ function __SnitchClassError(_message) constructor
     
     static SendLogFile = function()
     {
-        SnitchSendStringToLogFile(__GetString());
+        __GuaranteeCallstack();
+        SnitchSendStringToLogFile(__GetString()); //FIXME
         return self;
     }
     
     static SendUDP = function()
     {
-        SnitchSendStringToUDP(__GetString());
+        __GuaranteeCallstack();
+        SnitchSendStringToUDP(__GetString()); //FIXME
         return self;
     }
     
     static SendIntegration = function()
     {
+        __GuaranteeCallstack();
+        
         switch(SNITCH_INTEGRATION_MODE)
         {
             case 1: __SendGoogleAnalytics(); break;
@@ -130,8 +141,8 @@ function __SnitchClassError(_message) constructor
         //Extract information from the GameMaker exception struct we were given
         __message = _exceptionStruct.message;
         __longMessage = _exceptionStruct.longMessage;
+        __Callstack(_exceptionStruct.stacktrace, 0);
         __fatal = true;
-        Callstack(_exceptionStruct.stacktrace, 0);
         
         return self;
     }

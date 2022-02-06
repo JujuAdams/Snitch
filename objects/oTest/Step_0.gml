@@ -11,7 +11,7 @@ if (keyboard_check_pressed(ord("2"))) oInvalidObject.x += 1;
 if (keyboard_check_pressed(ord("3"))) show_error("Pressed the 3 key", true);
 
 //Trigger a debug event
-if (keyboard_check_pressed(ord("4"))) SnitchError("Wow! An error!").Callstack().SendAll();
+if (keyboard_check_pressed(ord("4"))) SnitchError("Wow! An error!").SendAll();
 
 //Toggle logging on and off
 if (keyboard_check_pressed(ord("L"))) SnitchLogFileSet(!SnitchLogFileGet());
