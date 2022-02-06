@@ -180,7 +180,7 @@ function __SnitchClassError(_message) constructor
             timestamp_micros     = floor(1000000*SnitchConvertToUnixTime(date_current_datetime()));
             events               = [
                 {
-                    name: "snitch",
+                    name: "exception",
                     params: _paramsStruct,
                 }
             ];
