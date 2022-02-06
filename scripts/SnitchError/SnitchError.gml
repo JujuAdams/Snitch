@@ -142,7 +142,6 @@ function __SnitchClassError(_message) constructor
         var _paramsStruct = {
             message: string(__message),
             fatal: __fatal? "true" : "false",
-            debug_mode: true,
         };
         
         if (is_array(__callstack))
