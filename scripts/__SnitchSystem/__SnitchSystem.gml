@@ -300,7 +300,6 @@ function __SnitchInit()
         //Google Analytics
         case 1:
             global.__snitchGoogleAnalyticsClientID = SnitchGenerateUUID4String(true);
-            global.__snitchGoogleAnalyticsUserID   = md5_string_utf8(global.__snitchGoogleAnalyticsClientID);
             global.__snitchGoogleAnalyticsEndpoint = "https://www.google-analytics.com/mp/collect?measurement_id=" + SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID + "&api_secret=" + SNITCH_GOOGLE_ANALYTICS_API_SECRET;
             
             if (debug_mode)
