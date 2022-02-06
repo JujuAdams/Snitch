@@ -145,32 +145,24 @@ function __SnitchClassError(_message) constructor
             fatal: __fatal? "true" : "false",
         };
         
+        //Add the crash location if we have a callstack to work with
         if (is_array(__callstack))
         {
-            var _arrayIndex = array_length(__callstack)-1;
-            var _count = min(25 - variable_struct_names_count(_paramsStruct), array_length(__callstack));
-            var _callstackIndex = 0;
-            repeat(_count)
+            var _callstackStage = __callstack[array_length(__callstack)-1];
+            
+            var _stageString = _callstackStage[$ "function"];
+            if (_stageString != _callstackStage.module) _stageString += " " + _callstackStage.module;
+            
+            var _lineNumber = " L" + string(_callstackStage.lineno);
+            var _maxLength = 100 - 1 - string_length(_lineNumber);
+            
+            if (string_length(_stageString) > _maxLength)
             {
-                var _callstackStage = __callstack[_arrayIndex];
-                
-                var _stageString = _callstackStage[$ "function"];
-                if (_stageString != _callstackStage.module) _stageString += " " + _callstackStage.module;
-                
-                var _lineNumber = " L" + string(_callstackStage.lineno);
-                var _maxLength = 100 -1 - string_length(_lineNumber);
-                
-                if (string_length(_stageString) > _maxLength)
-                {
-                    _maxLength -= 1;
-                    _stageString = string_copy(_stageString, 1, floor(_maxLength/2)) + "…" + string_copy(_stageString, string_length(_stageString) + 1 - floor(_maxLength/2), ceil(_maxLength/2));
-                }
-                
-                _paramsStruct[$ "callstack" + string(_callstackIndex)] = _stageString + _lineNumber;
-                
-                --_arrayIndex;
-                ++_callstackIndex;
+                _maxLength -= 1;
+                _stageString = string_copy(_stageString, 1, floor(_maxLength/2)) + "…" + string_copy(_stageString, string_length(_stageString) + 1 - floor(_maxLength/2), ceil(_maxLength/2));
             }
+            
+            _paramsStruct.location = _stageString + _lineNumber;
         }
         
         with(__payload) //TODO - Optimize by building this string manually without needing to allocate a struct that is then immediately JSONified
@@ -188,7 +180,7 @@ function __SnitchClassError(_message) constructor
         };
         
         //Make a new request struct
-        __request = new __SnitchClassRequest(SnitchGenerateUUID4String(), json_stringify(__payload));
+        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
@@ -294,7 +286,7 @@ function __SnitchClassError(_message) constructor
                         {
                             errorClass: __message,
                             message: __longMessage,
-                            stacktrace: [],
+                            stacktrace: (__callstack == undefined)? [] : __callstack,
                         },
                     ],
                     severity: __fatal? "error" : "warning",
@@ -303,7 +295,7 @@ function __SnitchClassError(_message) constructor
         };
         
         //Make a new request struct
-        __request = new __SnitchClassRequest(SnitchGenerateUUID4String(), json_stringify(__payload));
+        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 4) && SnitchIntegrationGet())

@@ -428,6 +428,22 @@ function __SnitchMessageString(_startIndex)
 
 function __SnitchProcessRawCallstack(_rawCallstack)
 {
+    switch(SNITCH_INTEGRATION_MODE)
+    {
+        case 1: //Google Analytics
+        case 2: //sentry.io
+            var _lineNumberField = "lineno";
+            var _functionField   = "function";
+            var _moduleField     = "module";
+        break;
+        
+        case 4: //Bugsnag
+            var _lineNumberField = "lineNumber";
+            var _functionField   = "method";
+            var _moduleField     = "file";
+        break;
+    }
+    
     var _callstack = [];
     
     var _i = array_length(_rawCallstack) - 1;
@@ -470,7 +486,7 @@ function __SnitchProcessRawCallstack(_rawCallstack)
             if (string_pos("gml_Script_", _func) == 1)
             {
                 _func = string_delete(_func, 1, 11);
-                _frame.module = _func;
+                _frame[$ _moduleField] = _func;
             }
             else if (string_pos("gml_Object_", _func) == 1)
             {
@@ -481,11 +497,11 @@ function __SnitchProcessRawCallstack(_rawCallstack)
                 
                 var _module = string_delete(_func, 1, _pos);
                 _func = string_copy(_func, 1, _pos - 1);
-                _frame.module = _module;
+                _frame[$ _moduleField] = _module;
             }
             
-            _frame[$ "function"] = _func; //ლ(ಠ_ಠლ)
-            _frame.lineno = _lineNumber;
+            _frame[$ _functionField  ] = _func;
+            _frame[$ _lineNumberField] = _lineNumber;
             
             array_push(_callstack, _frame);
         }

@@ -172,6 +172,11 @@ function __SnitchSentryHTTPRequest(_request)
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
 
+function __SnitchGameAnalyticsHTTPRequest(_request)
+{
+    
+}
+
 function __SnitchBugsnagHTTPRequest(_request)
 {
     //Set up the header...
@@ -182,9 +187,4 @@ function __SnitchBugsnagHTTPRequest(_request)
     _request.__Send("https://notify.bugsnag.com", "POST", global.__snitchHTTPHeaderMap, false);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
-}
-
-function __SnitchGameAnalyticsHTTPRequest(_request)
-{
-    
 }
