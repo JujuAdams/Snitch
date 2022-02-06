@@ -15,7 +15,7 @@
 ///   .SendUDP()         - Broadcasts the event over UDP, if enabled
 ///   .SendIntegration() - Transmits the event over HTTP to whichever API integration is enabled (if any)
 ///                        If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
-///   .SendAll()         - Sends the event to all of the below
+///   .SendAll()         - Sends the event to all of the above
 ///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendUDP()
 /// 
 /// Event methods are used to set properties for the event, such as message level or callstack logging
