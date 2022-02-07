@@ -329,7 +329,22 @@ function __SnitchClassError(_message) constructor
     
     static __SendDeltaDNA = function()
     {
-        //TODO
+        __payload = {
+            eventName: __message,
+            userID: global.__snitchDeltaDNASessionID, //Delibterately chosen so that players can't be tracked across sessions
+            sessionID: global.__snitchDeltaDNASessionID,
+            //eventTimestamp: //TODO
+            eventUUID: __uuid,
+            eventParams: {
+                fatal: __fatal,
+            }
+        };
+        
+        if (__longMessage != undefined) __payload.eventParams.longMessage = __longMessage;
+        if (is_array(__callstack)) __payload.eventParams.stacktrace = __callstack;
+        
+        //Make a new request struct
+        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have DeltaDNA enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 5) && SnitchIntegrationGet())

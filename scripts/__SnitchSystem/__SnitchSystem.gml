@@ -359,14 +359,17 @@ function __SnitchInit()
         
         //DeltaDNA
         case 5:
-            global.__snitchDeltaDNAEndpoint = SNITCH_DELTADNA_COLLECT_URL + "/collect/api/" + SNITCH_DELTADNA_ENVIRONMENT_KEY;
+            global.__snitchDeltaDNASessionID = SnitchGenerateUUID4String(true);
+            
+            //The endpoint is modified in __SnitchDeltaDNAHTTPRequest()
+            global.__snitchDeltaDNAEndpoint = SNITCH_DELTADNA_COLLECT_URL + "/" + SNITCH_DELTADNA_ENVIRONMENT_KEY;
+            if (SNITCH_DELTADNA_SECRET_KEY != "") global.__snitchDeltaDNAEndpoint += "/hash/";
             
             if (debug_mode)
             {
-                __SnitchTrace("DeltaDNA collect URL = \"", SNITCH_DELTADNA_COLLECT_URL, "\"");
-                __SnitchTrace("DeltaDNA environment key = \"", SNITCH_DELTADNA_ENVIRONMENT_KEY, "\"");
-                __SnitchTrace("DeltaDNA secret key = \"", SNITCH_DELTADNA_SECRET_KEY, "\"");
+                __SnitchTrace("DeltaDNA session ID = \"", global.__snitchDeltaDNASessionID, "\"");
                 __SnitchTrace("DeltaDNA endpoint = \"", global.__snitchDeltaDNAEndpoint, "\"");
+                __SnitchTrace("DeltaDNA secret key = \"", SNITCH_DELTADNA_SECRET_KEY, "\"");
             }
         break;
     }
@@ -451,15 +454,16 @@ function __SnitchProcessRawCallstack(_rawCallstack)
         break;
         
         case 3: //GameAnalytics
+        case 5: //DeltaDNA
+            var _lineNumberField = "lineNumber";
+            var _functionField   = "function";
+            var _moduleField     = "module";
         break;
         
         case 4: //Bugsnag
             var _lineNumberField = "lineNumber";
             var _functionField   = "method";
             var _moduleField     = "file";
-        break;
-        
-        case 5: //DeltaDNA
         break;
     }
     
