@@ -31,4 +31,4 @@
 //Whether to output HTTP success to the console. This is handy for confirming HTTP requests are being processed properly
 //If logging is enabled, this information will also be outputted to the log file
 //   N.B. HTTP warnings/failures will always be reported
-#macro  SNITCH_OUTPUT_HTTP_SUCCESS  false
+#macro  SNITCH_OUTPUT_HTTP_SUCCESS  true
