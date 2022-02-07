@@ -1,7 +1,7 @@
 function SnitchGenerateUUID4String(_hyphenate = false)
 {
     //As per https://www.cryptosys.net/pki/uuid-rfc4122.html (though without the hyphens)
-    var _UUID = md5_string_utf8(string(current_time) + string(date_current_datetime()) + string(__SnitchXORShift32Random(1000000)));
+    var _UUID = md5_string_unicode(string(current_time) + string(date_current_datetime()) + string(__SnitchXORShift32Random(1000000)));
     _UUID = string_set_byte_at(_UUID, 13, ord("4"));
     _UUID = string_set_byte_at(_UUID, 17, ord(__SnitchXORShift32Choose("8", "9", "a", "b")));
     
