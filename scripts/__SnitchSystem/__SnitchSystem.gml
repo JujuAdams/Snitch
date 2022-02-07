@@ -347,6 +347,24 @@ function __SnitchInit()
         
         //GameAnalytics
         case 3:
+            global.__snitchGameAnalyticsSessionID = SnitchGenerateUUID4String(true);
+            
+            if ((SNITCH_GAMEANALYTICS_GAME_KEY == "5c6bcb5402204249437fb5a7a80a4959") && (SNITCH_GAMEANALYTICS_SECRET_KEY == "16813a12f718bc5c620f56944e1abc3ea13ccbac"))
+            {
+                __SnitchTrace("Using GameAnalytics' sandbox endpoint");
+                global.__snitchGameAnalyticsEndpoint = "https://sandbox-api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
+            }
+            else
+            {
+                global.__snitchGameAnalyticsEndpoint = "https://api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
+            }
+            
+            if (debug_mode)
+            {
+                __SnitchTrace("GameAnalytics session ID = \"", global.__snitchGameAnalyticsSessionID, "\"");
+                __SnitchTrace("GameAnalytics endpoint = \"", global.__snitchGameAnalyticsEndpoint, "\"");
+                __SnitchTrace("GameAnalytics secret key = \"", SNITCH_GAMEANALYTICS_SECRET_KEY, "\"");
+            }
         break;
         
         //Bugsnag

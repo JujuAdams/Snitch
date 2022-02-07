@@ -6,7 +6,7 @@
 //   3:  Use the GameAnalytics integration
 //   4:  Use the Bugsnag integration
 //   5:  Use the DeltaDNA integration
-#macro  SNITCH_INTEGRATION_MODE  1
+#macro  SNITCH_INTEGRATION_MODE  3
 
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
 //If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)
@@ -26,6 +26,9 @@
 //The endpoint to use for sentry.io
 //This can be found via Settings -> Client Keys (under the SDK SETUP header on the left-hand side)
 #macro  SNITCH_SENTRY_DSN_URL  ""
+
+#macro  SNITCH_GAMEANALYTICS_GAME_KEY    "5c6bcb5402204249437fb5a7a80a4959"
+#macro  SNITCH_GAMEANALYTICS_SECRET_KEY  "16813a12f718bc5c620f56944e1abc3ea13ccbac"
 
 #macro  SNITCH_BUGSNAG_API_KEY  ""
 

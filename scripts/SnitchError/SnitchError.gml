@@ -278,12 +278,30 @@ function __SnitchClassError(_message) constructor
     
     static __SendGameAnalytics = function()
     {
-        //TODO
+        __payload = {
+            device: "unknown",
+            v: 2,
+            user_id: global.__snitchGameAnalyticsSessionID,
+            client_ts: 0,
+            sdk_version: "rest api v2",
+            os_version: "windows 10",
+            manufacturer: "unknown",
+            platform: "windows",
+            session_id: global.__snitchGameAnalyticsSessionID,
+            session_num: 1,
+            limit_ad_tracking: true,
+            category: "error",
+            severity: __fatal? "critical" : "error",
+            message: __message + (is_array(__callstack)? (" " + string(__callstack)) : ""),
+        };
+        
+        //Make a new request struct
+        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have GameAnalytics enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 3) && SnitchIntegrationGet())
         {
-            __SnitchDeltaDNAHTTPRequest(__request);
+            __SnitchGameAnalyticsHTTPRequest(__request);
             __request.__SaveBackup();
         }
         

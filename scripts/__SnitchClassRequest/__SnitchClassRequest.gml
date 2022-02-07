@@ -174,7 +174,32 @@ function __SnitchSentryHTTPRequest(_request)
 
 function __SnitchGameAnalyticsHTTPRequest(_request)
 {
+    // "The authentication value is a HMAC SHA-256 digest of the raw body content from the request using the secret key (private key) as the hashing key and then encoding it using base64."
+    var _hashArray = __SnitchHMACSHA256(SNITCH_GAMEANALYTICS_SECRET_KEY, _request.content, false);
     
+    //Get the base64 encoded version of the digest, whilst also handling endianness conversion
+    var _hashBuffer = buffer_create(64, buffer_fixed, 1);
+    var _i = 0;
+    repeat(8)
+    {
+        var _u32 = _hashArray[_i];
+        buffer_write(_hashBuffer, buffer_u8, (_u32 >> 24) & 0xFF);
+        buffer_write(_hashBuffer, buffer_u8, (_u32 >> 16) & 0xFF);
+        buffer_write(_hashBuffer, buffer_u8, (_u32 >>  8) & 0xFF);
+        buffer_write(_hashBuffer, buffer_u8, (_u32      ) & 0xFF);
+        ++_i;
+    }
+    
+    var _authHash = buffer_base64_encode(_hashBuffer, 0, 32);
+    buffer_delete(_hashBuffer);
+    
+    //Set up the header...
+    global.__snitchHTTPHeaderMap[? "Authorization"] = _authHash;
+    global.__snitchHTTPHeaderMap[? "Content-Type" ] = "application/json";
+    
+    _request.__Send(global.__snitchGameAnalyticsEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    
+    ds_map_clear(global.__snitchHTTPHeaderMap);
 }
 
 function __SnitchBugsnagHTTPRequest(_request)
@@ -193,7 +218,6 @@ function __SnitchDeltaDNAHTTPRequest(_request)
 {
     //Set up the header...
     global.__snitchHTTPHeaderMap[? "Content-Type"] = "application/json";
-    
     
     var _url = global.__snitchDeltaDNAEndpoint;
     if (SNITCH_DELTADNA_SECRET_KEY != "") _url += md5_string_unicode(_request.content + SNITCH_DELTADNA_SECRET_KEY);
