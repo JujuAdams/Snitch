@@ -131,6 +131,7 @@ function __SnitchClassError(_message) constructor
             case 2: __SendSentry();          break;
             case 3: __SendGameAnalytics();   break;
             case 4: __SendBugsnag();         break;
+            case 5: __SendDeltaDNA();        break;
         }
         
         return self;
@@ -278,6 +279,14 @@ function __SnitchClassError(_message) constructor
     static __SendGameAnalytics = function()
     {
         //TODO
+        
+        //If we have GameAnalytics enabled then actually send the request and make a backup in case the request fails
+        if ((SNITCH_INTEGRATION_MODE == 3) && SnitchIntegrationGet())
+        {
+            __SnitchDeltaDNAHTTPRequest(__request);
+            __request.__SaveBackup();
+        }
+        
         return self;
     }
     
@@ -308,10 +317,24 @@ function __SnitchClassError(_message) constructor
         //Make a new request struct
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
-        //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
+        //If we have Bugsnag enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 4) && SnitchIntegrationGet())
         {
             __SnitchBugsnagHTTPRequest(__request);
+            __request.__SaveBackup();
+        }
+        
+        return self;
+    }
+    
+    static __SendDeltaDNA = function()
+    {
+        //TODO
+        
+        //If we have DeltaDNA enabled then actually send the request and make a backup in case the request fails
+        if ((SNITCH_INTEGRATION_MODE == 5) && SnitchIntegrationGet())
+        {
+            __SnitchDeltaDNAHTTPRequest(__request);
             __request.__SaveBackup();
         }
         

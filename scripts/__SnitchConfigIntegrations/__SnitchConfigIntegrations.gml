@@ -1,9 +1,11 @@
 //Which integration to use
 //There are 4 modes:
 //   0:  Don't use any integration at all
-//   1:  Use of the Google Analytics integration
-//   2:  Use of the sentry.io integration
+//   1:  Use the Google Analytics integration
+//   2:  Use the sentry.io integration
 //   3:  Use the GameAnalytics integration
+//   4:  Use the Bugsnag integration
+//   5:  Use the DeltaDNA integration
 #macro  SNITCH_INTEGRATION_MODE  1
 
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
@@ -26,3 +28,7 @@
 #macro  SNITCH_SENTRY_DSN_URL  ""
 
 #macro  SNITCH_BUGSNAG_API_KEY  ""
+
+#macro  SNITCH_DELTADNA_COLLECT_URL      ""
+#macro  SNITCH_DELTADNA_ENVIRONMENT_KEY  ""
+#macro  SNITCH_DELTADNA_SECRET_KEY       ""

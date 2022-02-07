@@ -188,3 +188,13 @@ function __SnitchBugsnagHTTPRequest(_request)
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
+
+function __SnitchDeltaDNAHTTPRequest(_request)
+{
+    //Set up the header...
+    global.__snitchHTTPHeaderMap[? "Content-Type"] = "application/json";
+    
+    _request.__Send(global.__snitchDeltaDNAEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    
+    ds_map_clear(global.__snitchHTTPHeaderMap);
+}

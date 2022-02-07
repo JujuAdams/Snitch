@@ -38,6 +38,7 @@ function SnitchEventHook()
                                 case 2: __SnitchSentryHTTPRequest(self);          break;
                                 case 3: __SnitchGameAnalyticsHTTPRequest(self);   break;
                                 case 4: __SnitchBugsnagHTTPRequest(self);         break;
+                                case 5: __SnitchDeltaDNAHTTPRequest(self);        break;
                             }
                             
                             global.__snitchRequestBackupResendTime = current_time;

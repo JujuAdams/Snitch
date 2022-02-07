@@ -356,6 +356,19 @@ function __SnitchInit()
                 __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_API_KEY, "\"");
             }
         break;
+        
+        //DeltaDNA
+        case 5:
+            global.__snitchDeltaDNAEndpoint = SNITCH_DELTADNA_COLLECT_URL + "/collect/api/" + SNITCH_DELTADNA_ENVIRONMENT_KEY;
+            
+            if (debug_mode)
+            {
+                __SnitchTrace("DeltaDNA collect URL = \"", SNITCH_DELTADNA_COLLECT_URL, "\"");
+                __SnitchTrace("DeltaDNA environment key = \"", SNITCH_DELTADNA_ENVIRONMENT_KEY, "\"");
+                __SnitchTrace("DeltaDNA secret key = \"", SNITCH_DELTADNA_SECRET_KEY, "\"");
+                __SnitchTrace("DeltaDNA endpoint = \"", global.__snitchDeltaDNAEndpoint, "\"");
+            }
+        break;
     }
     
     if ((SNITCH_INTEGRATION_MODE > 0) && SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
@@ -437,10 +450,16 @@ function __SnitchProcessRawCallstack(_rawCallstack)
             var _moduleField     = "module";
         break;
         
+        case 3: //GameAnalytics
+        break;
+        
         case 4: //Bugsnag
             var _lineNumberField = "lineNumber";
             var _functionField   = "method";
             var _moduleField     = "file";
+        break;
+        
+        case 5: //DeltaDNA
         break;
     }
     
