@@ -194,7 +194,10 @@ function __SnitchDeltaDNAHTTPRequest(_request)
     //Set up the header...
     global.__snitchHTTPHeaderMap[? "Content-Type"] = "application/json";
     
-    _request.__Send(global.__snitchDeltaDNAEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    
+    var _url = global.__snitchDeltaDNAEndpoint;
+    if (SNITCH_DELTADNA_SECRET_KEY != "") _url += md5_string_unicode(_request.content + SNITCH_DELTADNA_SECRET_KEY);
+    _request.__Send(_url, "POST", global.__snitchHTTPHeaderMap, false);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
