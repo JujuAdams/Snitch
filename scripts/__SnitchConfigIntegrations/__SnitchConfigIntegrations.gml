@@ -6,7 +6,7 @@
 //   3:  Use the GameAnalytics integration
 //   4:  Use the Bugsnag integration
 //   5:  Use the DeltaDNA integration
-#macro  SNITCH_INTEGRATION_MODE  3
+#macro  SNITCH_INTEGRATION_MODE  5
 
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
 //If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)
@@ -34,4 +34,9 @@
 
 #macro  SNITCH_DELTADNA_COLLECT_URL      ""
 #macro  SNITCH_DELTADNA_ENVIRONMENT_KEY  ""
-#macro  SNITCH_DELTADNA_SECRET_KEY       ""
+#macro  SNITCH_DELTADNA_SECRET_KEY       ""#macro  SNITCH_DELTADNA_COLLECT_URL       "https://collect93954026tsttl.deltadna.net/collect/api"
+#macro  SNITCH_DELTADNA_EVENT_NAME         "exception"
+#macro  SNITCH_DELTADNA_MESSAGE_PARAM      "exceptionMessage"
+#macro  SNITCH_DELTADNA_LONGMESSAGE_PARAM  "exceptionLongMessage"
+#macro  SNITCH_DELTADNA_FATAL_PARAM        "exceptionFatal"
+#macro  SNITCH_DELTADNA_STACKTRACE_PARAM   "exceptionStacktrace"

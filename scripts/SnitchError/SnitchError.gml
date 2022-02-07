@@ -349,19 +349,21 @@ function __SnitchClassError(_message) constructor
     
     static __SendDeltaDNA = function()
     {
+        var _eventParams = {};
+        _eventParams[$ SNITCH_DELTADNA_MESSAGE_PARAM    ] = __message;
+        _eventParams[$ SNITCH_DELTADNA_LONGMESSAGE_PARAM] = is_string(__longMessage)? __longMessage : __message;
+        _eventParams[$ SNITCH_DELTADNA_FATAL_PARAM      ] = __fatal;
+        _eventParams[$ SNITCH_DELTADNA_STACKTRACE_PARAM ] = is_array(__callstack)? string(__callstack[0]) : "unknown";
+        
         __payload = {
-            eventName: __message,
-            userID: global.__snitchDeltaDNASessionID, //Delibterately chosen so that players can't be tracked across sessions
+            eventName: SNITCH_DELTADNA_EVENT_NAME,
+            userID: global.__snitchDeltaDNASessionID, //Deliberately chosen so that players can't be tracked across sessions
             sessionID: global.__snitchDeltaDNASessionID,
-            //eventTimestamp: //TODO
             eventUUID: __uuid,
-            eventParams: {
-                fatal: __fatal,
-            }
+            eventParams: _eventParams,
         };
         
-        if (__longMessage != undefined) __payload.eventParams.longMessage = __longMessage;
-        if (is_array(__callstack)) __payload.eventParams.stacktrace = __callstack;
+        show_debug_message(json_stringify(__payload));
         
         //Make a new request struct
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
