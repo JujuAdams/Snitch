@@ -463,29 +463,6 @@ function __SnitchMessageString(_startIndex)
 
 function __SnitchProcessRawCallstack(_rawCallstack)
 {
-    switch(SNITCH_INTEGRATION_MODE)
-    {
-        case 1: //Google Analytics
-        case 2: //sentry.io
-            var _lineNumberField = "lineno";
-            var _functionField   = "function";
-            var _moduleField     = "module";
-        break;
-        
-        case 3: //GameAnalytics
-        case 5: //DeltaDNA
-            var _lineNumberField = "lineNumber";
-            var _functionField   = "function";
-            var _moduleField     = "module";
-        break;
-        
-        case 4: //Bugsnag
-            var _lineNumberField = "lineNumber";
-            var _functionField   = "method";
-            var _moduleField     = "file";
-        break;
-    }
-    
     var _callstack = [];
     
     var _i = array_length(_rawCallstack) - 1;
@@ -513,6 +490,7 @@ function __SnitchProcessRawCallstack(_rawCallstack)
         if (_linePos > 0)
         {
             var _func = string_copy(_script, 1, _linePos - 1);
+            var _module = _func;
             
             try
             {
@@ -523,29 +501,66 @@ function __SnitchProcessRawCallstack(_rawCallstack)
                 var _lineNumber = 0;
             }
             
-            var _frame = {};
             
             if (string_pos("gml_Script_", _func) == 1)
             {
+                var _isScript = true;
+                
                 _func = string_delete(_func, 1, 11);
-                _frame[$ _moduleField] = _func;
+                _module = _func
             }
             else if (string_pos("gml_Object_", _func) == 1)
             {
+                var _isScript = false;
+                
                 _func = string_delete(_func, 1, 11);
                 
                 var _pos = string_last_pos("_", _func);
                 _pos = string_last_pos_ext("_", _func, _pos - 1);
                 
-                var _module = string_delete(_func, 1, _pos);
+                _module = string_delete(_func, 1, _pos);
                 _func = string_copy(_func, 1, _pos - 1);
-                _frame[$ _moduleField] = _module;
             }
             
-            _frame[$ _functionField  ] = _func;
-            _frame[$ _lineNumberField] = _lineNumber;
-            
-            array_push(_callstack, _frame);
+            switch(SNITCH_INTEGRATION_MODE)
+            {
+                case 1: //Google Analytics
+                    var _stageString = _func;
+                    if (!_isScript) _stageString += " " + _module;
+                    
+                    var _lineNumber = " L" + string(_lineNumber);
+                    var _maxLength = 100 - 1 - string_length(_lineNumber);
+                    
+                    if (string_length(_stageString) > _maxLength)
+                    {
+                        _maxLength -= 1;
+                        _stageString = string_copy(_stageString, 1, floor(_maxLength/2)) + "…" + string_copy(_stageString, string_length(_stageString) + 1 - floor(_maxLength/2), ceil(_maxLength/2));
+                    }
+                    
+                    array_push(_callstack, _stageString + _lineNumber);
+                break;
+                
+                case 3: //GameAnalytics
+                case 5: //DeltaDNA
+                    array_push(_callstack, _func + (_isScript? "" : (" " + _module)) + " L" + string(_lineNumber));
+                break;
+                
+                case 2: //sentry.io
+                    var _frame = {};
+                    _frame.module        = _module;
+                    _frame[$ "function"] = _func;
+                    _frame.lineno        = _lineNumber;
+                    array_push(_callstack, _frame);
+                break;
+                
+                case 4: //Bugsnag
+                    var _frame = {};
+                    _frame.file       = _module;
+                    _frame.method     = _func;
+                    _frame.lineNumber = _lineNumber;
+                    array_push(_callstack, _frame);
+                break;
+            }
         }
         
         --_i;

@@ -158,28 +158,15 @@ function __SnitchClassError(_message) constructor
         };
         
         //Add the crash location if we have a callstack to work with
+        //We have very limited space so we can only send the first callstack location
         if (is_array(__callstack))
         {
-            var _callstackStage = __callstack[array_length(__callstack)-1];
-            
-            var _stageString = _callstackStage[$ "function"];
-            if (_stageString != _callstackStage.module) _stageString += " " + _callstackStage.module;
-            
-            var _lineNumber = " L" + string(_callstackStage.lineno);
-            var _maxLength = 100 - 1 - string_length(_lineNumber);
-            
-            if (string_length(_stageString) > _maxLength)
-            {
-                _maxLength -= 1;
-                _stageString = string_copy(_stageString, 1, floor(_maxLength/2)) + "…" + string_copy(_stageString, string_length(_stageString) + 1 - floor(_maxLength/2), ceil(_maxLength/2));
-            }
-            
-            _paramsStruct.location = _stageString + _lineNumber;
+            _paramsStruct.location = __callstack[array_length(__callstack)-1];
         }
         
         with(__payload) //TODO - Optimize by building this string manually without needing to allocate a struct that is then immediately JSONified
         {
-            client_id            = global.__snitchGoogleAnalyticsClientID;
+            client_id            = global.__snitchClientID;
             //TODO - Add user_properties
             non_personalized_ads = true;
             timestamp_micros     = floor(1000000*SnitchConvertToUnixTime(date_current_datetime()));
@@ -245,26 +232,10 @@ function __SnitchClassError(_message) constructor
             
             //Pack the error data in such a way that sentry.io will understand it
             exception = { values: [_exceptionData] };
-            
-            //Also make sure we don't have any non-exception data lingering
-            variable_struct_remove(self, "sentry.interfaces.Message");
-            variable_struct_remove(self, "stacktrace");
         }
         
         //Make a new request struct
         __request = new __SnitchClassRequest(__uuid, json_stringify(_payload));
-        
-        //Clean up our payload
-        //TODO - Do we need to do this?
-        with(_payload)
-        {
-            variable_struct_remove(self, "event_id");
-            variable_struct_remove(self, "timestamp");
-            variable_struct_remove(self, "level");
-            variable_struct_remove(self, "stacktrace");
-            variable_struct_remove(self, "sentry.interfaces.Message");
-            variable_struct_remove(self, "exception");
-        }
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 2) && SnitchIntegrationGet())
@@ -282,13 +253,13 @@ function __SnitchClassError(_message) constructor
             {
                 device: "unknown",
                 v: int64(2),
-                user_id: global.__snitchGameAnalyticsSessionID,
-                client_ts: int64(0),
+                user_id: global.__snitchSessionID,
+                client_ts: floor(1000*SnitchConvertToUnixTime(date_current_datetime())),
                 sdk_version: "rest api v2",
                 os_version: "windows 10",
                 manufacturer: "unknown",
                 platform: "windows",
-                session_id: global.__snitchGameAnalyticsSessionID,
+                session_id: global.__snitchSessionID,
                 session_num: int64(1),
                 limit_ad_tracking: true,
                 category: "error",
@@ -357,8 +328,8 @@ function __SnitchClassError(_message) constructor
         
         __payload = {
             eventName: SNITCH_DELTADNA_EVENT_NAME,
-            userID: global.__snitchDeltaDNASessionID, //Deliberately chosen so that players can't be tracked across sessions
-            sessionID: global.__snitchDeltaDNASessionID,
+            userID: global.__snitchSessionID, //Deliberately chosen so that players can't be tracked across sessions
+            sessionID: global.__snitchSessionID,
             eventUUID: __uuid,
             eventParams: _eventParams,
         };
