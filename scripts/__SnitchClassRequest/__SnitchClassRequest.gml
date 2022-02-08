@@ -154,7 +154,7 @@ function __SnitchGoogleAnalyticsHTTPRequest(_request)
     //Set up the header...
     global.__snitchHTTPHeaderMap[? "Content-Type"] = "application/json";
     
-    _request.__Send(global.__snitchGoogleAnalyticsEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    _request.__Send(global.__snitchEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
@@ -167,7 +167,7 @@ function __SnitchSentryHTTPRequest(_request)
     
     //And fire off the request!
     //Good luck little packet
-    _request.__Send(global.__snitchSentryEndpoint, "POST", global.__snitchHTTPHeaderMap, true);
+    _request.__Send(global.__snitchEndpoint, "POST", global.__snitchHTTPHeaderMap, true);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
@@ -197,7 +197,7 @@ function __SnitchGameAnalyticsHTTPRequest(_request)
     global.__snitchHTTPHeaderMap[? "Authorization"] = _authHash;
     global.__snitchHTTPHeaderMap[? "Content-Type" ] = "application/json";
     
-    _request.__Send(global.__snitchGameAnalyticsEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    _request.__Send(global.__snitchEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
     
     ds_map_clear(global.__snitchHTTPHeaderMap);
 }
@@ -219,7 +219,7 @@ function __SnitchDeltaDNAHTTPRequest(_request)
     //Set up the header...
     global.__snitchHTTPHeaderMap[? "Content-Type"] = "application/json";
     
-    var _url = global.__snitchDeltaDNAEndpoint;
+    var _url = global.__snitchEndpoint;
     if (SNITCH_DELTADNA_SECRET_KEY != "") _url += md5_string_unicode(_request.content + SNITCH_DELTADNA_SECRET_KEY);
     _request.__Send(_url, "POST", global.__snitchHTTPHeaderMap, false);
     

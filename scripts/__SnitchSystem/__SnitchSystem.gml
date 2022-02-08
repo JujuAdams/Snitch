@@ -20,6 +20,7 @@
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
+#macro __SNITCH_DEBUG               (debug_mode && true)
 
 
 
@@ -299,14 +300,14 @@ function __SnitchInit()
     {
         //Google Analytics
         case 1:
-            global.__snitchGoogleAnalyticsClientID = SnitchGenerateUUID4String(true);
-            global.__snitchGoogleAnalyticsEndpoint = "https://www.google-analytics.com/mp/collect?measurement_id=" + SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID + "&api_secret=" + SNITCH_GOOGLE_ANALYTICS_API_SECRET;
+            global.__snitchClientID = SnitchGenerateUUID4String(true);
+            global.__snitchEndpoint = "https://www.google-analytics.com/mp/collect?measurement_id=" + SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID + "&api_secret=" + SNITCH_GOOGLE_ANALYTICS_API_SECRET;
             
-            if (debug_mode)
+            if (__SNITCH_DEBUG)
             {
                 __SnitchTrace("Google Analytics measurement ID = \"", SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID, "\"");
                 __SnitchTrace("Google Analytics API secret = \"", SNITCH_GOOGLE_ANALYTICS_API_SECRET, "\"");
-                __SnitchTrace("Google Analytics endpoint = \"", global.__snitchGoogleAnalyticsEndpoint, "\"");
+                __SnitchTrace("Google Analytics endpoint = \"", global.__snitchEndpoint, "\"");
             }
         break;
         
@@ -332,44 +333,44 @@ function __SnitchInit()
             var _DSNProject = string_copy(_DSN, _slashPosition + 1, string_length(_DSN) - _slashPosition);
             if (_DSNProject == "") __SnitchError("No project found in DSN string");
             
-            global.__snitchSentryEndpoint = _protocol + "://" + _DSNHostPath + "/api/" + _DSNProject + "/store/";
+            global.__snitchEndpoint = _protocol + "://" + _DSNHostPath + "/api/" + _DSNProject + "/store/";
             
             //Build an auth string for later HTTP requests
             //We fill in the timestamp later when sending the request
             global.__snitchSentryAuthString = "Sentry sentry_version=7, sentry_client=Snitch/" + string(SNITCH_VERSION) + ", sentry_key=" + global.__snitchSentryPublicKey + ", sentry_timestamp=";
             
-            if (debug_mode)
+            if (__SNITCH_DEBUG)
             {
                 __SnitchTrace("Sentry public key = \"", global.__snitchSentryPublicKey, "\"");
-                __SnitchTrace("Sentry endpoint = \"", global.__snitchSentryEndpoint, "\"");
+                __SnitchTrace("Sentry endpoint = \"", global.__snitchEndpoint, "\"");
             }
         break;
         
         //GameAnalytics
         case 3:
-            global.__snitchGameAnalyticsSessionID = SnitchGenerateUUID4String(true);
+            global.__snitchSessionID = SnitchGenerateUUID4String(true);
             
             if ((SNITCH_GAMEANALYTICS_GAME_KEY == "5c6bcb5402204249437fb5a7a80a4959") && (SNITCH_GAMEANALYTICS_SECRET_KEY == "16813a12f718bc5c620f56944e1abc3ea13ccbac"))
             {
                 __SnitchTrace("Using GameAnalytics' sandbox endpoint");
-                global.__snitchGameAnalyticsEndpoint = "https://sandbox-api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
+                global.__snitchEndpoint = "https://sandbox-api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
             }
             else
             {
-                global.__snitchGameAnalyticsEndpoint = "https://api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
+                global.__snitchEndpoint = "https://api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
             }
             
-            if (debug_mode)
+            if (__SNITCH_DEBUG)
             {
-                __SnitchTrace("GameAnalytics session ID = \"", global.__snitchGameAnalyticsSessionID, "\"");
-                __SnitchTrace("GameAnalytics endpoint = \"", global.__snitchGameAnalyticsEndpoint, "\"");
+                __SnitchTrace("GameAnalytics session ID = \"", global.__snitchSessionID, "\"");
+                __SnitchTrace("GameAnalytics endpoint = \"", global.__snitchEndpoint, "\"");
                 __SnitchTrace("GameAnalytics secret key = \"", SNITCH_GAMEANALYTICS_SECRET_KEY, "\"");
             }
         break;
         
         //Bugsnag
         case 4:
-            if (debug_mode)
+            if (__SNITCH_DEBUG)
             {
                 __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_API_KEY, "\"");
             }
@@ -377,16 +378,16 @@ function __SnitchInit()
         
         //DeltaDNA
         case 5:
-            global.__snitchDeltaDNASessionID = SnitchGenerateUUID4String(true);
+            global.__snitchSessionID = SnitchGenerateUUID4String(true);
             
             //The endpoint is modified in __SnitchDeltaDNAHTTPRequest()
-            global.__snitchDeltaDNAEndpoint = SNITCH_DELTADNA_COLLECT_URL + "/" + SNITCH_DELTADNA_ENVIRONMENT_KEY;
-            if (SNITCH_DELTADNA_SECRET_KEY != "") global.__snitchDeltaDNAEndpoint += "/hash/";
+            global.__snitchEndpoint = SNITCH_DELTADNA_COLLECT_URL + "/" + SNITCH_DELTADNA_ENVIRONMENT_KEY;
+            if (SNITCH_DELTADNA_SECRET_KEY != "") global.__snitchEndpoint += "/hash/";
             
-            if (debug_mode)
+            if (__SNITCH_DEBUG)
             {
-                __SnitchTrace("DeltaDNA session ID = \"", global.__snitchDeltaDNASessionID, "\"");
-                __SnitchTrace("DeltaDNA endpoint = \"", global.__snitchDeltaDNAEndpoint, "\"");
+                __SnitchTrace("DeltaDNA session ID = \"", global.__snitchSessionID, "\"");
+                __SnitchTrace("DeltaDNA endpoint = \"", global.__snitchEndpoint, "\"");
                 __SnitchTrace("DeltaDNA secret key = \"", SNITCH_DELTADNA_SECRET_KEY, "\"");
             }
         break;
