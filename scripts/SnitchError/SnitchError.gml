@@ -6,7 +6,7 @@
 /// 
 /// Event structs have a number of methods that can be chained together in a "fluent interface" i.e.:
 /// 
-///   SnitchError("Player is outside the level?!").Callstack().Send();
+///   SnitchError("Player is outside the level?!").SendAll();
 /// 
 /// Events won't do anything unless a "send method" is called. Send methods for events include:
 /// 
@@ -17,15 +17,6 @@
 ///                        If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
 ///   .SendAll()         - Sends the event to all of the above
 ///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendUDP()
-/// 
-/// Event methods are used to set properties for the event, such as message level or callstack logging
-///     
-/// .LongMessage(string)
-///     Sets the event's "longMessage" property. This is used to add extra context
-///     
-/// .Callstack([callstackArray], [trimCount])
-///     Sets the event's callstack. If no arguments are provid.Callstacked then the callstack is generated from where this function was called
-///     The optional [trimCount] argument allows for the given number of callstack levels to be removed
 
 function SnitchError()
 {
@@ -44,19 +35,6 @@ function __SnitchClassError(_message) constructor
     __payload           = undefined;
     __request           = undefined;
     __uuid              = SnitchGenerateUUID4String();
-    
-    static LongMessage = function(_string)
-    {
-        var _i = 0;
-        longMessage = "";
-        repeat(argument_count)
-        {
-            longMessage += string(argument[_i]);
-            ++_i;
-        }
-        
-        return self;
-    }
     
     static __GuaranteeCallstack = function()
     {
