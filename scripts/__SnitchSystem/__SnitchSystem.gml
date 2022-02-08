@@ -540,17 +540,17 @@ function __SnitchProcessRawCallstack(_rawCallstack)
                     array_push(_callstack, _stageString + _lineNumber);
                 break;
                 
-                case 3: //GameAnalytics
-                case 5: //DeltaDNA
-                    array_push(_callstack, _func + (_isScript? "" : (" " + _module)) + " L" + string(_lineNumber));
-                break;
-                
                 case 2: //sentry.io
                     var _frame = {};
                     _frame.module        = _module;
                     _frame[$ "function"] = _func;
                     _frame.lineno        = _lineNumber;
                     array_push(_callstack, _frame);
+                break;
+                
+                case 3: //GameAnalytics
+                case 5: //DeltaDNA
+                    array_push(_callstack, _func + (_isScript? "" : (" " + _module)) + " L" + string(_lineNumber));
                 break;
                 
                 case 4: //Bugsnag

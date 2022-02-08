@@ -37,7 +37,3 @@
 //   N.B. Use \r rather than \n to work around a GameMaker bug in show_question() (runtime GMS2.3.2.426, 2021-05-05)
 #macro  SNITCH_CRASH_CLIPBOARD_REQUEST_MESSAGE  ("Oh no! The game has crashed. Please reboot the game and try again.\r\r\rThe error was:\r\"" + string(_struct.message) + "\"\r" + string(_struct.stacktrace) + "\r\r\rWould you like to copy the error message to your clipboard?")
 #macro  SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE   ("The error message has been copied to your clipboard.")
-
-//Whether to send a crash event to a remote monitoring integration
-//Normally you'll want to let Snitch handle the error reporting for you, but occasionally you might want to take control of this yourself
-#macro  SNITCH_CRASH_SEND_EVENT_TO_INTEGRATION  true

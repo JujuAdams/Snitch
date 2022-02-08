@@ -1,8 +1,7 @@
 function __SnitchExceptionHandler(_struct)
 {
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    var _event = (new __SnitchClassError()).__Exception(_struct).SendLocal();
-    if (SNITCH_CRASH_SEND_EVENT_TO_INTEGRATION) _event.SendIntegration();
+    var _event = SnitchException(_struct).SendAll();
     __SnitchTrace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     
     

@@ -1,14 +1,22 @@
-/// Creates a new Snitch event that can be formatted and logged/broadcast/transmitted in multiple ways
-/// If an API integration is enabled then the event will be sent to the remote logging server when
-/// .SendIntegration() or .SendAll() is called
+/// Creates a new Snitch error that can be logged/broadcast/transmitted in multiple ways
+///
+///   N.B. Errors won't do anything unless a method is called!
 /// 
+/// The error message itself is built from concatenating values passed into the SnitchError()
+/// function call. For example:
 /// 
+///   SnitchError("Player has ", itemCount, " but this doesn't match ", cachedItemCount).SendAll();
 /// 
-/// Event structs have a number of methods that can be chained together in a "fluent interface" i.e.:
+/// This will concatenate those strings and numbers together, then send the error message to
+/// all the services that have been configured and enabled.
 /// 
-///   SnitchError("Player is outside the level?!").SendAll();
+/// Snitch error structs have a number of methods that control how the error struct should be
+/// shared with other services. These methods can be chained together. For example, the following
+/// code will output an error message to the console and to a log file but nothing else:
 /// 
-/// Events won't do anything unless a "send method" is called. Send methods for events include:
+///   SnitchError("Player is outside the level?!").SendConsole().SendLogFile();
+/// 
+/// Below is all the methods that are available. Make sure you call at least one of these!
 /// 
 ///   .SendConsole()     - Outputs the event to the debug console (i.e. calls show_debug_message())
 ///   .SendLogFile()     - Writes the event to the log file, if enabled
@@ -17,6 +25,9 @@
 ///                        If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
 ///   .SendAll()         - Sends the event to all of the above
 ///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendUDP()
+/// 
+/// @param value
+/// @param [value]...
 
 function SnitchError()
 {
@@ -311,8 +322,6 @@ function __SnitchClassError(_message) constructor
             eventUUID: __uuid,
             eventParams: _eventParams,
         };
-        
-        show_debug_message(json_stringify(__payload));
         
         //Make a new request struct
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
