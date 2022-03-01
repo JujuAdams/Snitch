@@ -8,10 +8,19 @@
 /// @param value
 /// @param [value]...
 
+
+
 function Snitch()
 {
-    SnitchMessageStartArgument = 0;
-    SnitchSendStringToLogFile(SnitchMessage);
-    SnitchSendStringToUDP(SnitchMessage);
-    show_debug_message(SnitchMessage);
+    var _string = "";
+    var _i = 0;
+    repeat(argument_count)
+    {
+        _string += string(argument[_i]);
+        ++_i;
+    }
+    
+    SnitchSendStringToLogFile(_string);
+    SnitchSendStringToUDP(_string);
+    show_debug_message(_string);
 }

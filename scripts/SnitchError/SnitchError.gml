@@ -31,8 +31,15 @@
 
 function SnitchError()
 {
-    SnitchMessageStartArgument = 0;
-    return new __SnitchClassError(SnitchMessage);
+    var _string = "";
+    var _i = 0;
+    repeat(argument_count)
+    {
+        _string += string(argument[_i]);
+        ++_i;
+    }
+    
+    return new __SnitchClassError(_string);
 }
 
 function __SnitchClassError(_message) constructor
