@@ -11,6 +11,7 @@ function SnitchSendStringToUDP(_string)
     if (SnitchUDPGet())
     {
         //https://logging.apache.org/log4j/2.x/manual/layouts.html
+        //https://logging.apache.org/log4j/2.x/log4j-1.2-api/apidocs/src-html/org/apache/log4j/layout/Log4j1XmlLayout.html
         
         var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
         buffer_write(_buffer, buffer_text, _string);
