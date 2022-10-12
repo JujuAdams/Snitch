@@ -1,6 +1,3 @@
-//Keep Snitch up to date
-SnitchEventHook();
-
 //Simple message logging
 if (keyboard_check_pressed(ord("1"))) Snitch("Pressed the 1 key");
 

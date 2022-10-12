@@ -2,7 +2,6 @@
 // Google Analytics - https://developers.google.com/analytics/devguides/collection/protocol/v1/
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 // sentry.io - https://develop.sentry.dev/sdk/overview/    https://develop.sentry.dev/sdk/event-payloads/https://develop.sentry.dev/sdk/event-payloads/
-// Yandex AppMetrica - https://appmetrica.yandex.com/docs/mobile-api/post/post-import-events.html
 
 //Redirect exception_unhandled_handler() to our own internal function
 //The bound exception handler will still be executed
@@ -32,10 +31,18 @@ function __SnitchInit()
     //Don't initialize twice
     if (variable_global_exists("__snitchLogToFileEnabled")) return;
     
+    
+    
     global.__snitchGMExceptionHandler = undefined;
     
+    global.__snitchCrashCapture       = false;
     global.__snitchLogToFileEnabled   = false;
     global.__snitchIntegrationEnabled = false;
+    global.__snitchSteamState         = undefined;
+    
+    //Determine how the application is being run and whether we should capture crashes
+    global.__snitchRunningFromIDE = (GM_build_type == "run");
+    global.__snitchCrashCapture   = global.__snitchRunningFromIDE? SNITCH_CRASH_CAPTURE_FROM_IDE : SNITCH_CRASH_CAPTURE_COMPILED;
     
     //Log files
     global.__snitchWroteLogFileHeader = false;
@@ -179,8 +186,9 @@ function __SnitchInit()
     
     if (SNITCH_LOG_FILE_ON_BOOT) SnitchLogFileSet(true);
     __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
+    __SnitchTrace("Running ", global.__snitchRunningFromIDE? "from IDE" : "compiled executable", ", crash capture turned ", global.__snitchCrashCapture? "on" : "off");
     
-    if (SNITCH_CRASH_CAPTURE)
+    if (global.__snitchCrashCapture)
     {
         __exception_unhandled_handler__(__SnitchExceptionHandler);
     }
@@ -389,11 +397,75 @@ function __SnitchInit()
     }
     
     if ((SNITCH_INTEGRATION_MODE > 0) && SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
+    
+    //Set up a per-frame request handler
+    time_source_start(time_source_create(time_source_global, 1, time_source_units_frames, function()
+    {
+        if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
+        {
+            if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)
+            {
+                var _backupCount = array_length(global.__snitchRequestBackupOrder);
+                if (_backupCount > 0)
+                {
+                    //Step round the request backup array
+                    global.__snitchRequestBackupResendIndex = (global.__snitchRequestBackupResendIndex + 1) mod _backupCount;
+                    
+                    //Pull out a backup...
+                    var _uuid = global.__snitchRequestBackupOrder[global.__snitchRequestBackupResendIndex];
+                    with(global.__snitchRequestBackups[$ _uuid])
+                    {
+                        //...and if we're not waiting for a response for this particular request, resend it
+                        if (asyncID < 0)
+                        {
+                            if (SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT) __SnitchTrace("Trying to resend event ", _uuid);
+                            
+                            switch(SNITCH_INTEGRATION_MODE)
+                            {
+                                case 1: __SnitchGoogleAnalyticsHTTPRequest(self); break;
+                                case 2: __SnitchSentryHTTPRequest(self);          break;
+                                case 3: __SnitchGameAnalyticsHTTPRequest(self);   break;
+                                case 4: __SnitchBugsnagHTTPRequest(self);         break;
+                                case 5: __SnitchDeltaDNAHTTPRequest(self);        break;
+                            }
+                            
+                            global.__snitchRequestBackupResendTime = current_time;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT)
+            {
+                global.__snitchRequestBackupFailures = 0;
+                __SnitchTrace("Retrying backup resending");
+            }
+        }
+    }, [], -1));
 }
 
 function __SnitchCrashSetGMHandler(_function)
 {
     global.__snitchGMExceptionHandler = _function;
+}
+
+function __SnitchIntegrationName()
+{
+    switch(SNITCH_INTEGRATION_MODE)
+    {
+        case 0: return "None";             break;
+        case 1: return "Google Analytics"; break;
+        case 2: return "sentry.io";        break;
+        case 3: return "GameAnalytics";    break;
+        case 4: return "Bugsnag";          break;
+        case 5: return "DeltaDNA";         break;
+        
+        default:
+            __SnitchError("SNITCH_INTEGRATION_MODE value ", SNITCH_INTEGRATION_MODE, " unsupported");
+        break;
+    }
 }
 
 function __SnitchTrace()

@@ -56,5 +56,5 @@ function __SnitchSentrySharedEventPayloadUpdate()
     contexts.os.network_connected = bool(os_is_network_connected(false));
     
     //Update whether we're hooked up to Steam successfully
-    contexts.app.steam = bool(steam_initialised());
+    contexts.app.steam = bool(SnitchSteamInitializedSafe());
 }

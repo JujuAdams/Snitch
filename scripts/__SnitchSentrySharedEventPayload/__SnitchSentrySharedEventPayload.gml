@@ -80,20 +80,20 @@ function __SnitchSentrySharedEventPayload()
             
             //What version of GameMaker are you using?
             runtime: {
-                name: "GameMaker Studio",
+                name: "GameMaker",
                 version: GM_runtime_version,
             },
             
             app: {
-                app_start_time: SnitchFormatTimestamp(date_current_datetime()), //This has to be formatted as a string unfortunately <_<
-                config:         os_get_config(),
-                yyc:            bool(code_is_compiled()),
-                app_name:       game_display_name,
-                app_version:    GM_version,
-                debug:          bool(debug_mode),
-                app_build:      SnitchFormatTimestamp(GM_build_date),
-                parameters:     SNITCH_BOOT_PARAMETERS,
-                steam:          bool(steam_initialised()), //--- Updated via __SnitchSentrySharedEventPayloadUpdate()
+                app_start_time:   SnitchFormatTimestamp(date_current_datetime()), //This has to be formatted as a string unfortunately <_<
+                config:           os_get_config(),
+                yyc:              bool(code_is_compiled()),
+                app_name:         game_display_name,
+                app_version:      GM_version,
+                running_from_ide: bool(global.__snitchRunningFromIDE),
+                app_build:        SnitchFormatTimestamp(GM_build_date),
+                parameters:       SNITCH_BOOT_PARAMETERS,
+                steam:            bool(SnitchSteamInitializedSafe()), //--- Updated via __SnitchSentrySharedEventPayloadUpdate()
             },
         }
     }

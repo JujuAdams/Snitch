@@ -25,7 +25,7 @@ if (is_struct(crashDump))
         _string += "line = " + string(crashDump.line) + "\n\n";
         _string += "stacktrace = " + string(crashDump.stacktrace) + "\n\n";
     }
-    catch(_)
+    catch(_error)
     {
         _string += "(Crash data in unexpected format)";
     }

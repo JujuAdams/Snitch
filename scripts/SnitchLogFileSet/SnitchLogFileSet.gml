@@ -50,11 +50,8 @@ function SnitchLogFileSet(_state)
                     buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
                     buffer_write(global.__snitchLogFileBuffer, buffer_text, "config = " + string(os_get_config()));
                     buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
-                    if (debug_mode)
-                    {
-                        buffer_write(global.__snitchLogFileBuffer, buffer_text, "debug mode = " + string(debug_mode));
-                        buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
-                    }
+                    buffer_write(global.__snitchLogFileBuffer, buffer_text, "running from ide = " + string(global.__snitchRunningFromIDE));
+                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
                     buffer_write(global.__snitchLogFileBuffer, buffer_text, "yyc = " + string(code_is_compiled()));
                     buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
                     buffer_write(global.__snitchLogFileBuffer, buffer_text, "build date = " + date_datetime_string(GM_build_date));
@@ -82,13 +79,10 @@ function SnitchLogFileSet(_state)
                     buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
                     buffer_save_ext(global.__snitchLogFileBuffer, global.__snitchZerothLogFile, 0, buffer_tell(global.__snitchLogFileBuffer));
                     
-                    if (debug_mode)
-                    {
-                        __SnitchTrace("Opened log file (", game_save_id, global.__snitchZerothLogFile, ")");
-                    }
-                    
-                    __SnitchTrace("Logging turned on");
+                    __SnitchTrace("Opened log file (", game_save_id, global.__snitchZerothLogFile, ")");
                 }
+                
+                __SnitchTrace("Logging turned on");
             }
         }
         else
