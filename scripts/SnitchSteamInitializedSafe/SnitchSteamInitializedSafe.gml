@@ -3,23 +3,24 @@
 
 function SnitchSteamInitializedSafe()
 {
-    if (global.__snitchSteamState == undefined)
+    static _state = undefined;
+    if (_state == undefined)
     {
         try
         {
             var _initialized = steam_initialised();
+            _state = true;
             __SnitchTrace("Steam API in use");
-            global.__snitchSteamState = true;
             return _initialized;
         }
         catch(_error)
         {
-            global.__snitchSteamState = false;
+           _state = false;
             __SnitchTrace("Steam API unused");
             return false;
         }
     }
-    else if (global.__snitchSteamState)
+    else if (_state)
     {
         return steam_initialised();
     }

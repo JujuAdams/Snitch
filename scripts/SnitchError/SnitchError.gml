@@ -106,14 +106,14 @@ function __SnitchClassError(_message) constructor
     static SendLogFile = function()
     {
         __GuaranteeCallstack();
-        SnitchSendStringToLogFile(__GetString()); //FIXME
+        SnitchSendStringToLogFile(__GetString());
         return self;
     }
     
     static SendUDP = function()
     {
         __GuaranteeCallstack();
-        SnitchSendStringToUDP(__GetString()); //FIXME
+        SnitchSendStringToUDP(__GetString()); //FIXME - Implement some sort of formatting for UDP packets (LogCat?)
         return self;
     }
     

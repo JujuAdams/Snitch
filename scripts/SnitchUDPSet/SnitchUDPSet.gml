@@ -15,7 +15,15 @@ function SnitchUDPSet(_state, _port = SNITCH_UDP_DEFAULT_PORT, _ip = SNITCH_UDP_
                 global.__snitchUDPEnabled = true;
                 global.__snitchUDPPort    = _port;
                 global.__snitchUDPIP      = _ip;
-                __SnitchTrace("UDP broadcast turned on. Using port ", _port, " and targetting IP address ", _ip);
+                
+                if (global.__snitchUDPIP == undefined)
+                {
+                    __SnitchTrace("UDP broadcast turned on, using port ", _port, " and broadcasting over LAN");
+                }
+                else
+                {
+                    __SnitchTrace("UDP broadcast turned on. using port ", _port, " and targetting IP address ", _ip);
+                }
             }
             else
             {
@@ -32,7 +40,17 @@ function SnitchUDPSet(_state, _port = SNITCH_UDP_DEFAULT_PORT, _ip = SNITCH_UDP_
     {
         if ((_port != global.__snitchUDPPort) || (_ip != global.__snitchUDPIP))
         {
-            //TODO - Change port/IP as necessary
+            global.__snitchUDPPort    = _port;
+            global.__snitchUDPIP      = _ip;
+            
+            if (global.__snitchUDPIP == undefined)
+            {
+                __SnitchTrace("UDP connection details changed: using port ", _port, " and broadcasting over LAN");
+            }
+            else
+            {
+                __SnitchTrace("UDP connection details changed: using port ", _port, " and IP address ", _ip);
+            }
         }
     }
 }

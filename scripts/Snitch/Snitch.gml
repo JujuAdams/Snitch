@@ -8,11 +8,10 @@
 /// @param value
 /// @param [value]...
 
-
-
 function Snitch()
 {
     var _string = "";
+    
     var _i = 0;
     repeat(argument_count)
     {
@@ -21,6 +20,6 @@ function Snitch()
     }
     
     SnitchSendStringToLogFile(_string);
-    SnitchSendStringToUDP(_string);
+    SnitchSendStringToUDP(_string); //FIXME - Format this string for consumption (LogCat?)
     show_debug_message(_string);
 }

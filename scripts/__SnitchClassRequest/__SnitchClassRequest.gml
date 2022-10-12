@@ -144,9 +144,10 @@ function __SnitchRequestBackupFilename(_uuid)
 
 function __SnitchRequestBackupSaveManifest()
 {
-    buffer_seek(global.__snitchRequestBackupManifestBuffer, buffer_seek_start, 0);
-    buffer_write(global.__snitchRequestBackupManifestBuffer, buffer_string, json_stringify(global.__snitchRequestBackupOrder));
-    buffer_save_ext(global.__snitchRequestBackupManifestBuffer, SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME, 0, buffer_tell(global.__snitchRequestBackupManifestBuffer));
+    static _buffer = buffer_create(1024, buffer_grow, 1);
+    buffer_seek(_buffer, buffer_seek_start, 0);
+    buffer_write(_buffer, buffer_text, json_stringify(_buffer));
+    buffer_save_ext(_buffer, SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME, 0, buffer_tell(_buffer));
 }
 
 function __SnitchGoogleAnalyticsHTTPRequest(_request)

@@ -19,7 +19,7 @@
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
-#macro __SNITCH_DEBUG               (debug_mode && true)
+#macro __SNITCH_DEBUG               (global.__snitchRunningFromIDE && true)
 
 
 
@@ -28,8 +28,10 @@ __SnitchInit();
 
 function __SnitchInit()
 {
-    //Don't initialize twice
-    if (variable_global_exists("__snitchLogToFileEnabled")) return;
+    //Don't initialize twices
+    static _initialized = false;
+    if (_initialized) return;
+    _initialized = true;
     
     
     
@@ -38,7 +40,6 @@ function __SnitchInit()
     global.__snitchCrashCapture       = false;
     global.__snitchLogToFileEnabled   = false;
     global.__snitchIntegrationEnabled = false;
-    global.__snitchSteamState         = undefined;
     
     //Determine how the application is being run and whether we should capture crashes
     global.__snitchRunningFromIDE = (GM_build_type == "run");
@@ -50,14 +51,13 @@ function __SnitchInit()
     global.__snitchLogFileBuffer      = buffer_create(SNITCH_LOG_FILE_BUFFER_START_SIZE, buffer_grow, 1);
     
     //HTTP-related tracking
-    global.__snitchHTTPHeaderMap               = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
-    global.__snitchHTTPRequests                = {};
-    global.__snitchRequestBackups              = {};
-    global.__snitchRequestBackupOrder          = [];
-    global.__snitchRequestBackupManifestBuffer = buffer_create(512, buffer_grow, 1);
-    global.__snitchRequestBackupResendTime     = -SNITCH_REQUEST_BACKUP_RESEND_DELAY; //Try to send a request backup immediately on boot
-    global.__snitchRequestBackupResendIndex    = 0;
-    global.__snitchRequestBackupFailures       = 0;
+    global.__snitchHTTPHeaderMap            = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
+    global.__snitchHTTPRequests             = {};
+    global.__snitchRequestBackups           = {};
+    global.__snitchRequestBackupOrder       = [];
+    global.__snitchRequestBackupResendTime  = -SNITCH_REQUEST_BACKUP_RESEND_DELAY; //Try to send a request backup immediately on boot
+    global.__snitchRequestBackupResendIndex = 0;
+    global.__snitchRequestBackupFailures    = 0;
     
     
     

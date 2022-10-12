@@ -2,8 +2,6 @@
 /// 
 /// @param string  String to broadcast over UDP
 
-global.__snitchUDPSocket = network_create_socket(network_socket_udp);
-
 function SnitchSendStringToUDP(_string)
 {
     __SnitchInit();
@@ -13,18 +11,18 @@ function SnitchSendStringToUDP(_string)
         //https://logging.apache.org/log4j/2.x/manual/layouts.html
         //https://logging.apache.org/log4j/2.x/log4j-1.2-api/apidocs/src-html/org/apache/log4j/layout/Log4j1XmlLayout.html
         
-        var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
+        static _socket = network_create_socket(network_socket_udp);
+        static _buffer = buffer_create(1024, buffer_grow, 1);
+        buffer_seek(_buffer, buffer_seek_start, 0);
         buffer_write(_buffer, buffer_text, _string);
         
-        if (SNITCH_UDP_DEFAULT_IP == undefined)
+        if (global.__snitchUDPIP == undefined)
         {
-    	    network_send_broadcast(global.__snitchUDPSocket, SNITCH_UDP_DEFAULT_PORT, _buffer, buffer_get_size(_buffer));
+    	    network_send_broadcast(_socket, global.__snitchUDPPort, _buffer, buffer_tell(_buffer));
         }
         else
         {
-    	    network_send_udp_raw(global.__snitchUDPSocket, SNITCH_UDP_DEFAULT_IP, SNITCH_UDP_DEFAULT_PORT, _buffer, buffer_get_size(_buffer));
+    	    network_send_udp_raw(_socket, global.__snitchUDPIP, global.__snitchUDPPort, _buffer, buffer_tell(_buffer));
         }
-        
-    	buffer_delete(_buffer);
     }
 }
