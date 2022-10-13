@@ -36,7 +36,7 @@ function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOIN
                     global.__snitchNetworkSocket = network_create_socket_ext(_type, global.__snitchNetworkOutgoingPort);
                 }
                 
-                __SnitchTrace("Created socket ", global.__snitchNetworkSocket);
+                __SnitchTrace("Created socket ", global.__snitchNetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
             }
         }
         
