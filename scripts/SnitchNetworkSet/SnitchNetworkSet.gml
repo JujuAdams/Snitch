@@ -36,7 +36,26 @@ function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOIN
                     global.__snitchNetworkSocket = network_create_socket_ext(_type, global.__snitchNetworkOutgoingPort);
                 }
                 
-                __SnitchTrace("Created socket ", global.__snitchNetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
+                if (SNITCH_NETWORK_MODE == 2)
+                {
+                    network_set_config(network_config_connect_timeout, 2000);
+                    var _success = network_connect_raw(global.__snitchNetworkSocket, global.__snitchNetworkTargetIP ?? "127.0.0.1", global.__snitchNetworkTargetPort);
+                    if (_success < 0)
+                    {
+                        __SnitchTrace("Failed to connect to \"", global.__snitchNetworkTargetIP, "\" on port ", global.__snitchNetworkTargetPort);
+                        network_destroy(global.__snitchNetworkSocket);
+                        global.__snitchNetworkSocket = -1;
+                    }
+                }
+                
+                if (global.__snitchNetworkSocket >= 0)
+                {
+                    __SnitchTrace("Created socket ", global.__snitchNetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
+                }
+                else
+                {
+                    __SnitchTrace("Failed to create socket");
+                }
             }
         }
         

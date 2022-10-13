@@ -13,7 +13,7 @@ function SnitchSendStringToNetwork(_string)
         
         static _buffer = buffer_create(1024, buffer_grow, 1);
         buffer_seek(_buffer, buffer_seek_start, 0);
-        buffer_write(_buffer, buffer_text, _string);
+        buffer_write(_buffer, buffer_string, _string);
         
         switch(SNITCH_NETWORK_MODE)
         {
@@ -33,7 +33,7 @@ function SnitchSendStringToNetwork(_string)
             break;
             
             case 2:
-            	network_send_udp_raw(global.__snitchNetworkSocket, global.__snitchNetworkTargetIP, global.__snitchNetworkTargetPort ?? "127.0.0.1", _buffer, buffer_tell(_buffer));
+            	network_send_raw(global.__snitchNetworkSocket, _buffer, buffer_tell(_buffer));
             break;
         }
     }

@@ -201,9 +201,11 @@ function __SnitchInit()
     
     
     if (SNITCH_LOG_FILE_ON_BOOT) SnitchLogFileSet(true);
+    if (SNITCH_NETWORK_ON_BOOT) SnitchNetworkSet(true);
     __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
     __SnitchTrace("Running ", global.__snitchRunningFromIDE? "from IDE" : "compiled executable", ", crash capture turned ", global.__snitchCrashCapture? "on" : "off");
-    if (SNITCH_NETWORK_ON_BOOT) SnitchNetworkSet(true);
+    
+    
     
     if (global.__snitchCrashCapture)
     {
