@@ -19,6 +19,8 @@
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
+#macro SNITCH_RUNNING_FROM_IDE      global.__snitchRunningFromIDE
+
 #macro __SNITCH_DEBUG               (global.__snitchRunningFromIDE && true)
 
 
@@ -32,6 +34,13 @@ function __SnitchInit()
     static _initialized = false;
     if (_initialized) return;
     _initialized = true;
+    
+    if ((SNITCH_INTEGRATION_MODE != 0) && !SNITCH_INTEGRATION_WARNING_READ)
+    {
+        __SnitchError("Bug tracking integrations open up potential security risks.\n1. Never share access keys with anyone\n2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly\n3. Do your absolute best to protect the privacy of your players\n \nPlease set SNITCH_INTEGRATION_WARNING_READ to <true> to acknowledge this warning");
+        game_end();
+        return;
+    }
     
     
     
@@ -49,6 +58,13 @@ function __SnitchInit()
     global.__snitchWroteLogFileHeader = false;
     global.__snitchZerothLogFile      = string_replace(SNITCH_LOG_FILE_FILENAME, "#", "0");
     global.__snitchLogFileBuffer      = buffer_create(SNITCH_LOG_FILE_BUFFER_START_SIZE, buffer_grow, 1);
+    
+    //Network transmission
+    global.__snitchNetworkSocket       = undefined;
+    global.__snitchNetworkEnabled      = false;
+    global.__snitchNetworkOutgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOING_PORT;
+    global.__snitchNetworkTargetPort   = SNITCH_NETWORK_DEFAULT_RECEIVER_PORT;
+    global.__snitchNetworkTargetIP     = SNITCH_NETWORK_DEFAULT_RECEIVER_IP;
     
     //HTTP-related tracking
     global.__snitchHTTPHeaderMap            = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
@@ -187,6 +203,7 @@ function __SnitchInit()
     if (SNITCH_LOG_FILE_ON_BOOT) SnitchLogFileSet(true);
     __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
     __SnitchTrace("Running ", global.__snitchRunningFromIDE? "from IDE" : "compiled executable", ", crash capture turned ", global.__snitchCrashCapture? "on" : "off");
+    if (SNITCH_NETWORK_ON_BOOT) SnitchNetworkSet(true);
     
     if (global.__snitchCrashCapture)
     {
@@ -479,7 +496,7 @@ function __SnitchTrace()
     }
     
     SnitchSendStringToLogFile(_string);
-    SnitchSendStringToUDP(_string);
+    SnitchSendStringToNetwork(_string);
     show_debug_message(_string);
 }
 

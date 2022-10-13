@@ -1,5 +1,5 @@
 /// Returns whether integrations are enabled
-/// This function will always return <false> is SNITCH_UDP_PERMITTED is set to <false>
+/// This function will always return <false> is SNITCH_INTEGRATION_MODE is set to 0
 
 function SnitchIntegrationGet()
 {

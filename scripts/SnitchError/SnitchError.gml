@@ -20,11 +20,11 @@
 /// 
 ///   .SendConsole()     - Outputs the event to the debug console (i.e. calls show_debug_message())
 ///   .SendLogFile()     - Writes the event to the log file, if enabled
-///   .SendUDP()         - Broadcasts the event over UDP, if enabled
+///   .SendNetwork()     - Transmits the event over the network, if enabled
 ///   .SendIntegration() - Transmits the event over HTTP to whichever API integration is enabled (if any)
 ///                        If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
 ///   .SendAll()         - Sends the event to all of the above
-///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendUDP()
+///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendNetwork()
 /// 
 /// @param value
 /// @param [value]...
@@ -75,7 +75,7 @@ function __SnitchClassError(_message) constructor
         __GuaranteeCallstack();
         SendConsole();
         SendLogFile();
-        SendUDP();
+        SendNetwork();
         SendIntegration();
         
         return self;
@@ -86,7 +86,7 @@ function __SnitchClassError(_message) constructor
         __GuaranteeCallstack();
         SendConsole();
         SendLogFile();
-        SendUDP();
+        SendNetwork();
         
         return self;
     }
@@ -110,10 +110,10 @@ function __SnitchClassError(_message) constructor
         return self;
     }
     
-    static SendUDP = function()
+    static SendNetwork = function()
     {
         __GuaranteeCallstack();
-        SnitchSendStringToUDP(__GetString()); //FIXME - Implement some sort of formatting for UDP packets (LogCat?)
+        SnitchSendStringToNetwork(__GetString()); //FIXME - Implement some sort of formatting for packets (LogCat?)
         return self;
     }
     

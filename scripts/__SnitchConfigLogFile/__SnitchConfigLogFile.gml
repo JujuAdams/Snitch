@@ -6,7 +6,7 @@
 //Whether to boot the game with logging to file turned on or off. Logging to file can be turned on/off manually by calling SnitchLogFileSet()
 //Generally, you'll only want to set this to <true> if you're running dev/debug builds as logging messages to a file can be slow
 //See SNITCH_ALLOW_LOG_FILE_BOOT_PARAMETER below for information on toggling logging on/off for production builds
-#macro SNITCH_LOG_FILE_ON_BOOT  true
+#macro SNITCH_LOG_FILE_ON_BOOT  (SNITCH_RUNNING_FROM_IDE)
 
 //Whether to allow logging to be toggled on by using the "-log" execution parameter
 //This is useful for in-production testing so you can turn on logging without the option normally being available to the end-user

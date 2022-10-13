@@ -1,0 +1,11 @@
+SNITCH_VERSION               The version of Snitch being used
+SNITCH_DATE                  The build date for this version of Snitch
+
+SNITCH_SHARED_EVENT_PAYLOAD  A struct containing an event payload
+SNITCH_OS_NAME               Human-readable name for the current OS
+SNITCH_OS_VERSION            Human-readable version of the current OS
+SNITCH_DEVICE_NAME           Human-readable name for the device
+SNITCH_BROWSER               Human-readable browser
+SNITCH_OS_INFO               Struct containing data relating to the OS enviroment
+SNITCH_BOOT_PARAMETERS       Array of boot parameters used to start the application
+SNITCH_RUNNING_FROM_IDE      Whether the application was booted from the GameMaker IDE

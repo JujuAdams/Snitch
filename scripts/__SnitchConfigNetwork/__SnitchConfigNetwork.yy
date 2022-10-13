@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__SnitchConfigHTTPGeneral",
+  "name": "__SnitchConfigNetwork",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

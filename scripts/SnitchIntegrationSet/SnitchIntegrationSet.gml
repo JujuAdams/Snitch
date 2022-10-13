@@ -9,10 +9,13 @@ function SnitchIntegrationSet(_state)
     
     if (SnitchIntegrationGet() != _state)
     {
-        if (SNITCH_INTEGRATION_MODE > 0)
+        if (_state)
         {
-            global.__snitchIntegrationEnabled = _state;
-            __SnitchTrace(__SnitchIntegrationName(), " integration turned ", global.__snitchIntegrationEnabled? "on" : "off");
+            if (SNITCH_INTEGRATION_MODE > 0)
+            {
+                global.__snitchIntegrationEnabled = _state;
+                __SnitchTrace(__SnitchIntegrationName(), " integration turned ", global.__snitchIntegrationEnabled? "on" : "off");
+            }
         }
         else
         {

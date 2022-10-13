@@ -6,37 +6,52 @@
 //   3:  Use the GameAnalytics integration
 //   4:  Use the Bugsnag integration
 //   5:  Use the DeltaDNA integration
-#macro SNITCH_INTEGRATION_MODE  5
+#macro SNITCH_INTEGRATION_MODE  0
 
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
 //If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)
 //It is recommended that this macro is set to <false> and you ask for user consent before enabling it
 #macro SNITCH_INTEGRATION_ON_BOOT  true
 
-//The API secret for your property
-//This is set up in the admin section of the Google Analytics backend
-//https://developers.google.com/analytics/devguides/collection/protocol/ga4/
-#macro SNITCH_GOOGLE_ANALYTICS_API_SECRET  ""
+//Whether to allow backups to be made for HTTP requests
+//Any requests that fail will be reattempted at a later time
+#macro SNITCH_REQUEST_BACKUP_ENABLE  true
 
-//The measurement ID that's generataed for your property
-//This can be found in the admin section of the Google Analytics backend
-//https://support.google.com/analytics/answer/9539598
-#macro SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID  ""
+//Name of the request backup manifest
+//This file records how many request backups exist and where to find them on disk
+#macro SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME  "event_manifest.dat"
 
-//The endpoint to use for sentry.io
-//This can be found via Settings -> Client Keys (under the SDK SETUP header on the left-hand side)
-#macro SNITCH_SENTRY_DSN_URL  ""
+//Name of request backup files. Use a # symbol for UUID position
+#macro SNITCH_REQUEST_BACKUP_FILENAME  "event_#.dat"
 
-#macro SNITCH_GAMEANALYTICS_GAME_KEY    "5c6bcb5402204249437fb5a7a80a4959"
-#macro SNITCH_GAMEANALYTICS_SECRET_KEY  "16813a12f718bc5c620f56944e1abc3ea13ccbac"
+//How many request backups to keep
+#macro SNITCH_REQUEST_BACKUP_COUNT  10
 
-#macro SNITCH_BUGSNAG_API_KEY  ""
+//The time, in milliseconds, between attempts to resend HTTP requests. 5000 = 5 seconds
+#macro SNITCH_REQUEST_BACKUP_RESEND_DELAY  5000
 
-#macro SNITCH_DELTADNA_COLLECT_URL        "https://collect93954026tsttl.deltadna.net/collect/api"
-#macro SNITCH_DELTADNA_ENVIRONMENT_KEY    ""
-#macro SNITCH_DELTADNA_SECRET_KEY         ""
-#macro SNITCH_DELTADNA_EVENT_NAME         "exception"
-#macro SNITCH_DELTADNA_MESSAGE_PARAM      "exceptionMessage"
-#macro SNITCH_DELTADNA_LONGMESSAGE_PARAM  "exceptionLongMessage"
-#macro SNITCH_DELTADNA_FATAL_PARAM        "exceptionFatal"
-#macro SNITCH_DELTADNA_STACKTRACE_PARAM   "exceptionStacktrace"
+//How many sequential HTTP request failures before Snitch decides to not try to resend request backups for a while
+//This is useful behaviour for mobile games where the player may lose their connection for some unpredictable reason
+#macro SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES  5
+
+//How long to wait after sequential failed backup resends before Snitch will try all over again
+//This value is in milliseconds, so 900000 is the same as 15 minutes
+#macro SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT  900000
+
+//Whether to output request backup send attempts to the console
+//This is handy for confirming request backups are being processed properly
+//If logging is enabled, this information will also be outputted to the log file
+#macro SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT  false
+
+//Whether to output HTTP success to the console. This is handy for confirming HTTP requests are being processed properly
+//If logging is enabled, this information will also be outputted to the log file
+//   N.B. HTTP warnings/failures will always be reported
+#macro SNITCH_OUTPUT_HTTP_SUCCESS  true
+
+//Bug tracking integrations open up potential security risks.
+//  1. Never share access keys with anyone
+//  2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly
+//  3. Do your absolute best to protect the privacy of your players
+//
+//Set this macro to <true> to acknowledge this warning
+#macro SNITCH_INTEGRATION_WARNING_READ  false

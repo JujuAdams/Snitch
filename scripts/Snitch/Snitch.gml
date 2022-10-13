@@ -3,7 +3,7 @@
 /// If logging is turned on (see SnitchLogFileSet()) then the string is also saved to a log file on disk (in the <game_save_id> directory)
 ///   N.B. This can cause slowdown if a lot of debug messages are being saved!
 /// 
-/// If UDP broadcasting is turned on (see SnitchUDPSet()) then the string is also broadcast over UDP for a receiver to pick up
+/// If network transmission is turned on (see SnitchNetworkSet()) then the string is also broadcast over the network for a receiver to pick up
 /// 
 /// @param value
 /// @param [value]...
@@ -20,6 +20,7 @@ function Snitch()
     }
     
     SnitchSendStringToLogFile(_string);
-    SnitchSendStringToUDP(_string); //FIXME - Format this string for consumption (LogCat?)
+    SnitchSendStringToNetwork(_string); //FIXME - Format this string for consumption (LogCat?)
+    
     show_debug_message(_string);
 }
