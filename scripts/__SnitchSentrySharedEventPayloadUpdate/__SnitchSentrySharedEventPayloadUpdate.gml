@@ -39,14 +39,6 @@
 
 function __SnitchSentrySharedEventPayloadUpdate()
 {
-    //We set the username/user ID to whatever Steam gives us only after Steam has fully initialised
-    //(This code is for demonstration purposes and it's unlikely you'll want to keep it in production owing to user data privacy)
-    //if (steam_initialised())
-    //{
-    //    user.username = steam_get_persona_name();
-    //    user.id = steam_get_user_account_id();
-    //}
-    
     //Update some miscellanous variables given our new state
     contexts.vars.mousex = mouse_x;
     contexts.vars.mousey = mouse_y;

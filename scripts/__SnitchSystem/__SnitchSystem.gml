@@ -515,7 +515,7 @@ function __SnitchError()
     show_error("Snitch:\n" + _string + "\n ", true);
 }
 
-function __SnitchProcessRawCallstack(_rawCallstack)
+function __SnitchProcessRawCallstack(_rawCallstack, _integrationMode)
 {
     var _callstack = [];
     
@@ -576,8 +576,12 @@ function __SnitchProcessRawCallstack(_rawCallstack)
                 _func = string_copy(_func, 1, _pos - 1);
             }
             
-            switch(SNITCH_INTEGRATION_MODE)
+            switch(_integrationMode)
             {
+                case 0:
+                    array_push(_callstack, _isScript? (_func + ":L" + _lineText) : (_func + ":" + _module + ":L" + _lineText));
+                break;
+                
                 case 1: //Google Analytics
                     var _stageString = _func;
                     if (!_isScript) _stageString += " " + _module;

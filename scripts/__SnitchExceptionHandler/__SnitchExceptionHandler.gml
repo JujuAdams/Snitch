@@ -28,7 +28,7 @@ function __SnitchExceptionHandler(_struct)
             switch(SWITCH_CRASH_DUMP_MODE)
             {
                 case 1: _text = json_stringify(_struct);        break;
-                case 2: _text = _event.__GetString();           break;
+                case 2: _text = _event.__GetPayloadString();    break;
                 case 3: _text = _event.__GetCompressedString(); break;
             }
             
@@ -59,7 +59,7 @@ function __SnitchExceptionHandler(_struct)
                 switch(SWITCH_CRASH_CLIPBOARD_MODE)
                 {
                     case 1: _text = json_stringify(_struct);        break;
-                    case 2: _text = _event.__GetString();           break;
+                    case 2: _text = _event.__GetPayloadString();    break;
                     case 3: _text = _event.__GetCompressedString(); break;
                 }
                 

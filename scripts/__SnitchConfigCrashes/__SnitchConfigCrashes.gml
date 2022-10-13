@@ -17,7 +17,7 @@
 //   1:  Save the exception struct that GameMaker generates to the clipboard
 //   2:  Save the full crash event payload to disk
 //   3:  Compress and base64 encode full crash event payload, and save that
-#macro SWITCH_CRASH_DUMP_MODE  1
+#macro SWITCH_CRASH_DUMP_MODE  2
 
 //Whether to ask the user if they want to copy the error message to their clipboard
 //This is useful in production to get crash data more easily from players

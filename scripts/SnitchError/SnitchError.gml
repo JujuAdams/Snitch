@@ -47,7 +47,6 @@ function __SnitchClassError(_message) constructor
     __message           = _message;
     __longMessage       = undefined;
     __fatal             = false;
-    __addCallstack      = false;
     __callstack         = undefined;
     __rawCallstackArray = undefined;
     __payload           = undefined;
@@ -64,56 +63,41 @@ function __SnitchClassError(_message) constructor
         __rawCallstackArray = array_create(array_length(_callstack) - _trim);
         array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
         
-        //Process the raw callstack, if we have it
-        if (is_array(__rawCallstackArray)) __callstack = __SnitchProcessRawCallstack(__rawCallstackArray);
-        
         return self;
     }
     
     static SendAll = function()
     {
-        __GuaranteeCallstack();
+        SendIntegration();
         SendConsole();
         SendLogFile();
         SendNetwork();
-        SendIntegration();
-        
         return self;
     }
     
     static SendLocal = function()
     {
-        __GuaranteeCallstack();
         SendConsole();
         SendLogFile();
         SendNetwork();
-        
         return self;
     }
     
     static SendConsole = function()
     {
-        __GuaranteeCallstack();
-        
-        //We don't need to make a request. Log some basic data and return nothing
-        var _logString = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
-        if (__addCallstack) _logString += "   " + string(__rawCallstackArray);
-        show_debug_message(_logString);
-        
+        show_debug_message(__GetSimpleString());
         return self;
     }
     
     static SendLogFile = function()
     {
-        __GuaranteeCallstack();
-        SnitchSendStringToLogFile(__GetString());
+        SnitchSendStringToLogFile(__GetSimpleString());
         return self;
     }
     
     static SendNetwork = function()
     {
-        __GuaranteeCallstack();
-        SnitchSendStringToNetwork(__GetString()); //FIXME - Implement some sort of formatting for packets (LogCat?)
+        SnitchSendStringToNetwork(__GetSimpleString());
         return self;
     }
     
@@ -343,7 +327,15 @@ function __SnitchClassError(_message) constructor
         return self;
     }
     
-    static __GetString = function()
+    static __GetSimpleString = function()
+    {
+        __GuaranteeCallstack();
+        var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
+        if (is_array(__rawCallstackArray)) _string += "   " + string(__SnitchProcessRawCallstack(__rawCallstackArray, 0));
+        return _string;
+    }
+    
+    static __GetPayloadString = function()
     {
         return json_stringify(__payload);
     }
@@ -351,7 +343,7 @@ function __SnitchClassError(_message) constructor
     static __GetCompressedString = function()
     {
         //If we want to compress the buffer, do the ol' swaperoo
-        var _string = __GetString();
+        var _string = __GetPayloadString();
         var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
         buffer_write(_buffer, buffer_text, _string);
         var _compressedBuffer = buffer_compress(_buffer, 0, buffer_get_size(_buffer));
