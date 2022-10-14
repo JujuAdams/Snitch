@@ -5,7 +5,7 @@ _string += "Press 1 to log a message\n";
 _string += "Press 2 to crash the game\n";
 _string += "Press 3 to call show_error()\n";
 _string += "Press 4 to trigger a soft (non-fatal) error\n";
-_string += "Press L to toggle logging (currently = " + string(SnitchLogFileGet()) + ")\n";
+_string += "Press L to toggle logging (currently = " + string(SnitchLogGet()) + ")\n";
 _string += "Press I to toggle integration (currently = " + string(SnitchIntegrationGet()) + ")\n";
 _string += "\n";
 _string += "\n";

@@ -1,47 +1,47 @@
-/// Sets whether Snitch should log message to a file on disk (in the directory given by <game_save_id>)
+/// Sets whether Snitch should log messages to a file on disk (in the directory given by <game_save_id>)
 /// 
 /// @param state
 
-function SnitchLogFileSet(_state)
+function SnitchLogSet(_state)
 {
     __SnitchInit();
     
     //If we've changed state...
-    if (_state != SnitchLogFileGet())
+    if (_state != SnitchLogGet())
     {
         if (_state) //If we're turning logging on...
         {
-            if (!SNITCH_LOG_FILE_PERMITTED)
+            if (!SNITCH_LOG_PERMITTED)
             {
-                __SnitchTrace("Logging cannot be turned on as SNITCH_LOG_FILE_PERMITTED is set to <false>");
+                __SnitchTrace("Logging cannot be turned on as SNITCH_LOG_PERMITTED is set to <false>");
             }
             else
             {
-                if (SNITCH_LOG_FILE_COUNT < 1)
+                if (SNITCH_LOG_COUNT < 1)
                 {
-                    __SnitchError("SNITCH_LOG_FILE_COUNT must be greater than zero");
+                    __SnitchError("SNITCH_LOG_COUNT must be greater than zero");
                 }
                 
-                if (string_pos("#", SNITCH_LOG_FILE_FILENAME) <= 0)
+                if (string_pos("#", SNITCH_LOG_FILENAME) <= 0)
                 {
-                    __SnitchError("SNITCH_LOG_FILE_FILENAME must contain a # character");
+                    __SnitchError("SNITCH_LOG_FILENAME must contain a # character");
                 }
                 
                 global.__snitchLogToFileEnabled = true;
                 
-                if (SnitchLogFileGet() && !global.__snitchWroteLogFileHeader)
+                if (SnitchLogGet() && !global.__snitchWroteLogFileHeader)
                 {
                     //If this is first time we've tried to turn logging on for this game instance, we need to create a new log file to write to
                     global.__snitchWroteLogFileHeader = true;
                     
                     //Delete the nth log file
-                    if (file_exists(string_replace(SNITCH_LOG_FILE_FILENAME, "#", SNITCH_LOG_FILE_COUNT-1))) file_delete(string_replace(SNITCH_LOG_FILE_FILENAME, "#", SNITCH_LOG_FILE_COUNT-1));
+                    if (file_exists(string_replace(SNITCH_LOG_FILENAME, "#", SNITCH_LOG_COUNT-1))) file_delete(string_replace(SNITCH_LOG_FILENAME, "#", SNITCH_LOG_COUNT-1));
                     
                     //Iterate over other log files and increment their index
-                    var _i = SNITCH_LOG_FILE_COUNT;
-                    repeat(SNITCH_LOG_FILE_COUNT)
+                    var _i = SNITCH_LOG_COUNT;
+                    repeat(SNITCH_LOG_COUNT)
                     {
-                        file_rename(string_replace(SNITCH_LOG_FILE_FILENAME, "#", _i-1), string_replace(SNITCH_LOG_FILE_FILENAME, "#", _i));
+                        file_rename(string_replace(SNITCH_LOG_FILENAME, "#", _i-1), string_replace(SNITCH_LOG_FILENAME, "#", _i));
                         --_i;
                     }
                     

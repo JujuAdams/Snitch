@@ -35,8 +35,8 @@
 #macro SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES  5
 
 //How long to wait after sequential failed backup resends before Snitch will try all over again
-//This value is in milliseconds, so 900000 is the same as 15 minutes
-#macro SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT  900000
+//This value is in milliseconds, so 600000 is the same as 10 minutes
+#macro SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT  600000
 
 //Whether to output request backup send attempts to the console
 //This is handy for confirming request backups are being processed properly

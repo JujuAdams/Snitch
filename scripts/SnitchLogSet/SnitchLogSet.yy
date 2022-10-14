@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "SnitchLogFileSet",
+  "name": "SnitchLogSet",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

@@ -6,7 +6,7 @@ function SnitchSendStringToLogFile(_data)
 {
     __SnitchInit();
     
-    if (SnitchLogFileGet())
+    if (SnitchLogGet())
     {
         buffer_write(global.__snitchLogFileBuffer, buffer_text, string(_data));
         buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);

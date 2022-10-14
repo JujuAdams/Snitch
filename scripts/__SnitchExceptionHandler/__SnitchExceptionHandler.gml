@@ -13,7 +13,7 @@ function __SnitchExceptionHandler(_struct)
     }
     catch(_error)
     {
-        __SnitchTrace("Exception when executing global.__snitchGMExceptionHandler");
+        __SnitchTrace("Exception encountered when executing exception handler");
         __SnitchTrace(json_stringify(_error));
     }
     
@@ -27,9 +27,9 @@ function __SnitchExceptionHandler(_struct)
             var _text = "No data available";
             switch(SWITCH_CRASH_DUMP_MODE)
             {
-                case 1: _text = json_stringify(_struct);        break;
-                case 2: _text = _event.__GetPayloadString();    break;
-                case 3: _text = _event.__GetCompressedString(); break;
+                case 1: _text = json_stringify(_struct);                 break;
+                case 2: _text = _event.__GetExceptionString();           break;
+                case 3: _text = _event.__GetCompressedExceptionString(); break;
             }
             
             var _buffer = buffer_create(string_byte_length(_text), buffer_fixed, 1);
@@ -58,9 +58,9 @@ function __SnitchExceptionHandler(_struct)
                 var _text = "No data available";
                 switch(SWITCH_CRASH_CLIPBOARD_MODE)
                 {
-                    case 1: _text = json_stringify(_struct);        break;
-                    case 2: _text = _event.__GetPayloadString();    break;
-                    case 3: _text = _event.__GetCompressedString(); break;
+                    case 1: _text = json_stringify(_struct);                 break;
+                    case 2: _text = _event.__GetExceptionString();           break;
+                    case 3: _text = _event.__GetCompressedExceptionString(); break;
                 }
                 
                 clipboard_set_text("#####" + _text + "#####"); break;

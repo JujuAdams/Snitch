@@ -11,7 +11,7 @@ if (keyboard_check_pressed(ord("3"))) show_error("Pressed the 3 key", true);
 if (keyboard_check_pressed(ord("4"))) SnitchError("Wow! An error!").SendAll();
 
 //Toggle logging on and off
-if (keyboard_check_pressed(ord("L"))) SnitchLogFileSet(!SnitchLogFileGet());
+if (keyboard_check_pressed(ord("L"))) SnitchLogSet(!SnitchLogGet());
 
 //Toggle integration on and off
 if (keyboard_check_pressed(ord("I"))) SnitchIntegrationSet(!SnitchIntegrationGet());

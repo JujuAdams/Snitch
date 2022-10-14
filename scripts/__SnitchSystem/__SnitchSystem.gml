@@ -56,8 +56,8 @@ function __SnitchInit()
     
     //Log files
     global.__snitchWroteLogFileHeader = false;
-    global.__snitchZerothLogFile      = string_replace(SNITCH_LOG_FILE_FILENAME, "#", "0");
-    global.__snitchLogFileBuffer      = buffer_create(SNITCH_LOG_FILE_BUFFER_START_SIZE, buffer_grow, 1);
+    global.__snitchZerothLogFile      = string_replace(SNITCH_LOG_FILENAME, "#", "0");
+    global.__snitchLogFileBuffer      = buffer_create(SNITCH_LOG_BUFFER_START_SIZE, buffer_grow, 1);
     
     //Network transmission
     global.__snitchNetworkSocket       = undefined;
@@ -200,7 +200,7 @@ function __SnitchInit()
     
     
     
-    if (SNITCH_LOG_FILE_ON_BOOT) SnitchLogFileSet(true);
+    if (SNITCH_LOG_ON_BOOT) SnitchLogSet(true);
     if (SNITCH_NETWORK_ON_BOOT) SnitchNetworkSet(true);
     __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
     __SnitchTrace("Running ", global.__snitchRunningFromIDE? "from IDE" : "compiled executable", ", crash capture turned ", global.__snitchCrashCapture? "on" : "off");
@@ -217,15 +217,15 @@ function __SnitchInit()
         __SnitchError("SNITCH_REQUEST_BACKUP_COUNT must be greater than zero");
     }
     
-    if (SNITCH_ALLOW_LOG_FILE_BOOT_PARAMETER && (os_type == os_windows))
+    if (SNITCH_ALLOW_LOG_BOOT_PARAMETER && (os_type == os_windows))
     {
         var _i = 0;
         repeat(parameter_count())
         {
             if (parameter_string(_i) == "-log")
             {
-                SnitchLogFileSet(true);
-                if (SnitchLogFileGet() && (SNITCH_LOG_FILE_BOOT_PARAMETER_CONFIRMATION != "")) show_message(SNITCH_LOG_FILE_BOOT_PARAMETER_CONFIRMATION);
+                SnitchLogSet(true);
+                if (SnitchLogGet() && (SNITCH_LOG_BOOT_PARAMETER_CONFIRMATION != "")) show_message(SNITCH_LOG_BOOT_PARAMETER_CONFIRMATION);
                 break;
             }
             
@@ -513,116 +513,4 @@ function __SnitchError()
     }
     
     show_error("Snitch:\n" + _string + "\n ", true);
-}
-
-function __SnitchProcessRawCallstack(_rawCallstack, _integrationMode)
-{
-    var _callstack = [];
-    
-    var _i = array_length(_rawCallstack) - 1;
-    repeat(array_length(_rawCallstack))
-    {
-        var _script = _rawCallstack[_i];
-        if (is_real(_script))
-        {
-            --_i;
-            continue;
-        }
-        
-        var _lineText = "";
-        var _linePos = string_pos(":", _script);
-        if (_linePos > 0)
-        {
-            _lineText = string_copy(_script, _linePos + 1, string_length(_script) - _linePos);
-        }
-        else
-        {
-            _linePos = string_pos(" (line ", _script);
-            if (_linePos > 0) _lineText = string_copy(_script, _linePos + 7, string_length(_script) - (_linePos + 7));
-        }
-        
-        if (_linePos > 0)
-        {
-            var _func = string_copy(_script, 1, _linePos - 1);
-            var _module = _func;
-            
-            try
-            {
-                var _lineNumber = real(_lineText);
-            }
-            catch(_)
-            {
-                var _lineNumber = 0;
-            }
-            
-            
-            if (string_pos("gml_Script_", _func) == 1)
-            {
-                var _isScript = true;
-                
-                _func = string_delete(_func, 1, 11);
-                _module = _func
-            }
-            else if (string_pos("gml_Object_", _func) == 1)
-            {
-                var _isScript = false;
-                
-                _func = string_delete(_func, 1, 11);
-                
-                var _pos = string_last_pos("_", _func);
-                _pos = string_last_pos_ext("_", _func, _pos - 1);
-                
-                _module = string_delete(_func, 1, _pos);
-                _func = string_copy(_func, 1, _pos - 1);
-            }
-            
-            switch(_integrationMode)
-            {
-                case 0:
-                    array_push(_callstack, _isScript? (_func + ":L" + _lineText) : (_func + ":" + _module + ":L" + _lineText));
-                break;
-                
-                case 1: //Google Analytics
-                    var _stageString = _func;
-                    if (!_isScript) _stageString += " " + _module;
-                    
-                    var _lineNumber = " L" + string(_lineNumber);
-                    var _maxLength = 100 - 1 - string_length(_lineNumber);
-                    
-                    if (string_length(_stageString) > _maxLength)
-                    {
-                        _maxLength -= 1;
-                        _stageString = string_copy(_stageString, 1, floor(_maxLength/2)) + "…" + string_copy(_stageString, string_length(_stageString) + 1 - floor(_maxLength/2), ceil(_maxLength/2));
-                    }
-                    
-                    array_push(_callstack, _stageString + _lineNumber);
-                break;
-                
-                case 2: //sentry.io
-                    var _frame = {};
-                    _frame.module        = _module;
-                    _frame[$ "function"] = _func;
-                    _frame.lineno        = _lineNumber;
-                    array_push(_callstack, _frame);
-                break;
-                
-                case 3: //GameAnalytics
-                case 5: //DeltaDNA
-                    array_push(_callstack, _func + (_isScript? "" : (" " + _module)) + " L" + string(_lineNumber));
-                break;
-                
-                case 4: //Bugsnag
-                    var _frame = {};
-                    _frame.file       = _module;
-                    _frame.method     = _func;
-                    _frame.lineNumber = _lineNumber;
-                    array_push(_callstack, _frame);
-                break;
-            }
-        }
-        
-        --_i;
-    }
-    
-    return _callstack;
 }

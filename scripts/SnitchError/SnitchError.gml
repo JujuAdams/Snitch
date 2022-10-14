@@ -14,17 +14,17 @@
 /// shared with other services. These methods can be chained together. For example, the following
 /// code will output an error message to the console and to a log file but nothing else:
 /// 
-///   SnitchError("Player is outside the level?!").SendConsole().SendLogFile();
+///   SnitchError("Player is outside the level?!").SendConsole().SendLog();
 /// 
 /// Below is all the methods that are available. Make sure you call at least one of these!
 /// 
 ///   .SendConsole()     - Outputs the event to the debug console (i.e. calls show_debug_message())
-///   .SendLogFile()     - Writes the event to the log file, if enabled
+///   .SendLog()         - Writes the event to the log file, if enabled
 ///   .SendNetwork()     - Transmits the event over the network, if enabled
 ///   .SendIntegration() - Transmits the event over HTTP to whichever API integration is enabled (if any)
 ///                        If request backups are enabled, a request backup is also saved. See SNITCH_REQUEST_BACKUP_ENABLE for more information
 ///   .SendAll()         - Sends the event to all of the above
-///   .SendLocal()       - Calls .SendConsole(), .SendLogFile(), and .SendNetwork()
+///   .SendLocal()       - Calls .SendConsole(), .SendLog(), and .SendNetwork()
 /// 
 /// @param value
 /// @param [value]...
@@ -46,9 +46,12 @@ function __SnitchClassError(_message) constructor
 {
     __message           = _message;
     __longMessage       = undefined;
+    __script            = undefined;
+    __line              = undefined;
     __fatal             = false;
     __callstack         = undefined;
     __rawCallstackArray = undefined;
+    __simpleCallstack   = undefined;
     __payload           = undefined;
     __request           = undefined;
     __uuid              = SnitchGenerateUUID4String();
@@ -56,6 +59,12 @@ function __SnitchClassError(_message) constructor
     static __GuaranteeCallstack = function()
     {
         if (!is_array(__rawCallstackArray)) __Callstack(undefined, 3);
+    }
+    
+    static __GuaranteeSimpleCallstack = function()
+    {
+        if (!is_array(__simpleCallstack)) __simpleCallstack = __SnitchProcessRawCallstack(__rawCallstackArray, 0);
+        return __simpleCallstack;
     }
     
     static __Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
@@ -70,7 +79,7 @@ function __SnitchClassError(_message) constructor
     {
         SendIntegration();
         SendConsole();
-        SendLogFile();
+        SendLog();
         SendNetwork();
         return self;
     }
@@ -78,26 +87,26 @@ function __SnitchClassError(_message) constructor
     static SendLocal = function()
     {
         SendConsole();
-        SendLogFile();
+        SendLog();
         SendNetwork();
         return self;
     }
     
     static SendConsole = function()
     {
-        show_debug_message(__GetSimpleString());
+        show_debug_message(__GetReadableString());
         return self;
     }
     
-    static SendLogFile = function()
+    static SendLog = function()
     {
-        SnitchSendStringToLogFile(__GetSimpleString());
+        SnitchSendStringToLogFile(__GetReadableString());
         return self;
     }
     
     static SendNetwork = function()
     {
-        SnitchSendStringToNetwork(__GetSimpleString());
+        SnitchSendStringToNetwork(__GetReadableString());
         return self;
     }
     
@@ -120,8 +129,11 @@ function __SnitchClassError(_message) constructor
     static __Exception = function(_exceptionStruct)
     {
         //Extract information from the GameMaker exception struct we were given
-        __message = _exceptionStruct.message;
+        __message     = _exceptionStruct.message;
         __longMessage = _exceptionStruct.longMessage;
+        __script      = _exceptionStruct.script;
+        __line        = _exceptionStruct.line;
+        
         __Callstack(_exceptionStruct.stacktrace, 0);
         __fatal = true;
         
@@ -327,23 +339,30 @@ function __SnitchClassError(_message) constructor
         return self;
     }
     
-    static __GetSimpleString = function()
+    static __GetReadableString = function()
     {
         __GuaranteeCallstack();
         var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
-        if (is_array(__rawCallstackArray)) _string += "   " + string(__SnitchProcessRawCallstack(__rawCallstackArray, 0));
+        if (is_array(__rawCallstackArray)) _string += "   " + string(__GuaranteeSimpleCallstack());
         return _string;
     }
     
-    static __GetPayloadString = function()
+    static __GetExceptionString = function()
     {
-        return json_stringify(__payload);
+        //Repackage information from the GameMaker exception struct we were given
+        return json_stringify({
+            message:     __message,
+            longMessage: __longMessage,
+            stacktrace:  __GuaranteeSimpleCallstack(),
+            script:      __script,
+            line:        __line,
+        });
     }
     
-    static __GetCompressedString = function()
+    static __GetCompressedExceptionString = function()
     {
         //If we want to compress the buffer, do the ol' swaperoo
-        var _string = __GetPayloadString();
+        var _string = __GetExceptionString();
         var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
         buffer_write(_buffer, buffer_text, _string);
         var _compressedBuffer = buffer_compress(_buffer, 0, buffer_get_size(_buffer));

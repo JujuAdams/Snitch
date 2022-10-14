@@ -1,5 +1,5 @@
 //Start logging messages to a disk on disk
-SnitchLogFileSet(true);
+SnitchLogSet(true);
 
 //Try to start our integration
 //This'll only work if the relevant information has been set up in __SnitchConfigIntegrations()

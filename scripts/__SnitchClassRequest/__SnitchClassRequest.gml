@@ -54,7 +54,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
     
     static __SaveBackup = function()
     {
-        //Don't bother saving a backup if there's no buffer to save. we've already saved a backup, or we never want to save any backups at all
+        //Don't bother saving a backup if there's no buffer to save, we've already saved a backup, or we never want to save any backups at all
         if (savedBackup || !SNITCH_REQUEST_BACKUP_ENABLE) return undefined;
         
         //Add the request to our tracking data structures
@@ -146,7 +146,7 @@ function __SnitchRequestBackupSaveManifest()
 {
     static _buffer = buffer_create(1024, buffer_grow, 1);
     buffer_seek(_buffer, buffer_seek_start, 0);
-    buffer_write(_buffer, buffer_text, json_stringify(_buffer));
+    buffer_write(_buffer, buffer_text, json_stringify(global.__snitchRequestBackupOrder));
     buffer_save_ext(_buffer, SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME, 0, buffer_tell(_buffer));
 }
 

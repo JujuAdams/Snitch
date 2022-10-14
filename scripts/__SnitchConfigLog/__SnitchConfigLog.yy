@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__SnitchConfigLogFile",
+  "name": "__SnitchConfigLog",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

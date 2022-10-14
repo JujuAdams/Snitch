@@ -1,20 +1,20 @@
 //What kind of networking connection to use for transmitting log packets
 //There are 2 modes:
 //   0:  No network transmission permitted
-//   1:  UDP
+//   1:  UDP (either LAN broadcast or to a specific IP, see below)
 //   2:  TCP
-#macro SNITCH_NETWORK_MODE  0
+#macro SNITCH_NETWORK_MODE  2
 
 //Whether to boot the game with network transmission turned on or off. Network transmission can be turned on/off manually by calling SnitchNetworkSet()
 //Generally, you'll only want to set this to <true> if you're running dev/debug builds as emitting lots of packets can adversely affect your players
-#macro SNITCH_NETWORK_ON_BOOT  (SNITCH_RUNNING_FROM_IDE)
+#macro SNITCH_NETWORK_ON_BOOT  true
 
 //Default outgoing port to use to for packets. This can be overridden with SnitchNetworkSet()
 //Set to <undefined> to automatically choose an open port
 #macro SNITCH_NETWORK_DEFAULT_OUTGOING_PORT  undefined
 
 //Default target port to use to for packets. This can be overridden with SnitchNetworkSet()
-#macro SNITCH_NETWORK_DEFAULT_RECEIVER_PORT  9992
+#macro SNITCH_NETWORK_DEFAULT_RECEIVER_PORT  9993
 
 //Default target IP address to send packets to. This can be overridden with SnitchNetworkSet()
 //If you're using UDP transmission, set this macro to <undefined> to broadcast packets over LAN
