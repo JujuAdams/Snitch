@@ -31,7 +31,7 @@
 ///   SNITCH_OS_NAME         = Human-readable name for the operating system e.g. "Windows", "Mac OS X" etc.
 ///   SNITCH_OS_VERSIONon    = Human-readable version for the operating system e.g. "10", "Lollipop"
 ///   SNITCH_BROWSER         = Web browser that the game is running in
-///   SNITCH_DEVICE_NAME     = OS name + OS version, or if the game is running in a web browser, the name of the web browser
+///   SNITCH_ENVIRONMENT_NAME     = OS name + OS version, or if the game is running in a web browser, the name of the web browser
 ///   SNITCH_OS_INFO         = The same as os_get_info() but as a struct instead of a ds_map
 ///   SNITCH_BOOT_PARAMETERS = Array of boot parameters used to execute the game
 /// 

@@ -15,7 +15,7 @@
 #macro SNITCH_SHARED_EVENT_PAYLOAD  global.__snitchSharedEventPayload
 #macro SNITCH_OS_NAME               global.__snitchOSName
 #macro SNITCH_OS_VERSION            global.__snitchOSVersion
-#macro SNITCH_DEVICE_NAME           global.__snitchDeviceName
+#macro SNITCH_ENVIRONMENT_NAME      global.__snitchEnvironmentName
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
@@ -88,12 +88,12 @@ function __SnitchInit()
     
     
     
-    #region Set SNITCH_OS_NAME, SNITCH_OS_VERSION, SNITCH_DEVICE_NAME, SNITCH_BROWSER, SNITCH_OS_INFO
+    #region Set SNITCH_OS_NAME, SNITCH_OS_VERSION, SNITCH_ENVIRONMENT_NAME, SNITCH_BROWSER, SNITCH_OS_INFO
         
-    SNITCH_OS_NAME     = "Unknown (=" + string(os_type) + ")"
-    SNITCH_OS_VERSION  = "Unknown (=" + string(os_version) + ")"
-    SNITCH_DEVICE_NAME = global.__snitchOSName + " " + global.__snitchOSVersion;
-    SNITCH_BROWSER     = "Unknown browser";
+    SNITCH_OS_NAME          = "Unknown (=" + string(os_type) + ")";
+    SNITCH_OS_VERSION       = "v" + string(os_version);
+    SNITCH_BROWSER          = "Unknown browser";
+    SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
     
     switch(os_type)
     {
@@ -112,32 +112,30 @@ function __SnitchInit()
                 case 393219: SNITCH_OS_VERSION = "8.1";   break;
                 case 655360: SNITCH_OS_VERSION = "10";    break;
             }
-            
-            SNITCH_DEVICE_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
         break;
         
         case os_uwp:
             SNITCH_OS_NAME     = "UWP";
             SNITCH_OS_VERSION  = string(os_version);
-            SNITCH_DEVICE_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
         break;
         
         case os_linux:
             SNITCH_OS_NAME     = "Linux";
             SNITCH_OS_VERSION  = string(os_version);
-            SNITCH_DEVICE_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
         break;
         
         case os_macosx:
-            SNITCH_OS_NAME     = "Mac OS X";
+            SNITCH_OS_NAME     = "macOS";
             SNITCH_OS_VERSION  = string(os_version >> 24) + "." + string((os_version >> 12) & 0xfff);
-            SNITCH_DEVICE_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
         break;
         
         case os_ios:
             SNITCH_OS_NAME     = "iOS";
             SNITCH_OS_VERSION  = string(os_version >> 24) + "." + string((os_version >> 12) & 0xfff);
-            SNITCH_DEVICE_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
         break;
         
         case os_android:
@@ -151,19 +149,27 @@ function __SnitchInit()
                 case 24: SNITCH_OS_VERSION = "Nougat";      break;
                 case 25: SNITCH_OS_VERSION = "Oreo";        break;
                 case 26: SNITCH_OS_VERSION = "Pie";         break;
-                case 27: SNITCH_OS_VERSION = "v10";         break;
-                case 28: SNITCH_OS_VERSION = "v11";         break;
-                case 29: SNITCH_OS_VERSION = "v12";         break;
+                
+                default:
+                    if (os_version >= 27)
+                    {
+                        SNITCH_OS_VERSION = "v" + string(os_version - 17);
+                    }
+                break;
             }
             
-            SNITCH_DEVICE_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
         break;
         
-        case os_ps3:     SNITCH_OS_NAME = "PlayStation 3";    break;
-        case os_ps4:     SNITCH_OS_NAME = "PlayStation 4";    break;
-        case os_psvita:  SNITCH_OS_NAME = "PlayStation Vita"; break;
-        case os_xboxone: SNITCH_OS_NAME = "Xbox One";         break;
-        case os_switch:  SNITCH_OS_NAME = "Switch";           break;
+        case os_tvos:         SNITCH_OS_NAME = "tvOS";             break;
+        case os_ps3:          SNITCH_OS_NAME = "PlayStation 3";    break;
+        case os_ps4:          SNITCH_OS_NAME = "PlayStation 4";    break;
+        case os_ps5:          SNITCH_OS_NAME = "PlayStation 5";    break;
+        case os_psvita:       SNITCH_OS_NAME = "PlayStation Vita"; break;
+        case os_xboxone:      SNITCH_OS_NAME = "Xbox One";         break;
+        case os_xboxseriesxs: SNITCH_OS_NAME = "Xbox Series X/S";  break;
+        case os_switch:       SNITCH_OS_NAME = "Switch";           break;
+        case os_operagx:      SNITCH_OS_NAME = "GX.games";         break;
     }
     
     //Figure out what browser we're using
@@ -180,7 +186,14 @@ function __SnitchInit()
     }
     
     //If we're on a browser, use the browser's name instead
-    if (os_browser != browser_not_a_browser) SNITCH_DEVICE_NAME = SNITCH_BROWSER;
+    if (os_browser == browser_not_a_browser)
+    {
+        SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+    }
+    else
+    {
+        SNITCH_ENVIRONMENT_NAME = SNITCH_BROWSER;
+    }
     
     //Turn the os_get_info() map into a struct for serialization
     SNITCH_OS_INFO = {};
