@@ -61,7 +61,7 @@ function __SnitchProcessRawCallstack(_rawCallstack, _integrationMode)
             
             switch(_integrationMode)
             {
-                case 0:
+                case 0: //No integration
                     array_push(_callstack, _isScript? (_func + ":L" + _lineText) : (_func + ":" + _module + ":L" + _lineText));
                 break;
                 

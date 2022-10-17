@@ -1,26 +1,21 @@
 function __SnitchClassError(_message) constructor
 {
-    __message           = _message;
-    __longMessage       = undefined;
-    __script            = undefined;
-    __line              = undefined;
-    __fatal             = false;
-    __callstack         = undefined;
-    __rawCallstackArray = undefined;
-    __simpleCallstack   = undefined;
-    __payload           = undefined;
-    __request           = undefined;
-    __uuid              = SnitchGenerateUUID4String();
+    __message              = _message;
+    __longMessage          = undefined;
+    __script               = undefined;
+    __line                 = undefined;
+    __fatal                = false;
+    __callstack            = undefined;
+    __rawCallstackArray    = undefined;
+    __simpleCallstack      = undefined;
+    __integrationCallstack = undefined;
+    __payload              = undefined;
+    __request              = undefined;
+    __uuid                 = SnitchGenerateUUID4String();
     
     static __GuaranteeCallstack = function()
     {
         if (!is_array(__rawCallstackArray)) __Callstack(undefined, 3);
-    }
-    
-    static __GuaranteeSimpleCallstack = function()
-    {
-        if (!is_array(__simpleCallstack)) __simpleCallstack = __SnitchProcessRawCallstack(__rawCallstackArray, 0);
-        return __simpleCallstack;
     }
     
     static __Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
@@ -29,6 +24,18 @@ function __SnitchClassError(_message) constructor
         array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
         
         return self;
+    }
+    
+    static __GuaranteeSimpleCallstack = function()
+    {
+        if (!is_array(__simpleCallstack)) __simpleCallstack = __SnitchProcessRawCallstack(__rawCallstackArray, 0);
+        return __simpleCallstack;
+    }
+    
+    static __GuaranteeIntegrationCallstack = function()
+    {
+        if (!is_array(__integrationCallstack)) __integrationCallstack = __SnitchProcessRawCallstack(__rawCallstackArray, 0);
+        return __integrationCallstack;
     }
     
     static SendAll = function()
@@ -66,21 +73,6 @@ function __SnitchClassError(_message) constructor
         return self;
     }
     
-    static SendIntegration = function()
-    {
-        __GuaranteeCallstack();
-        
-        switch(SNITCH_INTEGRATION_MODE)
-        {
-            case 1: __SendSentry();          break;
-            case 2: __SendGameAnalytics();   break;
-            case 3: __SendBugsnag();         break;
-            case 4: __SendDeltaDNA();        break;
-        }
-        
-        return self;
-    }
-    
     static __SetException = function(_exceptionStruct)
     {
         //Extract information from the GameMaker exception struct we were given
@@ -99,7 +91,7 @@ function __SnitchClassError(_message) constructor
     {
         __GuaranteeCallstack();
         var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
-        if (is_array(__rawCallstackArray)) _string += "   " + string(__GuaranteeSimpleCallstack());
+        if (is_array(__rawCallstackArray)) _string += " " + string(__GuaranteeSimpleCallstack());
         return _string;
     }
     
@@ -130,6 +122,22 @@ function __SnitchClassError(_message) constructor
         buffer_delete(_compressedBuffer);
         
         return _string;
+    }
+    
+    static SendIntegration = function()
+    {
+        __GuaranteeCallstack();
+        __GuaranteeIntegrationCallstack();
+        
+        switch(SNITCH_INTEGRATION_MODE)
+        {
+            case 1: __SendSentry();          break;
+            case 2: __SendGameAnalytics();   break;
+            case 3: __SendBugsnag();         break;
+            case 4: __SendDeltaDNA();        break;
+        }
+        
+        return self;
     }
     
     static __SendSentry = function()
@@ -205,7 +213,7 @@ function __SnitchClassError(_message) constructor
                 limit_ad_tracking: true,
                 category: "error",
                 severity: __fatal? "critical" : "error",
-                message: __message + (is_array(__callstack)? (" " + string(__callstack)) : ""),
+                message: __message + (is_array(__integrationCallstack)? (" " + string(__integrationCallstack)) : ""),
             },
         ];
         
@@ -230,7 +238,7 @@ function __SnitchClassError(_message) constructor
             notifier: {
                 name: "Snitch",
                 version: SNITCH_VERSION,
-                url: "https://github.com/jujuAdams/snitch",
+                url: "https://github.com/jujuAdams/snitch/",
             },
             events: [
                 {
@@ -238,7 +246,7 @@ function __SnitchClassError(_message) constructor
                         {
                             errorClass: __message,
                             message: __longMessage,
-                            stacktrace: (__callstack == undefined)? [] : __callstack,
+                            stacktrace: (is_array(__integrationCallstack)? __integrationCallstack : []),
                         },
                     ],
                     severity: __fatal? "error" : "warning",
@@ -265,11 +273,11 @@ function __SnitchClassError(_message) constructor
         _eventParams[$ SNITCH_DELTADNA_MESSAGE_PARAM    ] = __message;
         _eventParams[$ SNITCH_DELTADNA_LONGMESSAGE_PARAM] = is_string(__longMessage)? __longMessage : __message;
         _eventParams[$ SNITCH_DELTADNA_FATAL_PARAM      ] = __fatal;
-        _eventParams[$ SNITCH_DELTADNA_STACKTRACE_PARAM ] = is_array(__callstack)? string(__callstack[0]) : "unknown";
+        _eventParams[$ SNITCH_DELTADNA_STACKTRACE_PARAM ] = is_array(__integrationCallstack)? __integrationCallstack : [];
         
         __payload = {
             eventName: SNITCH_DELTADNA_EVENT_NAME,
-            userID: global.__snitchSessionID, //Deliberately chosen so that players can't be tracked across sessions
+            userID: global.__snitchSessionID, //Deliberately randomized so that players can't be tracked across sessions
             sessionID: global.__snitchSessionID,
             eventUUID: __uuid,
             eventParams: _eventParams,
