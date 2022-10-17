@@ -13,5 +13,8 @@ if (keyboard_check_pressed(ord("4"))) SnitchError("Wow! An error!").SendAll();
 //Toggle logging on and off
 if (keyboard_check_pressed(ord("L"))) SnitchLogSet(!SnitchLogGet());
 
+//Toggle networking on and off
+if (keyboard_check_pressed(ord("N"))) SnitchNetworkSet(!SnitchNetworkGet());
+
 //Toggle integration on and off
 if (keyboard_check_pressed(ord("I"))) SnitchIntegrationSet(!SnitchIntegrationGet());

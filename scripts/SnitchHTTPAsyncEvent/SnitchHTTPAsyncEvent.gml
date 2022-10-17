@@ -11,6 +11,8 @@ function SnitchHTTPAsyncEvent()
 {
     __SnitchInit();
     
+    if (global.__snitchHTTPTestTime != undefined) global.__snitchHTTPTestTime = undefined;
+    
     if ((event_type == ev_other) && (event_number == ev_async_web))
     {
         var _id = string(async_load[? "id"]);

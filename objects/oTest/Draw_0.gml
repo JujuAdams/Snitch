@@ -1,11 +1,13 @@
 var _string = "";
 _string += "Snitch by @jujuadams " + SNITCH_VERSION + ", " + SNITCH_DATE + "\n";
-_string += "Log files can be found in " + game_save_id + "\n\n";
+_string += "Log files can be found in " + game_save_id + "\n";
+_string += "\n";
 _string += "Press 1 to log a message\n";
 _string += "Press 2 to crash the game\n";
 _string += "Press 3 to call show_error()\n";
 _string += "Press 4 to trigger a soft (non-fatal) error\n";
 _string += "Press L to toggle logging (currently = " + string(SnitchLogGet()) + ")\n";
+_string += "Press N to toggle network transmission (currently = " + string(SnitchNetworkGet()) + ")\n";
 _string += "Press I to toggle integration (currently = " + string(SnitchIntegrationGet()) + ")\n";
 _string += "\n";
 _string += "\n";
@@ -19,11 +21,16 @@ if (is_struct(crashDump))
     
     try
     {
-        _string += "message = \"" + string(crashDump.message) + "\"\n\n";
-        _string += "longMessage = \"" + string(crashDump.longMessage) + "\"\n\n";
-        _string += "script = \"" + string(crashDump.script) + "\"\n\n";
-        _string += "line = " + string(crashDump.line) + "\n\n";
-        _string += "stacktrace = " + string(crashDump.stacktrace) + "\n\n";
+        _string += "message = \"" + string(crashDump.message) + "\"\n";
+        _string += "\n";
+        _string += "longMessage = \"" + string(crashDump.longMessage) + "\"\n";
+        _string += "\n";
+        _string += "script = \"" + string(crashDump.script) + "\"\n";
+        _string += "\n";
+        _string += "line = " + string(crashDump.line) + "\n";
+        _string += "\n";
+        _string += "stacktrace = " + string(crashDump.stacktrace) + "\n";
+        _string += "\n";
     }
     catch(_error)
     {

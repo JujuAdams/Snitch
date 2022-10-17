@@ -1,3 +1,11 @@
+//Bug tracking integrations open up potential security risks.
+//  1. Never share access keys with anyone
+//  2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly
+//  3. Do your absolute best to protect the privacy of your players
+//
+//Set this macro to <true> to acknowledge this warning
+#macro SNITCH_INTEGRATION_WARNING_READ  true
+
 //Which integration to use
 //There are 4 modes:
 //   0:  Don't use any integration at all
@@ -6,12 +14,16 @@
 //   3:  Use the GameAnalytics integration
 //   4:  Use the Bugsnag integration
 //   5:  Use the DeltaDNA integration
-#macro SNITCH_INTEGRATION_MODE  0
+#macro SNITCH_INTEGRATION_MODE  1
 
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
 //If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)
 //It is recommended that this macro is set to <false> and you ask for user consent before enabling it
 #macro SNITCH_INTEGRATION_ON_BOOT  true
+
+
+
+#region Advanced Settings
 
 //Whether to allow backups to be made for HTTP requests
 //Any requests that fail will be reattempted at a later time
@@ -46,12 +58,8 @@
 //Whether to output HTTP success to the console. This is handy for confirming HTTP requests are being processed properly
 //If logging is enabled, this information will also be outputted to the log file
 //   N.B. HTTP warnings/failures will always be reported
-#macro SNITCH_OUTPUT_HTTP_SUCCESS  true
+#macro SNITCH_OUTPUT_HTTP_SUCCESS  false
 
-//Bug tracking integrations open up potential security risks.
-//  1. Never share access keys with anyone
-//  2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly
-//  3. Do your absolute best to protect the privacy of your players
-//
-//Set this macro to <true> to acknowledge this warning
-#macro SNITCH_INTEGRATION_WARNING_READ  false
+#macro __SNITCH_HTTP_TEST_TIMEOUT  5000
+
+#endregion

@@ -4,6 +4,19 @@ these macros useful elsewhere in your game. All macros are read-only.
 SNITCH_RUNNING_FROM_IDE
   Whether the application was booted from the GameMaker IDE. Very useful for adding safety checks
   to prevent debug behaviour from being executed when in production.
+
+SNITCH_FRAMES
+  How many rendering frames have been drawn since the game started.
+
+SNITCH_SESSION_TIME
+  How many milliseconds have elapsed since the game was started. This may include time that the
+  game window is backgrounded and/or out of focus, depending on platform.
+
+SNITCH_FOCUS_FRAMES
+  How many rendering frames have been drawn whilst the game window has been in focus.
+
+SNTICH_FOCUS_TIME
+  How long the game has been running in focus in milliseconds.
   
 SNITCH_VERSION
   The version of Snitch being used, as a string.

@@ -5,5 +5,5 @@
 
 function SnitchException(_struct)
 {
-    return (new __SnitchClassError("")).__Exception(_struct);
+    return (new __SnitchClassError("")).__SetException(_struct);
 }

@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__SnitchHMACSHA256",
+  "name": "__SnitchClassError",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
