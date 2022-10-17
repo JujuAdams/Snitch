@@ -15,7 +15,12 @@ function __SnitchClassError(_message) constructor
     
     static __GuaranteeCallstack = function()
     {
-        if (!is_array(__rawCallstackArray)) __Callstack(undefined, 3);
+        if (!is_array(__rawCallstackArray))
+        {
+            __Callstack(undefined, 3);
+        }
+        
+        return __rawCallstackArray;
     }
     
     static __Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
@@ -23,18 +28,26 @@ function __SnitchClassError(_message) constructor
         __rawCallstackArray = array_create(array_length(_callstack) - _trim);
         array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
         
-        return self;
+        return __rawCallstackArray;
     }
     
     static __GuaranteeSimpleCallstack = function()
     {
-        if (!is_array(__simpleCallstack)) __simpleCallstack = __SnitchProcessRawCallstack(__rawCallstackArray, 0);
+        if (!is_array(__simpleCallstack))
+        {
+            __simpleCallstack = is_array(__rawCallstackArray)? __SnitchProcessRawCallstack(__rawCallstackArray, 0) : [];
+        }
+        
         return __simpleCallstack;
     }
     
     static __GuaranteeIntegrationCallstack = function()
     {
-        if (!is_array(__integrationCallstack)) __integrationCallstack = __SnitchProcessRawCallstack(__rawCallstackArray, 0);
+        if (!is_array(__integrationCallstack))
+        {
+            __integrationCallstack = is_array(__rawCallstackArray)? __SnitchProcessRawCallstack(__rawCallstackArray, 0) : [];
+        }
+        
         return __integrationCallstack;
     }
     
@@ -127,7 +140,6 @@ function __SnitchClassError(_message) constructor
     static SendIntegration = function()
     {
         __GuaranteeCallstack();
-        __GuaranteeIntegrationCallstack();
         
         switch(SNITCH_INTEGRATION_MODE)
         {
@@ -187,7 +199,7 @@ function __SnitchClassError(_message) constructor
         __request = new __SnitchClassRequest(__uuid, json_stringify(_payload));
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 2) && SnitchIntegrationGet())
+        if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
         {
             __SnitchSentryHTTPRequest(__request);
             __request.__SaveBackup();
@@ -213,7 +225,7 @@ function __SnitchClassError(_message) constructor
                 limit_ad_tracking: true,
                 category: "error",
                 severity: __fatal? "critical" : "error",
-                message: __message + (is_array(__integrationCallstack)? (" " + string(__integrationCallstack)) : ""),
+                message: __message + " " + string(__GuaranteeIntegrationCallstack()),
             },
         ];
         
@@ -221,7 +233,7 @@ function __SnitchClassError(_message) constructor
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have GameAnalytics enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 3) && SnitchIntegrationGet())
+        if ((SNITCH_INTEGRATION_MODE == 2) && SnitchIntegrationGet())
         {
             __SnitchGameAnalyticsHTTPRequest(__request);
             __request.__SaveBackup();
@@ -233,7 +245,6 @@ function __SnitchClassError(_message) constructor
     static __SendBugsnag = function()
     {
         __payload = {
-            apiKey: SNITCH_BUGSNAG_API_KEY,
             payloadVersion: "5",
             notifier: {
                 name: "Snitch",
@@ -246,7 +257,7 @@ function __SnitchClassError(_message) constructor
                         {
                             errorClass: __message,
                             message: __longMessage,
-                            stacktrace: (is_array(__integrationCallstack)? __integrationCallstack : []),
+                            stacktrace: __GuaranteeIntegrationCallstack(),
                         },
                     ],
                     severity: __fatal? "error" : "warning",
@@ -258,7 +269,7 @@ function __SnitchClassError(_message) constructor
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have Bugsnag enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 4) && SnitchIntegrationGet())
+        if ((SNITCH_INTEGRATION_MODE == 3) && SnitchIntegrationGet())
         {
             __SnitchBugsnagHTTPRequest(__request);
             __request.__SaveBackup();
@@ -273,7 +284,7 @@ function __SnitchClassError(_message) constructor
         _eventParams[$ SNITCH_DELTADNA_MESSAGE_PARAM    ] = __message;
         _eventParams[$ SNITCH_DELTADNA_LONGMESSAGE_PARAM] = is_string(__longMessage)? __longMessage : __message;
         _eventParams[$ SNITCH_DELTADNA_FATAL_PARAM      ] = __fatal;
-        _eventParams[$ SNITCH_DELTADNA_STACKTRACE_PARAM ] = is_array(__integrationCallstack)? __integrationCallstack : [];
+        _eventParams[$ SNITCH_DELTADNA_STACKTRACE_PARAM ] = __GuaranteeIntegrationCallstack();
         
         __payload = {
             eventName: SNITCH_DELTADNA_EVENT_NAME,
@@ -287,7 +298,7 @@ function __SnitchClassError(_message) constructor
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have DeltaDNA enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 5) && SnitchIntegrationGet())
+        if ((SNITCH_INTEGRATION_MODE == 4) && SnitchIntegrationGet())
         {
             __SnitchDeltaDNAHTTPRequest(__request);
             __request.__SaveBackup();
