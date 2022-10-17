@@ -1,5 +1,5 @@
 /// Returns whether integrations are enabled
-/// This function will always return <false> is SNITCH_INTEGRATION_MODE is set to 0
+/// This function will always return <false> if SNITCH_INTEGRATION_MODE is set to 0
 
 function SnitchIntegrationGet()
 {

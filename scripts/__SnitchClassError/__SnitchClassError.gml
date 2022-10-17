@@ -72,11 +72,10 @@ function __SnitchClassError(_message) constructor
         
         switch(SNITCH_INTEGRATION_MODE)
         {
-            case 1: __SendGoogleAnalytics(); break;
-            case 2: __SendSentry();          break;
-            case 3: __SendGameAnalytics();   break;
-            case 4: __SendBugsnag();         break;
-            case 5: __SendDeltaDNA();        break;
+            case 1: __SendSentry();          break;
+            case 2: __SendGameAnalytics();   break;
+            case 3: __SendBugsnag();         break;
+            case 4: __SendDeltaDNA();        break;
         }
         
         return self;
@@ -131,49 +130,6 @@ function __SnitchClassError(_message) constructor
         buffer_delete(_compressedBuffer);
         
         return _string;
-    }
-    
-    static __SendGoogleAnalytics = function()
-    {
-        if (__payload == undefined) __payload = {};
-        
-        var _paramsStruct = {
-            message: string(__message),
-            fatal: __fatal? "true" : "false",
-        };
-        
-        //Add the crash location if we have a callstack to work with
-        //We have very limited space so we can only send the first callstack location
-        if (is_array(__callstack))
-        {
-            _paramsStruct.location = __callstack[array_length(__callstack)-1];
-        }
-        
-        with(__payload) //TODO - Optimize by building this string manually without needing to allocate a struct that is then immediately JSONified
-        {
-            client_id            = global.__snitchClientID;
-            //TODO - Add user_properties
-            non_personalized_ads = true;
-            timestamp_micros     = floor(1000000*SnitchConvertToUnixTime(date_current_datetime()));
-            events               = [
-                {
-                    name: "exception",
-                    params: _paramsStruct,
-                }
-            ];
-        };
-        
-        //Make a new request struct
-        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
-        
-        //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
-        {
-            __SnitchGoogleAnalyticsHTTPRequest(__request);
-            __request.__SaveBackup();
-        }
-        
-        return self;
     }
     
     static __SendSentry = function()
@@ -251,7 +207,7 @@ function __SnitchClassError(_message) constructor
                 severity: __fatal? "critical" : "error",
                 message: __message + (is_array(__callstack)? (" " + string(__callstack)) : ""),
             },
-        ]
+        ];
         
         //Make a new request struct
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));

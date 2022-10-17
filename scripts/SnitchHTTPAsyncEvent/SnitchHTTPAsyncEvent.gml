@@ -1,11 +1,6 @@
-/// This function *must* be called once per frame in a Step event or many Snitch behaviours
-/// will not work. This is typically done by calling this function in the Step event of a
-/// persistent instance. Be careful that instance doesn't get deactivated if you're
-/// using instance deactivation in your game!
-/// 
-/// If you're using the Google Analytics, sentry.io, or GameAnalytics integrations then
-/// this function must also be called in an Async HTTP event every frame. Again, this is
-/// typically done in a persistent instance that is never deactivated.
+/// If you're using an integrations then this function must be called in an Async HTTP event
+/// every frame. This is typically done in a persistent instance. Be careful that instance
+/// doesn't get deactivated if you're using instance deactivation in your game!
 
 function SnitchHTTPAsyncEvent()
 {

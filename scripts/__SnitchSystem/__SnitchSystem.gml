@@ -1,5 +1,4 @@
 // GameAnalytics - https://restapidocs.gameanalytics.com/
-// Google Analytics - https://developers.google.com/analytics/devguides/collection/protocol/v1/
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 // sentry.io - https://develop.sentry.dev/sdk/overview/    https://develop.sentry.dev/sdk/event-payloads/https://develop.sentry.dev/sdk/event-payloads/
 
@@ -41,7 +40,7 @@ function __SnitchInit()
     
     if ((SNITCH_INTEGRATION_MODE != 0) && !SNITCH_INTEGRATION_WARNING_READ)
     {
-        __SnitchError("Bug tracking integrations open up potential security risks.\n1. Never share access keys with anyone\n2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly\n3. Do your absolute best to protect the privacy of your players\n \nPlease set SNITCH_INTEGRATION_WARNING_READ to <true> to acknowledge this warning");
+        __SnitchError("Bug tracking integrations open up potential privacy and security risks.\n1. Never share access keys with anyone\n2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly\n3. Do your absolute best to protect the privacy of your players\n \nPlease set SNITCH_INTEGRATION_WARNING_READ to <true> to acknowledge this warning");
         game_end();
         return;
     }
@@ -358,21 +357,8 @@ function __SnitchInit()
     
     switch(SNITCH_INTEGRATION_MODE)
     {
-        //Google Analytics
-        case 1:
-            global.__snitchClientID = SnitchGenerateUUID4String(true);
-            global.__snitchEndpoint = "https://www.google-analytics.com/mp/collect?measurement_id=" + SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID + "&api_secret=" + SNITCH_GOOGLE_ANALYTICS_API_SECRET;
-            
-            if (__SNITCH_DEBUG)
-            {
-                __SnitchTrace("Google Analytics measurement ID = \"", SNITCH_GOOGLE_ANALYTICS_MEASUREMENT_ID, "\"");
-                __SnitchTrace("Google Analytics API secret = \"", SNITCH_GOOGLE_ANALYTICS_API_SECRET, "\"");
-                __SnitchTrace("Google Analytics endpoint = \"", global.__snitchEndpoint, "\"");
-            }
-        break;
-        
         //sentry.io
-        case 2:
+        case 1:
             var _DSN = SNITCH_SENTRY_DSN_URL;
             
             var _protocolPosition = string_pos("://", _DSN);
@@ -407,7 +393,7 @@ function __SnitchInit()
         break;
         
         //GameAnalytics
-        case 3:
+        case 2:
             global.__snitchSessionID = SnitchGenerateUUID4String(true);
             
             if ((SNITCH_GAMEANALYTICS_GAME_KEY == "5c6bcb5402204249437fb5a7a80a4959") && (SNITCH_GAMEANALYTICS_SECRET_KEY == "16813a12f718bc5c620f56944e1abc3ea13ccbac"))
@@ -429,7 +415,7 @@ function __SnitchInit()
         break;
         
         //Bugsnag
-        case 4:
+        case 3:
             if (__SNITCH_DEBUG)
             {
                 __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_API_KEY, "\"");
@@ -437,7 +423,7 @@ function __SnitchInit()
         break;
         
         //DeltaDNA
-        case 5:
+        case 4:
             global.__snitchSessionID = SnitchGenerateUUID4String(true);
             
             //The endpoint is modified in __SnitchDeltaDNAHTTPRequest()
@@ -530,11 +516,10 @@ function __SnitchInit()
                             
                             switch(SNITCH_INTEGRATION_MODE)
                             {
-                                case 1: __SnitchGoogleAnalyticsHTTPRequest(self); break;
-                                case 2: __SnitchSentryHTTPRequest(self);          break;
-                                case 3: __SnitchGameAnalyticsHTTPRequest(self);   break;
-                                case 4: __SnitchBugsnagHTTPRequest(self);         break;
-                                case 5: __SnitchDeltaDNAHTTPRequest(self);        break;
+                                case 1: __SnitchSentryHTTPRequest(self);          break;
+                                case 2: __SnitchGameAnalyticsHTTPRequest(self);   break;
+                                case 3: __SnitchBugsnagHTTPRequest(self);         break;
+                                case 4: __SnitchDeltaDNAHTTPRequest(self);        break;
                             }
                             
                             global.__snitchRequestBackupResendTime = current_time;
@@ -564,11 +549,10 @@ function __SnitchIntegrationName()
     switch(SNITCH_INTEGRATION_MODE)
     {
         case 0: return "None";             break;
-        case 1: return "Google Analytics"; break;
-        case 2: return "sentry.io";        break;
-        case 3: return "GameAnalytics";    break;
-        case 4: return "Bugsnag";          break;
-        case 5: return "DeltaDNA";         break;
+        case 1: return "sentry.io";        break;
+        case 2: return "GameAnalytics";    break;
+        case 3: return "Bugsnag";          break;
+        case 4: return "DeltaDNA";         break;
         
         default:
             __SnitchError("SNITCH_INTEGRATION_MODE value ", SNITCH_INTEGRATION_MODE, " unsupported");
