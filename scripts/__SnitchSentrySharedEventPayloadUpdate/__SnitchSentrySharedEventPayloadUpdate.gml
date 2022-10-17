@@ -25,16 +25,6 @@
 ///   .exception.values[0].value      = Exception struct's .longMessage variable if provided, otherwise a copy of .exception.values[0].type
 ///   .exception.values[0].stacktrace = The callstack for the exception, based on the exception struct's .stacktrace variable if provided
 /// 
-/// 
-/// 
-/// The following macros are available for use in this function (and elsewhere too if you need them):
-///   SNITCH_OS_NAME         = Human-readable name for the operating system e.g. "Windows", "Mac OS X" etc.
-///   SNITCH_OS_VERSIONon    = Human-readable version for the operating system e.g. "10", "Lollipop"
-///   SNITCH_BROWSER         = Web browser that the game is running in
-///   SNITCH_ENVIRONMENT_NAME     = OS name + OS version, or if the game is running in a web browser, the name of the web browser
-///   SNITCH_OS_INFO         = The same as os_get_info() but as a struct instead of a ds_map
-///   SNITCH_BOOT_PARAMETERS = Array of boot parameters used to execute the game
-/// 
 /// You can otherwise use GameMaker features as you see fit. Bear in mind that ds_* data structures will not be serialised properly as this is a struct
 
 function __SnitchSentrySharedEventPayloadUpdate()
