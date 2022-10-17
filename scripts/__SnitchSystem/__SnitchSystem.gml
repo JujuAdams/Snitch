@@ -10,7 +10,7 @@
 
 
 #macro SNITCH_VERSION               "3.0.0"
-#macro SNITCH_DATE                  "2021-12-30"
+#macro SNITCH_DATE                  "2022-10-17"
 #macro SNITCH_SHARED_EVENT_PAYLOAD  global.__snitchSharedEventPayload
 #macro SNITCH_OS_NAME               global.__snitchOSName
 #macro SNITCH_OS_VERSION            global.__snitchOSVersion
