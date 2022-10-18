@@ -11,7 +11,7 @@ function __SnitchConfigPayloadGameAnalytics(_uuid, _message, _longMessage, _call
             manufacturer: "unknown",
             platform: SNITCH_GA_PLATFORM,
             session_id: SNITCH_SESSION_ID,
-            session_num: int64(1),
+            session_num: int64(1), //We're not tracking user IDs so this is always 1
             limit_ad_tracking: true,
             category: "error",
             severity: __fatal? "critical" : "error",
