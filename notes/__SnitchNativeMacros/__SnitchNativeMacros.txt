@@ -24,9 +24,11 @@ SNITCH_VERSION
 SNITCH_DATE
   The build date for this version of Snitch, as a string.
 
-SNITCH_SHARED_EVENT_PAYLOAD
-  A persistent struct containing an event payload. This is used for communicating data to sentry.io
-  when that particular integration is enabled (see __SnitchConfigIntegrations).
+SNITCH_SESSION_ID
+  A unique identifier for each time the game is run.
+
+SNITCH_SESSION_START_TIME
+  UTC time that the session was started.
 
 SNITCH_OS_NAME
   Human-readable name for the current OS, as a string. The following are values that this macro

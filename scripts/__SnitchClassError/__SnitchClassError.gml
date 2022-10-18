@@ -154,49 +154,9 @@ function __SnitchClassError(_message) constructor
     
     static __SendSentry = function()
     {
-        var _payload = __payload;
-        if (_payload == undefined)
-        {
-            _payload = SNITCH_SHARED_EVENT_PAYLOAD;
-            
-            //Update our event payload
-            with(SNITCH_SHARED_EVENT_PAYLOAD) __SnitchSentrySharedEventPayloadUpdate();
-        }
-        
-        with(_payload)
-        {
-            //Create a unique UUID and give the event a Unix timestamp
-            event_id  = other.__uuid;
-            timestamp = SnitchConvertToUnixTime(date_current_datetime());
-            
-            //Set the message level
-            level = other.__fatal? "fatal" : "error";
-            
-            //Build an exception struct to send
-            var _exceptionData =  { type: other.__message };
-            
-            if (other.__longMessage != undefined)
-            {
-                _exceptionData.value = other.__longMessage;
-            }
-            else
-            {
-                _exceptionData.value = other.__message;
-            }
-            
-            //Only add callstack/module information if we have it
-            if (is_array(other.__callstack))
-            {
-                if (array_length(other.__callstack) > 0) _exceptionData.module = other.__callstack[0].module;
-                _exceptionData.stacktrace = { frames: other.__callstack };
-            }
-            
-            //Pack the error data in such a way that sentry.io will understand it
-            exception = { values: [_exceptionData] };
-        }
-        
         //Make a new request struct
-        __request = new __SnitchClassRequest(__uuid, json_stringify(_payload));
+        __payload = __SnitchConfigPayloadSentry(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
+        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
@@ -210,26 +170,8 @@ function __SnitchClassError(_message) constructor
     
     static __SendGameAnalytics = function()
     {
-        __payload = [
-            {
-                device: "unknown",
-                v: int64(2),
-                user_id: global.__snitchSessionID,
-                client_ts: floor(1000*SnitchConvertToUnixTime(date_current_datetime())),
-                sdk_version: "rest api v2",
-                os_version: "windows 10",
-                manufacturer: "unknown",
-                platform: "windows",
-                session_id: global.__snitchSessionID,
-                session_num: int64(1),
-                limit_ad_tracking: true,
-                category: "error",
-                severity: __fatal? "critical" : "error",
-                message: __message + " " + string(__GuaranteeIntegrationCallstack()),
-            },
-        ];
-        
         //Make a new request struct
+        __payload = __SnitchConfigPayloadGameAnalytics(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have GameAnalytics enabled then actually send the request and make a backup in case the request fails
@@ -244,28 +186,9 @@ function __SnitchClassError(_message) constructor
     
     static __SendBugsnag = function()
     {
-        __payload = {
-            payloadVersion: "5",
-            notifier: {
-                name: "Snitch",
-                version: SNITCH_VERSION,
-                url: "https://github.com/jujuAdams/snitch/",
-            },
-            events: [
-                {
-                    exceptions: [
-                        {
-                            errorClass: __message,
-                            message: __longMessage,
-                            stacktrace: __GuaranteeIntegrationCallstack(),
-                        },
-                    ],
-                    severity: __fatal? "error" : "warning",
-                },
-            ],
-        };
         
         //Make a new request struct
+        __payload = __SnitchConfigPayloadBugsnag(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have Bugsnag enabled then actually send the request and make a backup in case the request fails
@@ -280,21 +203,8 @@ function __SnitchClassError(_message) constructor
     
     static __SendDeltaDNA = function()
     {
-        var _eventParams = {};
-        _eventParams[$ SNITCH_DELTADNA_MESSAGE_PARAM    ] = __message;
-        _eventParams[$ SNITCH_DELTADNA_LONGMESSAGE_PARAM] = is_string(__longMessage)? __longMessage : __message;
-        _eventParams[$ SNITCH_DELTADNA_FATAL_PARAM      ] = __fatal;
-        _eventParams[$ SNITCH_DELTADNA_STACKTRACE_PARAM ] = __GuaranteeIntegrationCallstack();
-        
-        __payload = {
-            eventName: SNITCH_DELTADNA_EVENT_NAME,
-            userID: global.__snitchSessionID, //Deliberately randomized so that players can't be tracked across sessions
-            sessionID: global.__snitchSessionID,
-            eventUUID: __uuid,
-            eventParams: _eventParams,
-        };
-        
         //Make a new request struct
+        __payload = __SnitchConfigPayloadDeltaDNA(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have DeltaDNA enabled then actually send the request and make a backup in case the request fails

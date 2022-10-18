@@ -11,18 +11,21 @@
 
 #macro SNITCH_VERSION               "3.0.0"
 #macro SNITCH_DATE                  "2022-10-17"
-#macro SNITCH_SHARED_EVENT_PAYLOAD  global.__snitchSharedEventPayload
 #macro SNITCH_OS_NAME               global.__snitchOSName
 #macro SNITCH_OS_VERSION            global.__snitchOSVersion
 #macro SNITCH_ENVIRONMENT_NAME      global.__snitchEnvironmentName
 #macro SNITCH_BROWSER               global.__snitchBrowser
 #macro SNITCH_OS_INFO               global.__snitchOSInfo
 #macro SNITCH_BOOT_PARAMETERS       global.__snitchBootParameters
+#macro SNITCH_SESSION_ID            global.__snitchSessionID
 #macro SNITCH_RUNNING_FROM_IDE      global.__snitchRunningFromIDE
+#macro SNITCH_SESSION_START_TIME    global.__snitchSessionBootTime
 #macro SNITCH_FRAMES                global.__snitchFrames
 #macro SNITCH_FOCUS_FRAMES          global.__snitchFocusFrames
 #macro SNITCH_SESSION_TIME          (current_time - global.__snitchSessionStartTime)
 #macro SNITCH_FOCUS_TIME            global.__snitchFocusTime
+#macro SNITCH_GA_PLATFORM           global.__snitchGAPlatform
+#macro SNITCH_GA_OS_VERSION         global.__snitchGAOSVersion
 
 #macro __SNITCH_DEBUG  (global.__snitchRunningFromIDE && true)
 
@@ -45,7 +48,9 @@ function __SnitchInit()
         return;
     }
     
-    
+    date_set_timezone(timezone_utc);
+    global.__snitchSessionBootTime = date_current_datetime();
+    date_set_timezone(timezone_local);
     
     global.__snitchGMExceptionHandler = undefined;
     global.__snitchFrames             = 0;
@@ -89,6 +94,10 @@ function __SnitchInit()
     global.__snitchRequestBackupResendIndex = 0;
     global.__snitchRequestBackupFailures    = 0;
     
+    //Integration-specific
+    global.__snitchGAPlatform  = "";
+    global.__snitchGAOSVersion = "";
+    
     
     
     //Build an array for the boot parameters
@@ -104,124 +113,136 @@ function __SnitchInit()
     
     
     
-    #region Set SNITCH_OS_NAME, SNITCH_OS_VERSION, SNITCH_ENVIRONMENT_NAME, SNITCH_BROWSER, SNITCH_OS_INFO
+    #region Set SNITCH_OS_NAME, SNITCH_OS_VERSION, SNITCH_ENVIRONMENT_NAME, SNITCH_BROWSER, global.__snitchOSInfo
         
-    SNITCH_OS_NAME          = "Unknown (=" + string(os_type) + ")";
-    SNITCH_OS_VERSION       = "v" + string(os_version);
-    SNITCH_BROWSER          = "Unknown browser";
-    SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+    global.__snitchOSName    = "Unknown (=" + string(os_type) + ")";
+    global.__snitchOSVersion = "v" + string(os_version);
+    global.__snitchBrowser           = "Unknown browser";
+    global.__snitchEnvironmentName  = global.__snitchOSName + " " + global.__snitchOSVersion;
     
     switch(os_type)
     {
         case os_windows:
         case os_win8native:
-            SNITCH_OS_NAME = "Windows";
+            global.__snitchOSName     = "Windows";
+            global.__snitchGAPlatform = "windows";
               
             switch(os_version)
             {
-                case 327680: SNITCH_OS_VERSION = "2000";  break;
-                case 327681: SNITCH_OS_VERSION = "XP";    break;
-                case 237862: SNITCH_OS_VERSION = "XP";    break;
-                case 393216: SNITCH_OS_VERSION = "Vista"; break;
-                case 393217: SNITCH_OS_VERSION = "7";     break;
-                case 393218: SNITCH_OS_VERSION = "8";     break;
-                case 393219: SNITCH_OS_VERSION = "8.1";   break;
-                case 655360: SNITCH_OS_VERSION = "10";    break;
+                case 327680: global.__snitchOSVersion = "2000";  global.__snitchGAPlatform = global.__snitchGAPlatform + " 5.0"  break;
+                case 327681: global.__snitchOSVersion = "XP";    global.__snitchGAPlatform = global.__snitchGAPlatform + " 5.1"; break;
+                case 237862: global.__snitchOSVersion = "XP";    global.__snitchGAPlatform = global.__snitchGAPlatform + " 5.2"; break;
+                case 393216: global.__snitchOSVersion = "Vista"; global.__snitchGAPlatform = global.__snitchGAPlatform + " 6";   break;
+                case 393217: global.__snitchOSVersion = "7";     global.__snitchGAPlatform = global.__snitchGAPlatform + " 7";   break;
+                case 393218: global.__snitchOSVersion = "8";     global.__snitchGAPlatform = global.__snitchGAPlatform + " 8";   break;
+                case 393219: global.__snitchOSVersion = "8.1";   global.__snitchGAPlatform = global.__snitchGAPlatform + " 8.1"; break;
+                case 655360: global.__snitchOSVersion = "10";    global.__snitchGAPlatform = global.__snitchGAPlatform + " 10";  break;
             }
         break;
         
         case os_uwp:
-            SNITCH_OS_NAME     = "UWP";
-            SNITCH_OS_VERSION  = string(os_version);
-            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            global.__snitchOSName    = "UWP";
+            global.__snitchOSVersion = string(os_version);
+            
+            global.__snitchGAPlatform  = "uwp_console"; //Dunno how to detect whether we're on console or not
+            global.__snitchGAOSVersion = global.__snitchGAPlatform + " " + string(os_version);
         break;
         
         case os_linux:
-            SNITCH_OS_NAME     = "Linux";
-            SNITCH_OS_VERSION  = string(os_version);
-            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            global.__snitchOSName    = "Linux";
+            global.__snitchOSVersion = string(os_version);
+            
+            global.__snitchGAPlatform  = "linux";
+            global.__snitchGAOSVersion = global.__snitchGAPlatform + " " + string(os_version);
         break;
         
         case os_macosx:
-            SNITCH_OS_NAME     = "macOS";
-            SNITCH_OS_VERSION  = string(os_version >> 24) + "." + string((os_version >> 12) & 0xfff);
-            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            global.__snitchOSName    = "macOS";
+            global.__snitchOSVersion = string(os_version >> 24) + "." + string((os_version >> 12) & 0xfff);
+            
+            global.__snitchGAPlatform  = "mac_osx";
+            global.__snitchGAOSVersion = global.__snitchGAPlatform + " " + string(os_version);
         break;
         
         case os_ios:
-            SNITCH_OS_NAME     = "iOS";
-            SNITCH_OS_VERSION  = string(os_version >> 24) + "." + string((os_version >> 12) & 0xfff);
-            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            global.__snitchOSName    = "iOS";
+            global.__snitchOSVersion = string(os_version >> 24) + "." + string((os_version >> 12) & 0xfff);
+            
+            global.__snitchGAPlatform  = "ios";
+            global.__snitchGAOSVersion = global.__snitchGAPlatform + " " + string(os_version);
         break;
         
         case os_android:
-            SNITCH_OS_NAME = "Android";
+            global.__snitchOSName = "Android";
             
-            switch (os_version)
+            switch(os_version)
             {
-                case 21: SNITCH_OS_VERSION = "Lollipop";    break;
-                case 22: SNITCH_OS_VERSION = "Lollipop";    break;
-                case 23: SNITCH_OS_VERSION = "Marshmallow"; break;
-                case 24: SNITCH_OS_VERSION = "Nougat";      break;
-                case 25: SNITCH_OS_VERSION = "Oreo";        break;
-                case 26: SNITCH_OS_VERSION = "Pie";         break;
+                case 21: global.__snitchOSVersion = "Lollipop";    break;
+                case 22: global.__snitchOSVersion = "Lollipop";    break;
+                case 23: global.__snitchOSVersion = "Marshmallow"; break;
+                case 24: global.__snitchOSVersion = "Nougat";      break;
+                case 25: global.__snitchOSVersion = "Oreo";        break;
+                case 26: global.__snitchOSVersion = "Pie";         break;
                 
                 default:
                     if (os_version >= 27)
                     {
-                        SNITCH_OS_VERSION = "v" + string(os_version - 17);
+                        global.__snitchOSVersion = "v" + string(os_version - 17);
                     }
                 break;
             }
             
-            SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+            global.__snitchGAPlatform  = "android";
+            global.__snitchGAOSVersion = global.__snitchGAPlatform + " " + string(os_version);
         break;
         
-        case os_tvos:         SNITCH_OS_NAME = "tvOS";             break;
-        case os_ps3:          SNITCH_OS_NAME = "PlayStation 3";    break;
-        case os_ps4:          SNITCH_OS_NAME = "PlayStation 4";    break;
-        case os_ps5:          SNITCH_OS_NAME = "PlayStation 5";    break;
-        case os_psvita:       SNITCH_OS_NAME = "PlayStation Vita"; break;
-        case os_xboxone:      SNITCH_OS_NAME = "Xbox One";         break;
-        case os_xboxseriesxs: SNITCH_OS_NAME = "Xbox Series X/S";  break;
-        case os_switch:       SNITCH_OS_NAME = "Switch";           break;
-        case os_operagx:      SNITCH_OS_NAME = "GX.games";         break;
+        case os_tvos:         global.__snitchOSName = "tvOS";             global.__snitchGAPlatform = "tvos";    global.__snitchGAOSVersion = global.__snitchGAPlatform; break;
+        case os_ps3:          global.__snitchOSName = "PlayStation 3";    global.__snitchGAPlatform = "ps3";     global.__snitchGAOSVersion = global.__snitchGAPlatform; break;
+        case os_ps4:          global.__snitchOSName = "PlayStation 4";    global.__snitchGAPlatform = "ps4";     global.__snitchGAOSVersion = global.__snitchGAPlatform; break;
+        case os_ps5:          global.__snitchOSName = "PlayStation 5";    global.__snitchGAPlatform = "psm";     global.__snitchGAOSVersion = global.__snitchGAPlatform; break; //No PS5
+        case os_psvita:       global.__snitchOSName = "PlayStation Vita"; global.__snitchGAPlatform = "vita";    global.__snitchGAOSVersion = global.__snitchGAPlatform; break;
+        case os_xboxone:      global.__snitchOSName = "Xbox One";         global.__snitchGAPlatform = "xboxone"; global.__snitchGAOSVersion = global.__snitchGAPlatform; break;
+        case os_xboxseriesxs: global.__snitchOSName = "Xbox Series X/S";  global.__snitchGAPlatform = "xboxone"; global.__snitchGAOSVersion = global.__snitchGAPlatform; break; //No Xbox Series X/S
+        case os_switch:       global.__snitchOSName = "Switch";           global.__snitchGAPlatform = "wiiu";    global.__snitchGAOSVersion = global.__snitchGAPlatform; break; //No Switch OS
+        case os_operagx:      global.__snitchOSName = "GX.games";         global.__snitchGAPlatform = "windows"; global.__snitchGAOSVersion = global.__snitchGAPlatform; break; //No idea how to deal with this
     }
     
     //Figure out what browser we're using
     switch(os_browser)
     {
-        case browser_not_a_browser: SNITCH_BROWSER = "Not a browser";     break;
-        case browser_ie:            SNITCH_BROWSER = "Internet Explorer"; break;
-        case browser_ie_mobile:     SNITCH_BROWSER = "Internet Explorer"; break;
-        case browser_firefox:       SNITCH_BROWSER = "Firefox";           break;
-        case browser_chrome:        SNITCH_BROWSER = "Chrome";            break;
-        case browser_safari:        SNITCH_BROWSER = "Safari";            break;
-        case browser_safari_mobile: SNITCH_BROWSER = "Safari";            break;
-        case browser_opera:         SNITCH_BROWSER = "Opera";             break;
+        case browser_not_a_browser: global.__snitchBrowser = "Not a browser";     break;
+        case browser_ie:            global.__snitchBrowser = "Internet Explorer"; break;
+        case browser_ie_mobile:     global.__snitchBrowser = "Internet Explorer"; break;
+        case browser_firefox:       global.__snitchBrowser = "Firefox";           break;
+        case browser_chrome:        global.__snitchBrowser = "Chrome";            break;
+        case browser_safari:        global.__snitchBrowser = "Safari";            break;
+        case browser_safari_mobile: global.__snitchBrowser = "Safari";            break;
+        case browser_opera:         global.__snitchBrowser = "Opera";             break;
     }
     
     //If we're on a browser, use the browser's name instead
     if (os_browser == browser_not_a_browser)
     {
-        SNITCH_ENVIRONMENT_NAME = SNITCH_OS_NAME + " " + SNITCH_OS_VERSION;
+        global.__snitchEnvironmentName = global.__snitchOSName + " " + global.__snitchOSVersion;
     }
     else
     {
-        SNITCH_ENVIRONMENT_NAME = SNITCH_BROWSER;
+        global.__snitchEnvironmentName = global.__snitchBrowser;
     }
     
     //Turn the os_get_info() map into a struct for serialization
-    SNITCH_OS_INFO = {};
+    global.__snitchOSInfo = {};
     if (os_type != os_switch) //TODO - Workaround for a crash on Switch (runtime 2.3.6   2022-02-04)
     {
         var _infoMap = os_get_info();
+        
         var _key = ds_map_find_first(_infoMap);
         repeat(ds_map_size(_infoMap))
         {
-            SNITCH_OS_INFO[$ _key] = _infoMap[? _key];
+            global.__snitchOSInfo[$ _key] = _infoMap[? _key];
             _key = ds_map_find_next(_infoMap, _key);
         }
+        
         ds_map_destroy(_infoMap);
     }
     
@@ -263,9 +284,6 @@ function __SnitchInit()
     }
     
     
-    
-    //Create the shared event payload
-    SNITCH_SHARED_EVENT_PAYLOAD = __SnitchSentrySharedEventPayload();
     
     if (SNITCH_REQUEST_BACKUP_ENABLE && (SNITCH_INTEGRATION_MODE > 0))
     {
