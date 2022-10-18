@@ -48,9 +48,10 @@ function __SnitchInit()
         return;
     }
     
+    var _oldTimezone = date_get_timezone();
     date_set_timezone(timezone_utc);
     global.__snitchSessionBootTime = date_current_datetime();
-    date_set_timezone(timezone_local);
+    date_set_timezone(_oldTimezone);
     
     global.__snitchGMExceptionHandler = undefined;
     global.__snitchFrames             = 0;
