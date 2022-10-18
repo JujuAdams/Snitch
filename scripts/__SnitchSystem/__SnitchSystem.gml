@@ -2,11 +2,6 @@
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 // sentry.io - https://develop.sentry.dev/sdk/overview/    https://develop.sentry.dev/sdk/event-payloads/https://develop.sentry.dev/sdk/event-payloads/
 
-//Redirect exception_unhandled_handler() to our own internal function
-//The bound exception handler will still be executed
-#macro exception_unhandled_handler      __SnitchCrashSetGMHandler
-#macro __exception_unhandled_handler__  exception_unhandled_handler
-
 
 
 #macro SNITCH_VERSION               "3.0.0"
@@ -558,20 +553,15 @@ function __SnitchInit()
     }, [], -1));
 }
 
-function __SnitchCrashSetGMHandler(_function)
-{
-    global.__snitchGMExceptionHandler = _function;
-}
-
 function __SnitchIntegrationName()
 {
     switch(SNITCH_INTEGRATION_MODE)
     {
-        case 0: return "None";             break;
-        case 1: return "sentry.io";        break;
-        case 2: return "GameAnalytics";    break;
-        case 3: return "Bugsnag";          break;
-        case 4: return "DeltaDNA";         break;
+        case 0: return "None";          break;
+        case 1: return "sentry.io";     break;
+        case 2: return "GameAnalytics"; break;
+        case 3: return "Bugsnag";       break;
+        case 4: return "DeltaDNA";      break;
         
         default:
             __SnitchError("SNITCH_INTEGRATION_MODE value ", SNITCH_INTEGRATION_MODE, " unsupported");

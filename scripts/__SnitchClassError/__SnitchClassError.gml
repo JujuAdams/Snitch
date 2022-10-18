@@ -1,11 +1,10 @@
-function __SnitchClassError(_message) constructor
+function __SnitchClassError() constructor
 {
-    __message              = _message;
+    __message              = undefined;
     __longMessage          = undefined;
     __script               = undefined;
     __line                 = undefined;
     __fatal                = false;
-    __callstack            = undefined;
     __rawCallstackArray    = undefined;
     __simpleCallstack      = undefined;
     __integrationCallstack = undefined;
@@ -13,20 +12,34 @@ function __SnitchClassError(_message) constructor
     __request              = undefined;
     __uuid                 = SnitchGenerateUUID4String();
     
-    static __GuaranteeCallstack = function()
+    static __SetMessage = function(_message)
     {
-        if (!is_array(__rawCallstackArray))
-        {
-            __Callstack(undefined, 3);
-        }
+        __message = _message;
         
-        return __rawCallstackArray;
+        __SetRawCallstack(undefined, 3);
+        __SendAll();
     }
     
-    static __Callstack = function(_callstack = debug_get_callstack(), _trim = 0)
+    static __SetException = function(_exceptionStruct)
     {
-        __rawCallstackArray = array_create(array_length(_callstack) - _trim);
-        array_copy(__rawCallstackArray, 0, _callstack, _trim, array_length(_callstack) - _trim);
+        //Extract information from the GameMaker exception struct we were given
+        __message     = _exceptionStruct.message;
+        __longMessage = _exceptionStruct.longMessage;
+        __script      = _exceptionStruct.script;
+        __line        = _exceptionStruct.line;
+        
+        __fatal = true;
+        
+        __SetRawCallstack(_exceptionStruct.stacktrace, 0);
+        __SendAll();
+    }
+    
+    static __SetRawCallstack = function(_callstack = debug_get_callstack(), _trim = 0)
+    {
+        var _size = max(1, array_length(_callstack) - _trim - 1);
+        
+        __rawCallstackArray = array_create(_size);
+        array_copy(__rawCallstackArray, 0, _callstack, _trim, _size);
         
         return __rawCallstackArray;
     }
@@ -49,63 +62,6 @@ function __SnitchClassError(_message) constructor
         }
         
         return __integrationCallstack;
-    }
-    
-    static SendAll = function()
-    {
-        SendIntegration();
-        SendConsole();
-        SendLog();
-        SendNetwork();
-        return self;
-    }
-    
-    static SendLocal = function()
-    {
-        SendConsole();
-        SendLog();
-        SendNetwork();
-        return self;
-    }
-    
-    static SendConsole = function()
-    {
-        show_debug_message(__GetReadableString());
-        return self;
-    }
-    
-    static SendLog = function()
-    {
-        SnitchSendStringToLogFile(__GetReadableString());
-        return self;
-    }
-    
-    static SendNetwork = function()
-    {
-        SnitchSendStringToNetwork(__GetReadableString());
-        return self;
-    }
-    
-    static __SetException = function(_exceptionStruct)
-    {
-        //Extract information from the GameMaker exception struct we were given
-        __message     = _exceptionStruct.message;
-        __longMessage = _exceptionStruct.longMessage;
-        __script      = _exceptionStruct.script;
-        __line        = _exceptionStruct.line;
-        
-        __Callstack(_exceptionStruct.stacktrace, 0);
-        __fatal = true;
-        
-        return self;
-    }
-    
-    static __GetReadableString = function()
-    {
-        __GuaranteeCallstack();
-        var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
-        if (is_array(__rawCallstackArray)) _string += " " + string(__GuaranteeSimpleCallstack());
-        return _string;
     }
     
     static __GetExceptionString = function()
@@ -137,19 +93,22 @@ function __SnitchClassError(_message) constructor
         return _string;
     }
     
-    static SendIntegration = function()
+    static __SendAll = function()
     {
-        __GuaranteeCallstack();
-        
         switch(SNITCH_INTEGRATION_MODE)
         {
-            case 1: __SendSentry();          break;
-            case 2: __SendGameAnalytics();   break;
-            case 3: __SendBugsnag();         break;
-            case 4: __SendDeltaDNA();        break;
+            case 1: __SendSentry();        break;
+            case 2: __SendGameAnalytics(); break;
+            case 3: __SendBugsnag();       break;
+            case 4: __SendDeltaDNA();      break;
         }
         
-        return self;
+        var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
+        if (is_array(__rawCallstackArray)) _string += " " + string(__GuaranteeSimpleCallstack());
+        
+        show_debug_message(_string);
+        SnitchSendStringToLogFile(_string);
+        SnitchSendStringToNetwork(_string);
     }
     
     static __SendSentry = function()
@@ -164,8 +123,6 @@ function __SnitchClassError(_message) constructor
             __SnitchSentryHTTPRequest(__request);
             __request.__SaveBackup();
         }
-        
-        return self;
     }
     
     static __SendGameAnalytics = function()
@@ -180,8 +137,6 @@ function __SnitchClassError(_message) constructor
             __SnitchGameAnalyticsHTTPRequest(__request);
             __request.__SaveBackup();
         }
-        
-        return self;
     }
     
     static __SendBugsnag = function()
@@ -197,8 +152,6 @@ function __SnitchClassError(_message) constructor
             __SnitchBugsnagHTTPRequest(__request);
             __request.__SaveBackup();
         }
-        
-        return self;
     }
     
     static __SendDeltaDNA = function()
@@ -213,7 +166,5 @@ function __SnitchClassError(_message) constructor
             __SnitchDeltaDNAHTTPRequest(__request);
             __request.__SaveBackup();
         }
-        
-        return self;
     }
 }
