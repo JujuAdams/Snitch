@@ -46,13 +46,35 @@ function SnitchLogSet(_state)
                     }
                     
                     //Output lots of data to the log
-                    var _logDataArray = __SnitchConfigLogHeader();
+                    var _stateStruct = __SnitchConfigAppState();
+                    var _logNameArray = variable_struct_get_names(_stateStruct);
+                    array_sort(_logNameArray, true);
+                    
                     var _i = 0;
-                    repeat(array_length(_logDataArray))
+                    repeat(array_length(_logNameArray))
                     {
-                        buffer_write(global.__snitchLogFileBuffer, buffer_text, string(_logDataArray[_i]));
+                        var _name  = _logNameArray[_i];
+                        var _value = _stateStruct[$ _name];
+                        
+                        if (is_struct(_value) || is_array(_value))
+                        {
+                            _value = json_stringify(_value);
+                        }
+                        else
+                        {
+                            _value = string(_value);
+                        }
+                        
+                        buffer_write(global.__snitchLogFileBuffer, buffer_text, _name);
+                        buffer_write(global.__snitchLogFileBuffer, buffer_text, " = ");
+                        buffer_write(global.__snitchLogFileBuffer, buffer_text, _value);
+                        buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10); //newline
                         ++_i;
                     }
+                    
+                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
+                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
+                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
                     
                     buffer_save_ext(global.__snitchLogFileBuffer, global.__snitchZerothLogFile, 0, buffer_tell(global.__snitchLogFileBuffer));
                     

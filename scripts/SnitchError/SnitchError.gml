@@ -13,5 +13,7 @@ function SnitchError()
         ++_i;
     }
     
-    return (new __SnitchClassError()).__SetMessage(_string);
+    var _event = new __SnitchClassError();
+    _event.__SetMessage(_string);
+    return _event;
 }

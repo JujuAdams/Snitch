@@ -67,13 +67,20 @@ function __SnitchClassError() constructor
     static __GetExceptionString = function()
     {
         //Repackage information from the GameMaker exception struct we were given
-        return json_stringify({
-            message:     __message,
-            longMessage: __longMessage,
-            stacktrace:  __GuaranteeSimpleCallstack(),
-            script:      __script,
-            line:        __line,
-        });
+        var _stateStruct = __SnitchConfigAppState();
+        
+        with(_stateStruct)
+        {
+            exception = {
+                message:     other.__message,
+                longMessage: other.__longMessage,
+                stacktrace:  other.__GuaranteeSimpleCallstack(),
+                script:      other.__script,
+                line:        other.__line,
+            }
+        }
+        
+        return json_stringify(_stateStruct);
     }
     
     static __GetCompressedExceptionString = function()

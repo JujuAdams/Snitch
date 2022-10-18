@@ -10,13 +10,11 @@ function SnitchSteamInitializedSafe()
         {
             var _initialized = steam_initialised();
             _state = true;
-            __SnitchTrace("Steam API in use");
             return _initialized;
         }
         catch(_error)
         {
            _state = false;
-            __SnitchTrace("Steam API unused");
             return false;
         }
     }

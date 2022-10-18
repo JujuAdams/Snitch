@@ -1,3 +1,5 @@
+// https://docs.deltadna.com/advanced-integration/rest-api/
+
 function __SnitchConfigPayloadDeltaDNA(_uuid, _message, _longMessage, _callstack, _fatal)
 {
     return {
