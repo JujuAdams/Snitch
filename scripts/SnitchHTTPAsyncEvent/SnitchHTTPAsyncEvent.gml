@@ -16,11 +16,19 @@ function SnitchHTTPAsyncEvent()
             //Pass the response into the request's response handler
             global.__snitchHTTPRequests[$ _id].__HTTPResponse(async_load[? "http_status"], async_load[? "status"]);
             
-            if (SNITCH_OUTPUT_HTTP_FAILURE_DETAILS && (async_load[? "status"] <= 0))
+            //Output extra details if there was a failure to submit a request
+            if (SNITCH_OUTPUT_HTTP_FAILURE_DETAILS && (async_load[? "http_status"] != 200) && (async_load[? "http_status"] != 204))
             {
                 var _result = async_load[? "result"];
-                var _json = json_parse(_result);
-                show_debug_message(snap_to_json(_json, true, true));
+                try
+                {
+                    var _json = json_parse(_result);
+                    __SnitchTrace("Result was:\n", snap_to_json(_json, true, true));
+                }
+                catch(_error)
+                {
+                    __SnitchTrace("Result was: \"", _result, "\"");
+                }
             }
         }
     }
