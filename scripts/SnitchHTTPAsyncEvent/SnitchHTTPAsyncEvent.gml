@@ -15,6 +15,13 @@ function SnitchHTTPAsyncEvent()
         {
             //Pass the response into the request's response handler
             global.__snitchHTTPRequests[$ _id].__HTTPResponse(async_load[? "http_status"], async_load[? "status"]);
+            
+            if (SNITCH_OUTPUT_HTTP_FAILURE_DETAILS && (async_load[? "status"] <= 0))
+            {
+                var _result = async_load[? "result"];
+                var _json = json_parse(_result);
+                show_debug_message(snap_to_json(_json, true, true));
+            }
         }
     }
     else

@@ -54,6 +54,8 @@
 //If logging is enabled, this information will also be outputted to the log file
 #macro SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT  (SNITCH_RUNNING_FROM_IDE)
 
+#macro SNITCH_OUTPUT_HTTP_FAILURE_DETAILS  (SNITCH_RUNNING_FROM_IDE)
+
 //Whether to output HTTP success to the console. This is handy for confirming HTTP requests are being processed properly
 //If logging is enabled, this information will also be outputted to the log file
 //   N.B. HTTP warnings/failures will always be reported
