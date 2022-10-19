@@ -7,7 +7,7 @@
 //  N.B. When using TCP connection mode, Snitch will call network_set_config() and change the
 //       timeout for connections to 5 seconds. This is a global setting and will affect all
 //       other networking connections
-#macro SNITCH_NETWORK_MODE  2
+#macro SNITCH_NETWORK_MODE  0
 
 //Whether to boot the game with network transmission turned on or off. Network transmission can be
 //turned on/off manually by calling SnitchNetworkSet(). Generally, you'll only want to set this to
