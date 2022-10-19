@@ -21,6 +21,7 @@
 #macro SNITCH_FOCUS_TIME            global.__snitchFocusTime
 #macro SNITCH_GA_PLATFORM           global.__snitchGAPlatform
 #macro SNITCH_GA_OS_VERSION         global.__snitchGAOSVersion
+#macro SNITCH_GA_GAMEMAKER_VERSION  global.__snitchGAGameMakerVersion
 
 #macro __SNITCH_DEBUG  (global.__snitchRunningFromIDE && true)
 
@@ -93,6 +94,7 @@ function __SnitchInit()
     //Integration-specific
     global.__snitchGAPlatform  = "";
     global.__snitchGAOSVersion = "";
+    global.__snitchGAGameMakerVersion = "gamemaker " + string_delete(string_delete(GM_runtime_version, 5, 1), 1, 3);
     
     
     
