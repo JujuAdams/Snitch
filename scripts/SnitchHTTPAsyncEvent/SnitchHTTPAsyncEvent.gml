@@ -23,7 +23,7 @@ function SnitchHTTPAsyncEvent()
                 try
                 {
                     var _json = json_parse(_result);
-                    __SnitchTrace("Result was:\n", snap_to_json(_json, true, true));
+                    __SnitchTrace("Result was:\n", __SnitchSNAPtoJSON(_json, true, true));
                 }
                 catch(_error)
                 {
