@@ -58,7 +58,7 @@ function __SnitchClassError() constructor
     {
         if (!is_array(__integrationCallstack))
         {
-            __integrationCallstack = is_array(__rawCallstackArray)? __SnitchProcessRawCallstack(__rawCallstackArray, 0) : [];
+            __integrationCallstack = is_array(__rawCallstackArray)? __SnitchProcessRawCallstack(__rawCallstackArray, SNITCH_INTEGRATION_MODE) : [];
         }
         
         return __integrationCallstack;
@@ -148,7 +148,6 @@ function __SnitchClassError() constructor
     
     static __SendBugsnag = function()
     {
-        
         //Make a new request struct
         __payload = __SnitchConfigPayloadBugsnag(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
