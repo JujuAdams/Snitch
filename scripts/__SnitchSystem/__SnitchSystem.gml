@@ -4,7 +4,7 @@
 
 
 
-#macro SNITCH_VERSION               "3.0.1"
+#macro SNITCH_VERSION               "3.0.1 Beta"
 #macro SNITCH_DATE                  "2022-10-18"
 #macro SNITCH_OS_NAME               global.__snitchOSName
 #macro SNITCH_OS_VERSION            global.__snitchOSVersion
