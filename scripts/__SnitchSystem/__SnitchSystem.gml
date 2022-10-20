@@ -400,12 +400,6 @@ function __SnitchInit()
             //Build an auth string for later HTTP requests
             //We fill in the timestamp later when sending the request
             global.__snitchSentryAuthString = "Sentry sentry_version=7, sentry_client=Snitch/" + string(SNITCH_VERSION) + ", sentry_key=" + global.__snitchSentryPublicKey + ", sentry_timestamp=";
-            
-            if (__SNITCH_DEBUG)
-            {
-                __SnitchTrace("Sentry public key = \"", global.__snitchSentryPublicKey, "\"");
-                __SnitchTrace("Sentry endpoint = \"", global.__snitchEndpoint, "\"");
-            }
         break;
         
         //GameAnalytics
@@ -421,21 +415,10 @@ function __SnitchInit()
             {
                 global.__snitchEndpoint = "https://api.gameanalytics.com/v2/" + SNITCH_GAMEANALYTICS_GAME_KEY + "/events";
             }
-            
-            if (__SNITCH_DEBUG)
-            {
-                __SnitchTrace("GameAnalytics session ID = \"", global.__snitchSessionID, "\"");
-                __SnitchTrace("GameAnalytics endpoint = \"", global.__snitchEndpoint, "\"");
-                __SnitchTrace("GameAnalytics secret key = \"", SNITCH_GAMEANALYTICS_SECRET_KEY, "\"");
-            }
         break;
         
         //Bugsnag
         case 3:
-            if (__SNITCH_DEBUG)
-            {
-                __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_NOTIFIER_API_KEY, "\"");
-            }
         break;
     }
     
