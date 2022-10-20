@@ -1,7 +1,7 @@
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 
-#macro SNITCH_VERSION               "3.0.1 Beta"
-#macro SNITCH_DATE                  "2022-10-18"
+#macro SNITCH_VERSION               "3.0.2"
+#macro SNITCH_DATE                  "2022-10-20"
 #macro SNITCH_OS_NAME               global.__snitchOSName
 #macro SNITCH_OS_VERSION            global.__snitchOSVersion
 #macro SNITCH_ENVIRONMENT_NAME      global.__snitchEnvironmentName
