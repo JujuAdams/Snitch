@@ -6,7 +6,3 @@
 #macro SNITCH_GAMEANALYTICS_SECRET_KEY  ""
 
 #macro SNITCH_BUGSNAG_API_KEY  ""
-
-#macro SNITCH_DELTADNA_COLLECT_URL      "https://collect93954026tsttl.deltadna.net/collect/api"
-#macro SNITCH_DELTADNA_ENVIRONMENT_KEY  ""
-#macro SNITCH_DELTADNA_SECRET_KEY       ""

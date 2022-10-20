@@ -74,7 +74,6 @@ function __SnitchProcessRawCallstack(_rawCallstack, _integrationMode)
                 break;
                 
                 case 2: //GameAnalytics
-                case 4: //DeltaDNA
                     array_push(_callstack, _func + (_isScript? "" : (" " + _module)) + " L" + string(_lineNumber));
                 break;
                 

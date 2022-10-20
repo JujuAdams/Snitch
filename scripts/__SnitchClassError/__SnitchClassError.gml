@@ -107,7 +107,6 @@ function __SnitchClassError() constructor
             case 1: __SendSentry();        break;
             case 2: __SendGameAnalytics(); break;
             case 3: __SendBugsnag();       break;
-            case 4: __SendDeltaDNA();      break;
         }
         
         var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
@@ -156,20 +155,6 @@ function __SnitchClassError() constructor
         if ((SNITCH_INTEGRATION_MODE == 3) && SnitchIntegrationGet())
         {
             __SnitchBugsnagHTTPRequest(__request);
-            __request.__SaveBackup();
-        }
-    }
-    
-    static __SendDeltaDNA = function()
-    {
-        //Make a new request struct
-        __payload = __SnitchConfigPayloadDeltaDNA(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
-        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
-        
-        //If we have DeltaDNA enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 4) && SnitchIntegrationGet())
-        {
-            __SnitchDeltaDNAHTTPRequest(__request);
             __request.__SaveBackup();
         }
     }

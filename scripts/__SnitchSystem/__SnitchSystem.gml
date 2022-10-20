@@ -437,22 +437,6 @@ function __SnitchInit()
                 __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_API_KEY, "\"");
             }
         break;
-        
-        //DeltaDNA
-        case 4:
-            global.__snitchSessionID = SnitchGenerateUUID4String(true);
-            
-            //The endpoint is modified in __SnitchDeltaDNAHTTPRequest()
-            global.__snitchEndpoint = SNITCH_DELTADNA_COLLECT_URL + "/" + SNITCH_DELTADNA_ENVIRONMENT_KEY;
-            if (SNITCH_DELTADNA_SECRET_KEY != "") global.__snitchEndpoint += "/hash/";
-            
-            if (__SNITCH_DEBUG)
-            {
-                __SnitchTrace("DeltaDNA session ID = \"", global.__snitchSessionID, "\"");
-                __SnitchTrace("DeltaDNA endpoint = \"", global.__snitchEndpoint, "\"");
-                __SnitchTrace("DeltaDNA secret key = \"", SNITCH_DELTADNA_SECRET_KEY, "\"");
-            }
-        break;
     }
     
     if (SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
@@ -532,10 +516,9 @@ function __SnitchInit()
                             
                             switch(SNITCH_INTEGRATION_MODE)
                             {
-                                case 1: __SnitchSentryHTTPRequest(self);          break;
-                                case 2: __SnitchGameAnalyticsHTTPRequest(self);   break;
-                                case 3: __SnitchBugsnagHTTPRequest(self);         break;
-                                case 4: __SnitchDeltaDNAHTTPRequest(self);        break;
+                                case 1: __SnitchSentryHTTPRequest(self);        break;
+                                case 2: __SnitchGameAnalyticsHTTPRequest(self); break;
+                                case 3: __SnitchBugsnagHTTPRequest(self);       break;
                             }
                             
                             global.__snitchRequestBackupResendTime = current_time;
@@ -563,7 +546,6 @@ function __SnitchIntegrationName()
         case 1: return "sentry.io";     break;
         case 2: return "GameAnalytics"; break;
         case 3: return "Bugsnag";       break;
-        case 4: return "DeltaDNA";      break;
         
         default:
             __SnitchError("SNITCH_INTEGRATION_MODE value ", SNITCH_INTEGRATION_MODE, " unsupported");

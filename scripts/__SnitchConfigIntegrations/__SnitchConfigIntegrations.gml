@@ -9,11 +9,10 @@
 //Which integration to use
 //There are 4 modes:
 //   0:  Don't use any integration at all
-//   0:  Use the sentry.io integration
-//   1:  Use the GameAnalytics integration
-//   2:  Use the Bugsnag integration
-//   3:  Use the DeltaDNA integration
-#macro SNITCH_INTEGRATION_MODE  0
+//   1:  Use the sentry.io integration
+//   2:  Use the GameAnalytics integration
+//   3:  Use the Bugsnag integration
+#macro SNITCH_INTEGRATION_MODE  3
 
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
 //If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)

@@ -24,7 +24,6 @@
     {"id":{"name":"SnitchHTTPAsyncEvent","path":"scripts/SnitchHTTPAsyncEvent/SnitchHTTPAsyncEvent.yy",},"order":5,},
     {"id":{"name":"__SnitchProcessRawCallstack","path":"scripts/__SnitchProcessRawCallstack/__SnitchProcessRawCallstack.yy",},"order":3,},
     {"id":{"name":"__SnitchClassError","path":"scripts/__SnitchClassError/__SnitchClassError.yy",},"order":1,},
-    {"id":{"name":"__SnitchConfigPayloadDeltaDNA","path":"scripts/__SnitchConfigPayloadDeltaDNA/__SnitchConfigPayloadDeltaDNA.yy",},"order":11,},
     {"id":{"name":"SnitchException","path":"scripts/SnitchException/SnitchException.yy",},"order":3,},
     {"id":{"name":"SnitchCrashDumpDelete","path":"scripts/SnitchCrashDumpDelete/SnitchCrashDumpDelete.yy",},"order":1,},
     {"id":{"name":"__SnitchConfigPayloadBugsnag","path":"scripts/__SnitchConfigPayloadBugsnag/__SnitchConfigPayloadBugsnag.yy",},"order":10,},
