@@ -1,71 +1,83 @@
-/// url_encode(url_string)
-/// @param url_string
-
-global._url_encode_ready = false;
-
-function SnitchURLEncode(argument0)
+function SnitchURLEncode(_url)
 {
-    var l_inbuf, l_outbuf, l_allowed, l_hex, l_ind;
-    if (global._url_encode_ready) {
-        l_inbuf = global._url_encode_in;
-        l_outbuf = global._url_encode_out;
-        l_allowed = global._url_encode_allowed;
-        l_hex = global._url_encode_hex;
-    } else { // first-time setup
-        global._url_encode_ready = true;
-        l_inbuf = buffer_create(1024, buffer_grow, 1);
-        global._url_encode_in = l_inbuf;
-        l_outbuf = buffer_create(1024, buffer_grow, 1);
-        global._url_encode_out = l_outbuf;
-        // establish which characters we do NOT need to encode:
-        l_allowed = array_create(256);
-        for (l_ind = ord("A"); l_ind <= ord("Z"); l_ind++) l_allowed[l_ind] = true;
-        for (l_ind = ord("a"); l_ind <= ord("z"); l_ind++) l_allowed[l_ind] = true;
-        for (l_ind = ord("0"); l_ind <= ord("9"); l_ind++) l_allowed[l_ind] = true;
-        l_allowed[ord("-")] = true;
-        l_allowed[ord("_")] = true;
-        l_allowed[ord(".")] = true;
-        l_allowed[ord("!")] = true;
-        l_allowed[ord("~")] = true;
-        l_allowed[ord("*")] = true;
-        l_allowed[ord("'")] = true;
-        l_allowed[ord("(")] = true;
-        l_allowed[ord(")")] = true;
-        global._url_encode_allowed = l_allowed;
-        // pre-generate two-byte hex char sequences:
-        l_hex = array_create(256);
-        for (l_ind = 0; l_ind < 256; l_ind++) {
-            var l_hv, l_hd = l_ind >> 4;
-            if (l_hd >= 10) {
-                l_hv = ord("A") + l_hd - 10;
-            } else l_hv = ord("0") + l_hd;
-            // second char (lower nibble):
-            l_hd = l_ind & $F;
-            if (l_hd >= 10) {
-                l_hv |= (ord("A") + l_hd - 10) << 8;
-            } else l_hv |= (ord("0") + l_hd) << 8;
-            l_hex[l_ind] = l_hv;
-        }
-        global._url_encode_hex = l_hex;
-    }
-    // write down and measure the input string:
-    buffer_seek(l_inbuf, buffer_seek_start, 0);
-    buffer_write(l_inbuf, buffer_text, argument0);
-    var l_len = buffer_tell(l_inbuf);
-    // read bytes one-by-one, deciding for each:
-    buffer_seek(l_inbuf, buffer_seek_start, 0);
-    buffer_seek(l_outbuf, buffer_seek_start, 0);
-    repeat (l_len) {
-        var l_byte = buffer_read(l_inbuf, buffer_u8);
-        if (l_allowed[l_byte]) {
-            buffer_write(l_outbuf, buffer_u8, l_byte);
-        } else { // if it needs to be encoded, write %<two hex digits>
-            buffer_write(l_outbuf, buffer_u8, ord("%"));
-            buffer_write(l_outbuf, buffer_u16, l_hex[l_byte]);
+    static _inBuffer     = buffer_create(1024, buffer_grow, 1);
+    static _outBuffer    = buffer_create(1024, buffer_grow, 1);
+    static _allowedArray = array_create(256);
+    static _hexArray     = array_create(256);
+    static _initialized  = false;
+    
+    if (!_initialized)
+    {
+        _initialized = true;
+        
+        for(var _i = ord("A"); _i <= ord("Z"); _i++) _allowedArray[_i] = true;
+        for(var _i = ord("a"); _i <= ord("z"); _i++) _allowedArray[_i] = true;
+        for(var _i = ord("0"); _i <= ord("9"); _i++) _allowedArray[_i] = true;
+        _allowedArray[ord("-")] = true;
+        _allowedArray[ord("_")] = true;
+        _allowedArray[ord(".")] = true;
+        _allowedArray[ord("!")] = true;
+        _allowedArray[ord("~")] = true;
+        _allowedArray[ord("*")] = true;
+        _allowedArray[ord("'")] = true;
+        _allowedArray[ord("(")] = true;
+        _allowedArray[ord(")")] = true;
+        
+        var _i = 0;
+        repeat(256)
+        {
+            var _value = 0;
+            
+            //Lower part of the byte
+            var _work = (_i >> 4);
+            if (_work >= 10)
+            {
+                _value = ord("A") + _work - 10;
+            }
+            else
+            {
+                _value = ord("0") + _work;
+            }
+            
+            //Upper part of the byte
+            _work = _i & 0x0F;
+            if (_work >= 10)
+            {
+                _value |= (ord("A") + _work - 10) << 8;
+            }
+            else
+            {
+                _value |= (ord("0") + _work) << 8;
+            }
+            
+            _hexArray[_i] = _value;
+            
+            ++_i;
         }
     }
-    // finally, rewind and read the string:
-    buffer_write(l_outbuf, buffer_u8, 0);
-    buffer_seek(l_outbuf, buffer_seek_start, 0);
-    return buffer_read(l_outbuf, buffer_string);
+    
+    buffer_seek(_inBuffer, buffer_seek_start, 0);
+    buffer_write(_inBuffer, buffer_text, _url);
+    
+    var _byteCount = buffer_tell(_inBuffer);
+    buffer_seek(_inBuffer,  buffer_seek_start, 0);
+    buffer_seek(_outBuffer, buffer_seek_start, 0);
+    
+    repeat(_byteCount)
+    {
+        var _byte = buffer_read(_inBuffer, buffer_u8);
+        if (_allowedArray[_byte])
+        {
+            buffer_write(_outBuffer, buffer_u8, _byte);
+        }
+        else
+        {
+            buffer_write(_outBuffer, buffer_u8, ord("%"));
+            buffer_write(_outBuffer, buffer_u16, _hexArray[_byte]);
+        }
+    }
+    
+    buffer_write(_outBuffer, buffer_u8, 0);
+    buffer_seek(_outBuffer, buffer_seek_start, 0);
+    return buffer_read(_outBuffer, buffer_string);
 }
