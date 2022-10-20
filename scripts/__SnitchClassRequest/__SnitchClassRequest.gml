@@ -197,7 +197,7 @@ function __SnitchBugsnagHTTPRequest(_request)
 {
     //Set up the header...
     global.__snitchHTTPHeaderMap[? "Content-Type"           ] = "application/json";
-    global.__snitchHTTPHeaderMap[? "Bugsnag-Api-Key"        ] = SNITCH_BUGSNAG_API_KEY;
+    global.__snitchHTTPHeaderMap[? "Bugsnag-Api-Key"        ] = SNITCH_BUGSNAG_NOTIFIER_API_KEY;
     global.__snitchHTTPHeaderMap[? "Bugsnag-Payload-Version"] = "5";
     
     _request.__Send("https://notify.bugsnag.com", "POST", global.__snitchHTTPHeaderMap, false);

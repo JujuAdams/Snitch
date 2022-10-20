@@ -434,7 +434,7 @@ function __SnitchInit()
         case 3:
             if (__SNITCH_DEBUG)
             {
-                __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_API_KEY, "\"");
+                __SnitchTrace("Bugsnag API key = \"", SNITCH_BUGSNAG_NOTIFIER_API_KEY, "\"");
             }
         break;
     }
