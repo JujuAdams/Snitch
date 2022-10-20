@@ -1,8 +1,4 @@
-// GameAnalytics - https://restapidocs.gameanalytics.com/
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
-// sentry.io - https://develop.sentry.dev/sdk/overview/    https://develop.sentry.dev/sdk/event-payloads/https://develop.sentry.dev/sdk/event-payloads/
-
-
 
 #macro SNITCH_VERSION               "3.0.1 Beta"
 #macro SNITCH_DATE                  "2022-10-18"

@@ -1,9 +1,9 @@
-/// Concatenates a series of values into a single string and outputs them to the IDE's Output window
-/// 
-/// If logging is turned on (see SnitchLogSet()) then the string is also saved to a log file on disk (in the <game_save_id> directory)
-///   N.B. This can cause slowdown if a lot of debug messages are being saved!
-/// 
-/// If network transmission is turned on (see SnitchNetworkSet()) then the string is also broadcast over the network for a receiver to pick up
+/// Concatenates a series of values into a single string and outputs it
+///
+/// The final string is outputted to three destinations:
+///   1. The console output (show_debug_message())
+///   2. Save to the log file, if logging is turned on, see SnitchLogSet()
+///   3. Broadcast over the network, if UDP/TCP is turned on, see SnitchNetworkSet()
 /// 
 /// @param value
 /// @param [value]...
@@ -19,8 +19,7 @@ function Snitch()
         ++_i;
     }
     
-    SnitchSendStringToLogFile(_string);
-    SnitchSendStringToNetwork(_string); //FIXME - Format this string for consumption (LogCat?)
-    
     show_debug_message(_string);
+    SnitchSendStringToLogFile(_string);
+    SnitchSendStringToNetwork(_string); //TODO - Format this string for consumption (LogCat?)
 }

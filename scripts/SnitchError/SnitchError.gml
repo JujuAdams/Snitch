@@ -1,4 +1,10 @@
-/// Creates a new Snitch error that i logged/broadcast/transmitted in multiple ways.
+/// Concatenates a series of values into a single string and shows it as a showstopper error (show_error())
+///
+/// The error message is outputted to four destinations:
+///   1. The console output (show_debug_message())
+///   2. Save to the log file, if logging is turned on, see SnitchLogSet()
+///   3. Broadcast over the network, if UDP/TCP is turned on, see SnitchNetworkSet()
+///   4. Submitted to a bug tracking integration, if turned on, see SnitchIntegrationSet()
 /// 
 /// @param value
 /// @param [value]...
