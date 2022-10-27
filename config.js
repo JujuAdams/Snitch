@@ -25,5 +25,5 @@ const config = {
 	latestVersion: '3.0',
 	otherVersions: [],
 	favicon: 'assets/favicon.ico',
-	themeColor: '#7b95a6',
+	themeColor: '#88a3b8',
 };
