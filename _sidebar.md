@@ -14,6 +14,8 @@
 
 ---
 
+*Functions*
+
 - [`Snitch()`](function-snitch)
 - [`SnitchError()`](function-snitcherror)
 - [Crash Dumps](function-crash-dumps)
