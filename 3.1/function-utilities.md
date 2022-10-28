@@ -1,4 +1,4 @@
-# Utility
+# Utilities
 
 The functions on this page are utilities that have general applicability that can be used inside or outside of Snitch. Whether you use them yourself or not, all functions on this page are required for Snitch to operate correctly.
 
