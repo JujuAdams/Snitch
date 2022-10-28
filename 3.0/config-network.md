@@ -2,7 +2,7 @@
 
 The macros on this page can be found in the `__SnitchConfigNetwork` script. They relate to the behaviour of Snitch when sending packets over UDP/TCP to local debugging tools.
 
-!> You should edit these macros to suit your own needs when using Snitch.
+?> You should edit these macros to suit your own needs when using Snitch.
 
 &nbsp;
 

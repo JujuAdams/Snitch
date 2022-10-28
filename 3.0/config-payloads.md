@@ -16,7 +16,7 @@ The payload to send to sentry.io when encountering an error is defined in `__Sni
 
 The payload to send to GameAnalytics when encountering an error is defined in `__SnitchConfigPayloadGameAnalytics()`. You can find information on what information GameAnalytics can handle [here](https://restapidocs.gameanalytics.com/).
 
-!> GameAnalytics is **extremely** fussy with what data it accepts. You will need to use `SNITCH_GA_GAMEMAKER_VERSION` for the `.engine_version` property.
+!> GameAnalytics is **extremely** fussy with what data it accepts. Please read the link above carefully. You will need to use `SNITCH_GA_GAMEMAKER_VERSION` for the `.engine_version` property.
 
 &nbsp;
 

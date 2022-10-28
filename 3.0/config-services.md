@@ -2,7 +2,7 @@
 
 The macros on this page can be found in the `__SnitchConfigServices` script. They relate to the behaviour of Snitch when communicating with various third-party bug tracking services (sentry.io, GameAnalytics, Bugsnag).
 
-!> You should edit these macros to suit your own needs when using Snitch.
+?> You should edit these macros to suit your own needs when using Snitch.
 
 &nbsp;
 
