@@ -21,7 +21,7 @@ _Returns:_ Boolean, whether logging to file is enabled
 
 |Name|Datatype|Purpose|
 |----|--------|-------|
-|    |        |       |
+|None|        |       |
 
 &nbsp;
 
@@ -41,7 +41,7 @@ _Returns:_ Boolean, whether network broadcast is enabled
 
 |Name|Datatype|Purpose|
 |----|--------|-------|
-|    |        |       |
+|None|        |       |
 
 &nbsp;
 
@@ -61,4 +61,4 @@ _Returns:_ Boolean, whether a bug tracking service is enabled
 
 |Name|Datatype|Purpose|
 |----|--------|-------|
-|    |        |       |
+|None|        |       |
