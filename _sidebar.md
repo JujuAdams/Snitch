@@ -16,10 +16,10 @@
 
 *Functions*
 
+- [Async Event Hooks](function-async-event-hooks)
 - [`Snitch()`](function-snitch)
-- [`SnitchError()`](function-snitcherror)
+- [`SnitchSoftError()`](function-snitchsofterror)
+- [Feature Toggles](function-feature-toggles)
+- [Utilities](function-utilities)
 - [Crash Dumps](function-crash-dumps)
 - [Direct Logging/Networking](function-direct)
-- [Async Event Hooks](function-async-event-hooks)
-- [Feature Toggles](function-service-toggles)
-- [Utilities](function-utilities)
