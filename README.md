@@ -2,6 +2,8 @@
 
 <h1 align="center">Snitch 3.1.0</h1>
 
+<p align="center">Logging and crash handling system for GameMaker Studio 2022 LTS by <b>@jujuadams</b></p>
+
 &nbsp;
 
 &nbsp;
