@@ -2,8 +2,10 @@
 
 <h1 align="center">Snitch 3.1.0</h1>
 
-<p align="center">Logging and crash handling system for GameMaker Studio 2022 LTS by <b>@jujuadams</b></p>
+&nbsp;
 
-<p align="center"><a href="https://github.com/JujuAdams/Snitch/releases/">Download the .yymps</a></p>
+&nbsp;
 
-<p align="center">Chat about Snitch on the <a href="https://discord.gg/8krYCqr">Discord server</a></p>
+- ### [Download the .yymps](https://github.com/JujuAdams/Snitch/releases/)
+- ### Read the [documentation](http://jujuadams.github.io/Snitch)
+- ### Talk about Snitch on the [Discord server](https://discord.gg/8krYCqr)
