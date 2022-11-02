@@ -12,7 +12,7 @@ The macros on this page can be found in the `__SnitchConfigServiceKeys` script. 
 
 *Typical value:* `""`
 
-Endpoint required to communicate with sentry.io. This can be found via Settings -> Client Keys (under the SDK SETUP header on the left-hand side).
+Endpoint required to communicate with sentry.io. This can be found by selecting your project via the sentry.io dashboard, then selecting Settings then Client Keys (under the SDK SETUP header on the left-hand side).
 
 &nbsp;
 
@@ -20,7 +20,7 @@ Endpoint required to communicate with sentry.io. This can be found via Settings 
 
 *Typical value:* `""`
 
-One of the two keys required to communicate with GameAnalytics. Found via Settings -> Game Keys for your game.
+One of the two keys required to communicate with GameAnalytics. Found via the Settings -> Game Keys for your game in the GameAnalytics dashboard.
 
 &nbsp;
 
@@ -28,7 +28,8 @@ One of the two keys required to communicate with GameAnalytics. Found via Settin
 
 *Typical value:* `""`
 
-One of the two keys required to communicate with GameAnalytics. Found via Settings -> Game Keys for your game.
+One of the two keys required to communicate with GameAnalytics. Found via Settings -> Game Keys for your game in the GameAnalytics dashboard.
+
 
 &nbsp;
 
