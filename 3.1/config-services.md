@@ -6,7 +6,7 @@ The macros on this page can be found in the `__SnitchConfigServices` script. The
 
 &nbsp;
 
-## `SNITCH_INTEGRATION_MODE`
+## `SNITCH_SERVICE_MODE`
 
 *Typical value:* `0`
 
@@ -20,11 +20,11 @@ Setting this macro to `0` is equivalent to turning off bug tracking services com
 
 &nbsp;
 
-## `SNITCH_INTEGRATION_ON_BOOT`
+## `SNITCH_SERVICE_ON_BOOT`
 
 *Typical value:* `false`
 
-Whether to boot the game with bug tracking services turned on or off. Logging can be turned on/off manually by calling `SnitchIntegrationSet()`. If this macro is set to `false` then your chosen service will need to be turned on manually by calling `SnitchIntegrationSet(true)`.
+Whether to boot the game with bug tracking services turned on or off. Logging can be turned on/off manually by calling `SnitchServiceSet()`. If this macro is set to `false` then your chosen service will need to be turned on manually by calling `SnitchServiceSet(true)`.
 
 !> It is recommended that this macro is set to `false` and you ask for user consent before enabling bug tracking services.
 
