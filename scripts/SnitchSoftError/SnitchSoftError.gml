@@ -4,7 +4,7 @@
 ///   1. The console output (show_debug_message())
 ///   2. Save to the log file, if logging is turned on, see SnitchLogSet()
 ///   3. Broadcast over the network, if UDP/TCP is turned on, see SnitchNetworkSet()
-///   4. Submitted to a bug tracking integration, if turned on, see SnitchIntegrationSet()
+///   4. Submitted to a bug tracking service, if turned on, see SnitchServiceSet()
 /// 
 /// @param value
 /// @param [value]...

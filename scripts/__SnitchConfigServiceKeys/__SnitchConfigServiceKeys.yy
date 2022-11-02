@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__SnitchConfigIntegrations",
+  "name": "__SnitchConfigServiceKeys",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

@@ -1,4 +1,4 @@
-function __SnitchProcessRawCallstack(_rawCallstack, _integrationMode)
+function __SnitchProcessRawCallstack(_rawCallstack, _serviceMode)
 {
     var _callstack = [];
     
@@ -59,9 +59,9 @@ function __SnitchProcessRawCallstack(_rawCallstack, _integrationMode)
                 _func = string_copy(_func, 1, _pos - 1);
             }
             
-            switch(_integrationMode)
+            switch(_serviceMode)
             {
-                case 0: //No integration
+                case 0: //No service
                     array_push(_callstack, _isScript? (_func + ":L" + _lineText) : (_func + ":" + _module + ":L" + _lineText));
                 break;
                 

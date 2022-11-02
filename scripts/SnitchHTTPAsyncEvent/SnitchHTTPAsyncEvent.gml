@@ -1,4 +1,4 @@
-/// If you're using an integrations then this function must be called in an Async HTTP event
+/// If you're using an services then this function must be called in an Async HTTP event
 /// every frame. This is typically done in a persistent instance. Be careful that instance
 /// doesn't get deactivated if you're using instance deactivation in your game!
 

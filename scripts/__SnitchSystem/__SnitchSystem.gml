@@ -34,9 +34,9 @@ function __SnitchInit()
     if (_initialized) return;
     _initialized = true;
     
-    if ((SNITCH_INTEGRATION_MODE != 0) && !SNITCH_INTEGRATION_WARNING_READ)
+    if ((SNITCH_SERVICE_MODE != 0) && !SNITCH_SERVICE_WARNING_READ)
     {
-        __SnitchError("Bug tracking integrations open up potential privacy and security risks.\n1. Never share access keys with anyone\n2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly\n3. Do your absolute best to protect the privacy of your players\n \nPlease set SNITCH_INTEGRATION_WARNING_READ to <true> to acknowledge this warning");
+        __SnitchError("Bug tracking services open up potential privacy and security risks.\n1. Never share access keys with anyone\n2. Use .gitignore to ignore __SnitchConfigServiceKeys.gml if hosting your work publicly\n3. Do your absolute best to protect the privacy of your players\n \nPlease set SNITCH_SERVICE_WARNING_READ to <true> to acknowledge this warning");
         game_end();
         return;
     }
@@ -54,7 +54,7 @@ function __SnitchInit()
     
     global.__snitchCrashCapture       = false;
     global.__snitchLogToFileEnabled   = false;
-    global.__snitchIntegrationEnabled = false;
+    global.__snitchServiceEnabled = false;
     
     //Determine how the application is being run and whether we should capture crashes
     global.__snitchRunningFromIDE = (GM_build_type == "run");
@@ -88,7 +88,7 @@ function __SnitchInit()
     global.__snitchRequestBackupResendIndex = 0;
     global.__snitchRequestBackupFailures    = 0;
     
-    //Integration-specific
+    //Service-specific
     global.__snitchGAPlatform  = "";
     global.__snitchGAOSVersion = "";
     global.__snitchGAGameMakerVersion = "gamemaker " + string_delete(string_delete(GM_runtime_version, 5, 1), 1, 3);
@@ -280,7 +280,7 @@ function __SnitchInit()
     
     
     
-    if (SNITCH_REQUEST_BACKUP_ENABLE && (SNITCH_INTEGRATION_MODE > 0))
+    if (SNITCH_REQUEST_BACKUP_ENABLE && (SNITCH_SERVICE_MODE > 0))
     {
         var _loadedManifest = false;
         try
@@ -358,7 +358,7 @@ function __SnitchInit()
     }
     
     
-    if (SNITCH_INTEGRATION_MODE > 0)
+    if (SNITCH_SERVICE_MODE > 0)
     {
         //Force a network connection if possible
         os_is_network_connected(true);
@@ -368,7 +368,7 @@ function __SnitchInit()
         global.__snitchHTTPTestTime = SNITCH_FOCUS_TIME;
     }
     
-    switch(SNITCH_INTEGRATION_MODE)
+    switch(SNITCH_SERVICE_MODE)
     {
         //sentry.io
         case 1:
@@ -419,7 +419,7 @@ function __SnitchInit()
         break;
     }
     
-    if (SNITCH_INTEGRATION_ON_BOOT) SnitchIntegrationSet(true);
+    if (SNITCH_SERVICE_ON_BOOT) SnitchServiceSet(true);
     
     
     
@@ -435,7 +435,7 @@ function __SnitchInit()
         
         //Perform HTTP event test timeout
         //This will throw an error if the user hasn't called SnitchHTTPAsyncEvent()
-        if (SNITCH_INTEGRATION_MODE > 0)
+        if (SNITCH_SERVICE_MODE > 0)
         {
             if ((global.__snitchHTTPTestTime != undefined) && (SNITCH_FOCUS_TIME - global.__snitchHTTPTestTime > __SNITCH_HTTP_TEST_TIMEOUT))
             {
@@ -494,7 +494,7 @@ function __SnitchInit()
                         {
                             if (SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT) __SnitchTrace("Trying to resend event ", _uuid);
                             
-                            switch(SNITCH_INTEGRATION_MODE)
+                            switch(SNITCH_SERVICE_MODE)
                             {
                                 case 1: __SnitchSentryHTTPRequest(self);        break;
                                 case 2: __SnitchGameAnalyticsHTTPRequest(self); break;
@@ -518,9 +518,9 @@ function __SnitchInit()
     }, [], -1));
 }
 
-function __SnitchIntegrationName()
+function __SnitchServiceName()
 {
-    switch(SNITCH_INTEGRATION_MODE)
+    switch(SNITCH_SERVICE_MODE)
     {
         case 0: return "None";          break;
         case 1: return "sentry.io";     break;
@@ -528,7 +528,7 @@ function __SnitchIntegrationName()
         case 3: return "Bugsnag";       break;
         
         default:
-            __SnitchError("SNITCH_INTEGRATION_MODE value ", SNITCH_INTEGRATION_MODE, " unsupported");
+            __SnitchError("SNITCH_SERVICE_MODE value ", SNITCH_SERVICE_MODE, " unsupported");
         break;
     }
 }

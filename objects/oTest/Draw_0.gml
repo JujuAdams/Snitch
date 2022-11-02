@@ -8,7 +8,7 @@ _string += "Press 3 to call show_error()\n";
 _string += "Press 4 to trigger a soft (non-fatal) error\n";
 _string += "Press L to toggle logging (currently = " + string(SnitchLogGet()) + ")\n";
 _string += "Press N to toggle network transmission (currently = " + string(SnitchNetworkGet()) + ")\n";
-_string += "Press I to toggle integration (currently = " + string(SnitchIntegrationGet()) + ")\n";
+_string += "Press S to toggle service (currently = " + string(SnitchServiceGet()) + ")\n";
 _string += "\n";
 _string += "\n";
 _string += "\n";

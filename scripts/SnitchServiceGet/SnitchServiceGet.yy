@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "SnitchIntegrationGet",
+  "name": "SnitchServiceGet",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

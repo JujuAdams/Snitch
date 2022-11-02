@@ -16,5 +16,5 @@ if (keyboard_check_pressed(ord("L"))) SnitchLogSet(!SnitchLogGet());
 //Toggle networking on and off
 if (keyboard_check_pressed(ord("N"))) SnitchNetworkSet(!SnitchNetworkGet());
 
-//Toggle integration on and off
-if (keyboard_check_pressed(ord("I"))) SnitchIntegrationSet(!SnitchIntegrationGet());
+//Toggle service on and off
+if (keyboard_check_pressed(ord("S"))) SnitchServiceSet(!SnitchServiceGet());

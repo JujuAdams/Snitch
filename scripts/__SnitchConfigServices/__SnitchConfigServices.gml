@@ -1,23 +1,23 @@
-//Bug tracking integrations open up potential security risks.
+//Bug tracking services open up potential security risks.
 //  1. Never share access keys with anyone
-//  2. Use .gitignore to ignore __SnitchConfigIntegrationKeys.gml if hosting your work publicly
+//  2. Use .gitignore to ignore __SnitchConfigServiceKeys.gml if hosting your work publicly
 //  3. Do your absolute best to protect the privacy of your players
 //
 //Set this macro to <true> to acknowledge this warning
-#macro SNITCH_INTEGRATION_WARNING_READ  true
+#macro SNITCH_SERVICE_WARNING_READ  true
 
-//Which integration to use
+//Which service to use
 //There are 4 modes:
-//   0:  Don't use any integration at all
-//   1:  Use the sentry.io integration
-//   2:  Use the GameAnalytics integration
-//   3:  Use the Bugsnag integration
-#macro SNITCH_INTEGRATION_MODE  0
+//   0:  Don't use any service at all
+//   1:  Use the sentry.io service
+//   2:  Use the GameAnalytics service
+//   3:  Use the Bugsnag service
+#macro SNITCH_SERVICE_MODE  0
 
-//Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
-//If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)
+//Whether to boot the game with services turned on or off. Logging can be turned on/off manually by calling SnitchServiceSet()
+//If this macro is set to <False> then logging will need to be turned on manually by calling SnitchServiceSet(true)
 //It is recommended that this macro is set to <false> and you ask for user consent before enabling it
-#macro SNITCH_INTEGRATION_ON_BOOT  false
+#macro SNITCH_SERVICE_ON_BOOT  false
 
 
 

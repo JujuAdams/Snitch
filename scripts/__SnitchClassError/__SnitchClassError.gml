@@ -7,7 +7,7 @@ function __SnitchClassError() constructor
     __fatal                = false;
     __rawCallstackArray    = undefined;
     __simpleCallstack      = undefined;
-    __integrationCallstack = undefined;
+    __serviceCallstack = undefined;
     __payload              = undefined;
     __request              = undefined;
     __uuid                 = SnitchGenerateUUID4String();
@@ -54,14 +54,14 @@ function __SnitchClassError() constructor
         return __simpleCallstack;
     }
     
-    static __GuaranteeIntegrationCallstack = function()
+    static __GuaranteeServiceCallstack = function()
     {
-        if (!is_array(__integrationCallstack))
+        if (!is_array(__serviceCallstack))
         {
-            __integrationCallstack = is_array(__rawCallstackArray)? __SnitchProcessRawCallstack(__rawCallstackArray, SNITCH_INTEGRATION_MODE) : [];
+            __serviceCallstack = is_array(__rawCallstackArray)? __SnitchProcessRawCallstack(__rawCallstackArray, SNITCH_SERVICE_MODE) : [];
         }
         
-        return __integrationCallstack;
+        return __serviceCallstack;
     }
     
     static __GetExceptionString = function()
@@ -102,7 +102,7 @@ function __SnitchClassError() constructor
     
     static __SendAll = function()
     {
-        switch(SNITCH_INTEGRATION_MODE)
+        switch(SNITCH_SERVICE_MODE)
         {
             case 1: __SendSentry();        break;
             case 2: __SendGameAnalytics(); break;
@@ -120,11 +120,11 @@ function __SnitchClassError() constructor
     static __SendSentry = function()
     {
         //Make a new request struct
-        __payload = __SnitchConfigPayloadSentry(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
+        __payload = __SnitchConfigPayloadSentry(__uuid, __message, __longMessage, __GuaranteeServiceCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have sentry.io enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 1) && SnitchIntegrationGet())
+        if ((SNITCH_SERVICE_MODE == 1) && SnitchServiceGet())
         {
             __SnitchSentryHTTPRequest(__request);
             __request.__SaveBackup();
@@ -134,11 +134,11 @@ function __SnitchClassError() constructor
     static __SendGameAnalytics = function()
     {
         //Make a new request struct
-        __payload = __SnitchConfigPayloadGameAnalytics(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
+        __payload = __SnitchConfigPayloadGameAnalytics(__uuid, __message, __longMessage, __GuaranteeServiceCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have GameAnalytics enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 2) && SnitchIntegrationGet())
+        if ((SNITCH_SERVICE_MODE == 2) && SnitchServiceGet())
         {
             __SnitchGameAnalyticsHTTPRequest(__request);
             __request.__SaveBackup();
@@ -148,11 +148,11 @@ function __SnitchClassError() constructor
     static __SendBugsnag = function()
     {
         //Make a new request struct
-        __payload = __SnitchConfigPayloadBugsnag(__uuid, __message, __longMessage, __GuaranteeIntegrationCallstack(), __fatal);
+        __payload = __SnitchConfigPayloadBugsnag(__uuid, __message, __longMessage, __GuaranteeServiceCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
         //If we have Bugsnag enabled then actually send the request and make a backup in case the request fails
-        if ((SNITCH_INTEGRATION_MODE == 3) && SnitchIntegrationGet())
+        if ((SNITCH_SERVICE_MODE == 3) && SnitchServiceGet())
         {
             __SnitchBugsnagHTTPRequest(__request);
             __request.__SaveBackup();
