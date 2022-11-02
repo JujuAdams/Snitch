@@ -1,6 +1,6 @@
 /// Checks whether a crash dump exists on disk and returns it if so
 /// 
-/// If an crash dump exists, this function returns the exception struct that was generated
+/// If a crash dump exists, this function returns the exception struct that was generated
 /// If the crash dump couldn't be parsed or no crash dump exists, this function returns <undefined>
 
 function SnitchCrashDumpCollect()

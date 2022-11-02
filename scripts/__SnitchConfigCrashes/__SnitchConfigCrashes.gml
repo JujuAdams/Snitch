@@ -1,14 +1,13 @@
-//SNITCH_CRASH_CAPTURE_FROM_IDE and SNITCH_CRASH_CAPTURE_COMPILED control whether to capture crashes using Snitch's own exception handler
+//SNITCH_CRASH_CAPTURE_COMPILED controls whether to capture crashes using Snitch's own exception handler
 //Snitch's exception handler is *not* mutually exclusive with exception_unhandled_handler() (Snitch hijacks calls to that function and executes the handler itself)
 //The crash handler can save a crash dump, can prompt the user to copy error data onto their clipboard, and can immediately send events to bug tracking services
-//
-//Whilst Snitch's crash handler is really snazzy, it can make tracking down bugs a bit harder when you're running from the IDE during development
-//The default value here (false) will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F5/F6)
-#macro SNITCH_CRASH_CAPTURE_FROM_IDE  true
 #macro SNITCH_CRASH_CAPTURE_COMPILED  true
 
-//Name of the crash dump file
-//What exactly is reported in the crash event can be configured by changing SWITCH_CRASH_DUMP_MODE
+//Whilst Snitch's crash handler is really snazzy, it can make tracking down bugs a bit harder when you're running from the IDE during development
+//Setting this macro to <false> will prevent Snitch from capturing crashes when running in debug mode from the IDE (i.e. running using F5/F6)
+#macro SNITCH_CRASH_CAPTURE_FROM_IDE  true
+
+//Name of the crash dump file. What exactly is reported in the crash event can be configured by changing SWITCH_CRASH_DUMP_MODE
 #macro SNITCH_CRASH_DUMP_FILENAME  "crash.txt"
 
 //How much data to save to disk when the game crashes

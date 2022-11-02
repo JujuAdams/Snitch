@@ -5,7 +5,7 @@
   "resources": [
     {"id":{"name":"SnitchIntegrationSet","path":"scripts/SnitchIntegrationSet/SnitchIntegrationSet.yy",},"order":6,},
     {"id":{"name":"SnitchLogSet","path":"scripts/SnitchLogSet/SnitchLogSet.yy",},"order":0,},
-    {"id":{"name":"SnitchError","path":"scripts/SnitchError/SnitchError.yy",},"order":2,},
+    {"id":{"name":"SnitchSoftError","path":"scripts/SnitchSoftError/SnitchSoftError.yy",},"order":2,},
     {"id":{"name":"__SnitchSystem","path":"scripts/__SnitchSystem/__SnitchSystem.yy",},"order":0,},
     {"id":{"name":"SnitchNetworkSet","path":"scripts/SnitchNetworkSet/SnitchNetworkSet.yy",},"order":2,},
     {"id":{"name":"oInvalidObject","path":"objects/oInvalidObject/oInvalidObject.yy",},"order":2,},
@@ -76,7 +76,7 @@
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"THE SNITCH SEES ALL","folderPath":"folders/Snitch/(System)/THE SNITCH SEES ALL.yy","order":0,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Advanced","folderPath":"folders/Snitch/Advanced.yy","order":6,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Configuration - Please edit these scripts!","folderPath":"folders/Snitch/Configuration - Please edit these scripts!.yy","order":0,},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Service Toggles","folderPath":"folders/Snitch/Service Toggles.yy","order":7,},
+    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Feature Toggles","folderPath":"folders/Snitch/Feature Toggles.yy","order":7,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Utility","folderPath":"folders/Snitch/Utility.yy","order":8,},
   ],
   "AudioGroups": [

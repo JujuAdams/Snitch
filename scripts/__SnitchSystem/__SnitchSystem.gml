@@ -20,6 +20,7 @@
 #macro SNITCH_GA_GAMEMAKER_VERSION  global.__snitchGAGameMakerVersion
 
 #macro __SNITCH_DEBUG  (global.__snitchRunningFromIDE && true)
+#macro __SNITCH_HTTP_TEST_TIMEOUT  5000
 
 
 

@@ -1,6 +1,4 @@
 //Controls whether logging to file should be allowed at all
-//   N.B. Logging to file will initially be set to disabled even if SNITCH_LOG_PERMITTED is <true>
-//        Either call SnitchLogSet(true), or set SNITCH_LOG_ON_BOOT to <true>, to enable logging
 #macro SNITCH_LOG_PERMITTED  true
 
 //Whether to boot the game with logging to file turned on or off. Logging to file can be turned on/off manually by calling SnitchLogSet()

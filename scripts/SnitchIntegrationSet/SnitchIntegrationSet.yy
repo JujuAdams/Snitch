@@ -5,7 +5,7 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Service Toggles",
-    "path": "folders/Snitch/Service Toggles.yy",
+    "name": "Feature Toggles",
+    "path": "folders/Snitch/Feature Toggles.yy",
   },
 }

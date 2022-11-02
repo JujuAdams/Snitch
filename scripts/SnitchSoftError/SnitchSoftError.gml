@@ -21,5 +21,4 @@ function SnitchError()
     
     var _event = new __SnitchClassError();
     _event.__SetMessage(_string);
-    return _event;
 }

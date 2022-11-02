@@ -17,7 +17,7 @@
 //Whether to boot the game with integrations turned on or off. Logging can be turned on/off manually by calling SnitchIntegrationSet()
 //If this macro is set to <False> then logging will need to be turned on manually by calling SnitchIntegrationSet(true)
 //It is recommended that this macro is set to <false> and you ask for user consent before enabling it
-#macro SNITCH_INTEGRATION_ON_BOOT  true
+#macro SNITCH_INTEGRATION_ON_BOOT  false
 
 
 
@@ -59,7 +59,5 @@
 //If logging is enabled, this information will also be outputted to the log file
 //   N.B. HTTP warnings/failures will always be reported
 #macro SNITCH_OUTPUT_HTTP_SUCCESS  (SNITCH_RUNNING_FROM_IDE)
-
-#macro __SNITCH_HTTP_TEST_TIMEOUT  5000
 
 #endregion
