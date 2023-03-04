@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__SnitchSystem",
+  "name": "__SnitchMacros",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

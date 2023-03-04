@@ -1,6 +1,6 @@
 function __SnitchState()
 {
-    __SnitchInit();
+    __SnitchInitialize();
     
     static _struct = {};
     return _struct;
