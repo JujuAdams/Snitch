@@ -8,45 +8,45 @@
 
 function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOING_PORT, _receiverPort = SNITCH_NETWORK_DEFAULT_RECEIVER_PORT, _receiverIP = SNITCH_NETWORK_DEFAULT_RECEIVER_IP)
 {
-    __SnitchInit();
+    static _snitchState = __SnitchState();
     
     if (SnitchNetworkGet() != _state)
     {
         var _funcCloseSocket = function()
         {
-            if (__SnitchState().__NetworkSocket != undefined)
+            if (_snitchState.__NetworkSocket != undefined)
             {
-                __SnitchTrace("Destroying socket ", __SnitchState().__NetworkSocket);
-                network_destroy(__SnitchState().__NetworkSocket);
-                __SnitchState().__NetworkSocket = undefined;
-                __SnitchState().__NetworkConnected = false;
+                __SnitchTrace("Destroying socket ", _snitchState.__NetworkSocket);
+                network_destroy(_snitchState.__NetworkSocket);
+                _snitchState.__NetworkSocket = undefined;
+                _snitchState.__NetworkConnected = false;
             }
         }
         
         var _funcOpenSocket = function()
         {
-            if (__SnitchState().__NetworkSocket == undefined)
+            if (_snitchState.__NetworkSocket == undefined)
             {
                 var _type = (SNITCH_NETWORK_MODE == 1)? network_socket_udp : network_socket_tcp;
-                if (__SnitchState().__NetworkOutgoingPort == undefined)
+                if (_snitchState.__NetworkOutgoingPort == undefined)
                 {
-                    __SnitchState().__NetworkSocket = network_create_socket(_type);
+                    _snitchState.__NetworkSocket = network_create_socket(_type);
                 }
                 else
                 {
-                    __SnitchState().__NetworkSocket = network_create_socket_ext(_type, __SnitchState().__NetworkOutgoingPort);
+                    _snitchState.__NetworkSocket = network_create_socket_ext(_type, _snitchState.__NetworkOutgoingPort);
                 }
                 
-                if (__SnitchState().__NetworkSocket >= 0)
+                if (_snitchState.__NetworkSocket >= 0)
                 {
-                    __SnitchTrace("Created socket ", __SnitchState().__NetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
+                    __SnitchTrace("Created socket ", _snitchState.__NetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
                     __SnitchTrace("Attempting TCP connection");
                     __SnitchAttemptTCPConnection();
                 }
                 else
                 {
                     __SnitchTrace("Failed to create socket");
-                    __SnitchState().__NetworkConnected = false;
+                    _snitchState.__NetworkConnected = false;
                 }
             }
         }
@@ -55,10 +55,10 @@ function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOIN
         {
             if (SNITCH_NETWORK_MODE > 0)
             {
-                __SnitchState().__NetworkEnabled      = true;
-                __SnitchState().__NetworkOutgoingPort = _outgoingPort;
-                __SnitchState().__NetworkTargetPort   = _receiverPort;
-                __SnitchState().__NetworkTargetIP     = _receiverIP;
+                _snitchState.__NetworkEnabled      = true;
+                _snitchState.__NetworkOutgoingPort = _outgoingPort;
+                _snitchState.__NetworkTargetPort   = _receiverPort;
+                _snitchState.__NetworkTargetIP     = _receiverIP;
                 
                 _funcCloseSocket();
                 _funcOpenSocket();
@@ -74,20 +74,20 @@ function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOIN
         {
             _funcCloseSocket();
             
-            __SnitchState().__NetworkEnabled = false;
+            _snitchState.__NetworkEnabled = false;
             __SnitchTrace("Network transmission turned off");
         }
     }
     else if (_state)
     {
-        if ((_receiverPort != __SnitchState().__NetworkOutgoingPort) || (_receiverPort != __SnitchState().__NetworkTargetPort) || (_receiverIP != __SnitchState().__NetworkTargetIP))
+        if ((_receiverPort != _snitchState.__NetworkOutgoingPort) || (_receiverPort != _snitchState.__NetworkTargetPort) || (_receiverIP != _snitchState.__NetworkTargetIP))
         {
             _funcCloseSocket();
             _funcOpenSocket();
             
-            __SnitchState().__NetworkOutgoingPort = _outgoingPort;
-            __SnitchState().__NetworkTargetPort   = _receiverPort;
-            __SnitchState().__NetworkTargetIP     = _receiverIP;
+            _snitchState.__NetworkOutgoingPort = _outgoingPort;
+            _snitchState.__NetworkTargetPort   = _receiverPort;
+            _snitchState.__NetworkTargetIP     = _receiverIP;
             
             __SnitchTrace("Networking details changed, using ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", ", outgoing port ", _outgoingPort, ", target port ", _receiverPort, ", target IP ", _receiverIP);
         }

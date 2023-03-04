@@ -4,12 +4,13 @@
 
 function SnitchSendStringToLogFile(_data)
 {
-    __SnitchInit();
+    static _snitchState = __SnitchState();
+    var _buffer = _snitchState.__LogFileBuffer;
     
     if (SnitchLogGet())
     {
-        buffer_write(__SnitchState().__LogFileBuffer, buffer_text, string(_data));
-        buffer_write(__SnitchState().__LogFileBuffer, buffer_u8, 10);
-        buffer_save_ext(__SnitchState().__LogFileBuffer, __SnitchState().__ZerothLogFile, 0, buffer_tell(__SnitchState().__LogFileBuffer));
+        buffer_write(_buffer, buffer_text, string(_data));
+        buffer_write(_buffer, buffer_u8, 10);
+        buffer_save_ext(_buffer, _snitchState.__ZerothLogFile, 0, buffer_tell(_buffer));
     }
 }

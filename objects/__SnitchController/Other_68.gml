@@ -1,10 +1,12 @@
+var _snitchState = __SnitchState();
+
 switch(async_load[? "type"])
 {
     case network_type_disconnect:
         __SnitchTrace("TCP connection lost, retrying");
-        __SnitchState().__NetworkConnectionAttempts = 0;
-        __SnitchState().__NetworkConnected = false;
-        __SnitchState().__NetworkAbandoned = false;
+        _snitchState.__NetworkConnectionAttempts = 0;
+        _snitchState.__NetworkConnected = false;
+        _snitchState.__NetworkAbandoned = false;
         __SnitchAttemptTCPConnection();
     break;
     
@@ -12,17 +14,17 @@ switch(async_load[? "type"])
         if (async_load[? "succeeded"])
         {
             __SnitchTrace("TCP connection established");
-            __SnitchState().__NetworkConnected = true;
-            __SnitchState().__NetworkAbandoned = false;
+            _snitchState.__NetworkConnected = true;
+            _snitchState.__NetworkAbandoned = false;
         }
         else
         {
-            __SnitchState().__NetworkConnectionAttempts++;
-            if (__SnitchState().__NetworkConnectionAttempts >= SNITCH_NETWORK_CONNECTION_ATTEMPTS)
+            _snitchState.__NetworkConnectionAttempts++;
+            if (_snitchState.__NetworkConnectionAttempts >= SNITCH_NETWORK_CONNECTION_ATTEMPTS)
             {
-                __SnitchTrace("TCP connection failed to establish despite ", __SnitchState().__NetworkConnectionAttempts, " attempts, giving up");
-                __SnitchState().__NetworkConnected = false;
-                __SnitchState().__NetworkAbandoned = true;
+                __SnitchTrace("TCP connection failed to establish despite ", _snitchState.__NetworkConnectionAttempts, " attempts, giving up");
+                _snitchState.__NetworkConnected = false;
+                _snitchState.__NetworkAbandoned = true;
             }
             else
             {
