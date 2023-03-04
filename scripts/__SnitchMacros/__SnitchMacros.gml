@@ -1,7 +1,7 @@
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 
 #macro SNITCH_VERSION               "3.1.0"
-#macro SNITCH_DATE                  "2022-11-02"
+#macro SNITCH_DATE                  "2023-03-04"
 #macro SNITCH_OS_NAME               (__SnitchState().__OSName)
 #macro SNITCH_OS_VERSION            (__SnitchState().__OSVersion)
 #macro SNITCH_ENVIRONMENT_NAME      (__SnitchState().__EnvironmentName)
@@ -19,5 +19,4 @@
 #macro SNITCH_GA_OS_VERSION         (__SnitchState().__GAOSVersion)
 #macro SNITCH_GA_GAMEMAKER_VERSION  (__SnitchState().__GAGameMakerVersion)
 
-#macro __SNITCH_DEBUG  (__SnitchState().__RunningFromIDE && true)
 #macro __SNITCH_HTTP_TEST_TIMEOUT  5000
