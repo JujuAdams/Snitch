@@ -72,14 +72,11 @@ function __SnitchInit()
     global.__snitchNetworkOutgoingPort       = SNITCH_NETWORK_DEFAULT_OUTGOING_PORT;
     global.__snitchNetworkTargetPort         = SNITCH_NETWORK_DEFAULT_RECEIVER_PORT;
     global.__snitchNetworkTargetIP           = SNITCH_NETWORK_DEFAULT_RECEIVER_IP;
-    global.__snitchNetworkTestTime           = undefined;
-    global.__snitchNetworkTested             = false;
     global.__snitchNetworkConnectionAttempts = 0;
     global.__snitchNetworkAbandoned          = false;
     global.__snitchNetworkPendingMessages    = [];
     
     //HTTP-related tracking
-    global.__snitchHTTPTestTime             = undefined;
     global.__snitchHTTPHeaderMap            = ds_map_create(); //Has to be a map due to GameMaker's HTTP request API
     global.__snitchHTTPRequests             = {};
     global.__snitchRequestBackups           = {};
@@ -362,10 +359,6 @@ function __SnitchInit()
     {
         //Force a network connection if possible
         os_is_network_connected(true);
-        
-        //Send off a ping to test if SnitchHTTPAsyncEvent() has been placed in the correct event
-        http_get("https://www.google.com/");
-        global.__snitchHTTPTestTime = SNITCH_FOCUS_TIME;
     }
     
     switch(SNITCH_SERVICE_MODE)
@@ -423,96 +416,20 @@ function __SnitchInit()
     
     
     
-    //Set up a per-frame request handler
+    //Ensure our controller instance always sticks around
     time_source_start(time_source_create(time_source_global, 1, time_source_units_frames, function()
     {
-        global.__snitchFrames++;
-        if (!os_is_paused() && window_has_focus())
+        if (!instance_exists(__SnitchController))
         {
-            global.__snitchFocusFrames++;
-            global.__snitchFocusTime += delta_time/1000;
-        }
-        
-        //Perform HTTP event test timeout
-        //This will throw an error if the user hasn't called SnitchHTTPAsyncEvent()
-        if (SNITCH_SERVICE_MODE > 0)
-        {
-            if ((global.__snitchHTTPTestTime != undefined) && (SNITCH_FOCUS_TIME - global.__snitchHTTPTestTime > __SNITCH_HTTP_TEST_TIMEOUT))
-            {
-                if (SNITCH_RUNNING_FROM_IDE)
-                {
-                    __SnitchError("HTTP ping failed to resolve\nPlease check that SnitchHTTPAsyncEvent() is being called in an HTTP Async event in a persistent object");
-                }
-                else
-                {
-                    SnitchError("HTTP ping failed to resolve. Please check that SnitchHTTPAsyncEvent() is being called in a HTTP Async event in a persistent object").SendAll();
-                }
-            }
-        }
-        
-        if (SNITCH_NETWORK_MODE == 2)
-        {
-            if (!global.__snitchNetworkTested && (global.__snitchNetworkTestTime != undefined) && (SNITCH_FOCUS_TIME - global.__snitchNetworkTestTime > SNITCH_NETWORK_CONNECTION_TIMEOUT + 1000))
-            {
-                if (SNITCH_RUNNING_FROM_IDE)
-                {
-                    __SnitchError("TCP connection failed to resolve\nPlease check that SnitchNetworkingAsyncEvent() is being called in a Networking Async event in a persistent object");
-                }
-                else
-                {
-                    SnitchError("TCP connection failed to resolve. Please check that SnitchNetworkingAsyncEvent() is being called in a Networking Async event in a persistent object").SendAll();
-                }
-            }
+            instance_activate_object(__SnitchController);
             
-            if (global.__snitchNetworkConnected)
+            if (instance_exists(__SnitchController))
             {
-                //Churn through the pending messages and clear them out
-                repeat(ceil(sqrt(array_length(global.__snitchNetworkPendingMessages))))
-                {
-                    __SnitchSendStringToNetwork(global.__snitchNetworkPendingMessages[0]);
-                    array_delete(global.__snitchNetworkPendingMessages, 0, 1);
-                }
+                __SnitchError("__SnitchContoller has been deactivated\nPlease ensure that __SnitchContoller is never deactivated");
             }
-        }
-        
-        if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
-        {
-            if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)
+            else
             {
-                var _backupCount = array_length(global.__snitchRequestBackupOrder);
-                if (_backupCount > 0)
-                {
-                    //Step round the request backup array
-                    global.__snitchRequestBackupResendIndex = (global.__snitchRequestBackupResendIndex + 1) mod _backupCount;
-                    
-                    //Pull out a backup...
-                    var _uuid = global.__snitchRequestBackupOrder[global.__snitchRequestBackupResendIndex];
-                    with(global.__snitchRequestBackups[$ _uuid])
-                    {
-                        //...and if we're not waiting for a response for this particular request, resend it
-                        if (asyncID < 0)
-                        {
-                            if (SNITCH_REQUEST_BACKUP_OUTPUT_ATTEMPT) __SnitchTrace("Trying to resend event ", _uuid);
-                            
-                            switch(SNITCH_SERVICE_MODE)
-                            {
-                                case 1: __SnitchSentryHTTPRequest(self);        break;
-                                case 2: __SnitchGameAnalyticsHTTPRequest(self); break;
-                                case 3: __SnitchBugsnagHTTPRequest(self);       break;
-                            }
-                            
-                            global.__snitchRequestBackupResendTime = current_time;
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT)
-            {
-                global.__snitchRequestBackupFailures = 0;
-                __SnitchTrace("Retrying backup resending");
+                instance_create_depth(0, 0, 0, __SnitchController);
             }
         }
     }, [], -1));

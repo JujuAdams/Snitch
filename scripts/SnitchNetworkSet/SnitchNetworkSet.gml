@@ -19,7 +19,6 @@ function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOIN
                 __SnitchTrace("Destroying socket ", global.__snitchNetworkSocket);
                 network_destroy(global.__snitchNetworkSocket);
                 global.__snitchNetworkSocket = undefined;
-                global.__snitchNetworkTestTime = undefined;
                 global.__snitchNetworkConnected = false;
             }
         }

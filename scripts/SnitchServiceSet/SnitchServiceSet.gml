@@ -16,10 +16,10 @@ function SnitchServiceSet(_state)
                 global.__snitchServiceEnabled = _state;
                 __SnitchTrace(__SnitchServiceName(), " service turned ", global.__snitchServiceEnabled? "on" : "off");
             }
-        }
-        else
-        {
-            __SnitchTrace("Service cannot be toggled as no service has been enabled (see SNITCH_SERVICE_MODE)");
+            else
+            {
+                __SnitchTrace("Service cannot be toggled as no service has been enabled (see SNITCH_SERVICE_MODE)");
+            }
         }
     }
 }
