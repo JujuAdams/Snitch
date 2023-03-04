@@ -3,9 +3,6 @@
 
 function SnitchNetworkGet()
 {
-    __SnitchInit();
-    
     if (SNITCH_NETWORK_MODE <= 0) return false;
-    
-    return global.__snitchNetworkEnabled;
+    return __SnitchState().__NetworkEnabled;
 }

@@ -1,5 +1,7 @@
 function __SnitchClassRequest(_uuid, _string) constructor
 {
+    static __snitchState = __snitchState;
+    
     content     = _string;
     UUID        = _uuid;
     savedBackup = false;
@@ -26,7 +28,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
             if (asyncID >= 0)
             {
                 //If the HTTP request is valid then link the returned ID to this struct for use later
-                global.__snitchHTTPRequests[$ string(asyncID)] = self;
+                __snitchState.__HTTPRequests[$ string(asyncID)] = self;
             }
             else
             {
@@ -58,13 +60,13 @@ function __SnitchClassRequest(_uuid, _string) constructor
         if (savedBackup || !SNITCH_REQUEST_BACKUP_ENABLE) return undefined;
         
         //Add the request to our tracking data structures
-        global.__snitchRequestBackups[$ UUID] = self;
-        array_push(global.__snitchRequestBackupOrder, UUID);
+        __snitchState.__RequestBackups[$ UUID] = self;
+        array_push(__snitchState.__RequestBackupOrder, UUID);
         
         //If we've exceeded our maximum number of backups, delete a few until we're back within limits
-        repeat(array_length(global.__snitchRequestBackupOrder) - SNITCH_REQUEST_BACKUP_COUNT)
+        repeat(array_length(__snitchState.__RequestBackupOrder) - SNITCH_REQUEST_BACKUP_COUNT)
         {
-            global.__snitchRequestBackupOrder[0].__Destroy();
+            __snitchState.__RequestBackupOrder[0].__Destroy();
         }
         
         //Make sure the manifest is updated on disk
@@ -90,7 +92,7 @@ function __SnitchClassRequest(_uuid, _string) constructor
             __Destroy();
             
             //Reset the failure count
-            global.__snitchRequestBackupFailures = 0;
+            __snitchState.__RequestBackupFailures = 0;
         }
         else if (status != 1)
         {
@@ -101,14 +103,14 @@ function __SnitchClassRequest(_uuid, _string) constructor
                 __SnitchTrace("Warning! Response was \"HTTP 400 - Bad Request\". Check your event payload");
                 __Destroy();
             }
-            else if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
+            else if (__snitchState.__RequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
             {
                 //Increment the failure count
-                global.__snitchRequestBackupFailures++;
+                __snitchState.__RequestBackupFailures++;
                 
-                if (global.__snitchRequestBackupFailures >= SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
+                if (__snitchState.__RequestBackupFailures >= SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
                 {
-                    __SnitchTrace("Too many failed requests (", global.__snitchRequestBackupFailures, "), retrying later");
+                    __SnitchTrace("Too many failed requests (", __snitchState.__RequestBackupFailures, "), retrying later");
                 }
             }
         }
@@ -121,17 +123,17 @@ function __SnitchClassRequest(_uuid, _string) constructor
     static __Destroy = function()
     {
         //Remove ourselves from the HTTP request lookup
-        variable_struct_remove(global.__snitchHTTPRequests, asyncID);
+        variable_struct_remove(__snitchState.__HTTPRequests, asyncID);
         
         //Delete any backup on disk
         file_delete(__SnitchRequestBackupFilename(UUID));
         
         //Remove this request from our backup records
-        variable_struct_remove(global.__snitchRequestBackups, UUID);
-        var _i = array_length(global.__snitchRequestBackupOrder) - 1
+        variable_struct_remove(__snitchState.__RequestBackups, UUID);
+        var _i = array_length(__snitchState.__RequestBackupOrder) - 1
         repeat(_i + 1)
         {
-            if (global.__snitchRequestBackupOrder[_i] == UUID) array_delete(global.__snitchRequestBackupOrder, _i, 1);
+            if (__snitchState.__RequestBackupOrder[_i] == UUID) array_delete(__snitchState.__RequestBackupOrder, _i, 1);
             --_i;
         }
     }
@@ -146,21 +148,21 @@ function __SnitchRequestBackupSaveManifest()
 {
     static _buffer = buffer_create(1024, buffer_grow, 1);
     buffer_seek(_buffer, buffer_seek_start, 0);
-    buffer_write(_buffer, buffer_text, json_stringify(global.__snitchRequestBackupOrder));
+    buffer_write(_buffer, buffer_text, json_stringify(__snitchState.__RequestBackupOrder));
     buffer_save_ext(_buffer, SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME, 0, buffer_tell(_buffer));
 }
 
 function __SnitchSentryHTTPRequest(_request)
 {
     //Set up the headers...
-    global.__snitchHTTPHeaderMap[? "Content-Type" ] = "application/json";
-    global.__snitchHTTPHeaderMap[? "X-Sentry-Auth"] = global.__snitchSentryAuthString + string(SnitchConvertToUnixTime(date_current_datetime()));
+    __snitchState.__HTTPHeaderMap[? "Content-Type" ] = "application/json";
+    __snitchState.__HTTPHeaderMap[? "X-Sentry-Auth"] = __snitchState.__SentryAuthString + string(SnitchConvertToUnixTime(date_current_datetime()));
     
     //And fire off the request!
     //Good luck little packet
-    _request.__Send(global.__snitchEndpoint, "POST", global.__snitchHTTPHeaderMap, true);
+    _request.__Send(__snitchState.__Endpoint, "POST", __snitchState.__HTTPHeaderMap, true);
     
-    ds_map_clear(global.__snitchHTTPHeaderMap);
+    ds_map_clear(__snitchState.__HTTPHeaderMap);
 }
 
 function __SnitchGameAnalyticsHTTPRequest(_request)
@@ -185,22 +187,22 @@ function __SnitchGameAnalyticsHTTPRequest(_request)
     buffer_delete(_hashBuffer);
     
     //Set up the header...
-    global.__snitchHTTPHeaderMap[? "Authorization"] = _authHash;
-    global.__snitchHTTPHeaderMap[? "Content-Type" ] = "application/json";
+    __snitchState.__HTTPHeaderMap[? "Authorization"] = _authHash;
+    __snitchState.__HTTPHeaderMap[? "Content-Type" ] = "application/json";
     
-    _request.__Send(global.__snitchEndpoint, "POST", global.__snitchHTTPHeaderMap, false);
+    _request.__Send(__snitchState.__Endpoint, "POST", __snitchState.__HTTPHeaderMap, false);
     
-    ds_map_clear(global.__snitchHTTPHeaderMap);
+    ds_map_clear(__snitchState.__HTTPHeaderMap);
 }
 
 function __SnitchBugsnagHTTPRequest(_request)
 {
     //Set up the header...
-    global.__snitchHTTPHeaderMap[? "Content-Type"           ] = "application/json";
-    global.__snitchHTTPHeaderMap[? "Bugsnag-Api-Key"        ] = SNITCH_BUGSNAG_NOTIFIER_API_KEY;
-    global.__snitchHTTPHeaderMap[? "Bugsnag-Payload-Version"] = "5";
+    __snitchState.__HTTPHeaderMap[? "Content-Type"           ] = "application/json";
+    __snitchState.__HTTPHeaderMap[? "Bugsnag-Api-Key"        ] = SNITCH_BUGSNAG_NOTIFIER_API_KEY;
+    __snitchState.__HTTPHeaderMap[? "Bugsnag-Payload-Version"] = "5";
     
-    _request.__Send("https://notify.bugsnag.com", "POST", global.__snitchHTTPHeaderMap, false);
+    _request.__Send("https://notify.bugsnag.com", "POST", __snitchState.__HTTPHeaderMap, false);
     
-    ds_map_clear(global.__snitchHTTPHeaderMap);
+    ds_map_clear(__snitchState.__HTTPHeaderMap);
 }

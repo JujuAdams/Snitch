@@ -10,7 +10,7 @@ function __SnitchExceptionHandler(_struct)
     //Call the exception handler defined by the native exception_unhandled_handler() function
     try
     {
-        if (global.__snitchGMExceptionHandler != undefined) global.__snitchGMExceptionHandler(_struct);
+        if (__SnitchState().__GMExceptionHandler != undefined) __SnitchState().__GMExceptionHandler(_struct);
     }
     catch(_error)
     {

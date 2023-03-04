@@ -3,9 +3,6 @@
 
 function SnitchLogGet()
 {
-    __SnitchInit();
-    
     if (!SNITCH_LOG_PERMITTED) return false;
-    
-    return global.__snitchLogToFileEnabled;
+    return __SnitchState().__LogToFileEnabled;
 }

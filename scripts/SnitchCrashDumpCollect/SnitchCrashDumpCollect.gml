@@ -5,8 +5,6 @@
 
 function SnitchCrashDumpCollect()
 {
-    __SnitchInit();
-    
     var _struct = undefined;
     
     if ((SNITCH_CRASH_DUMP_FILENAME != "") && file_exists(SNITCH_CRASH_DUMP_FILENAME))

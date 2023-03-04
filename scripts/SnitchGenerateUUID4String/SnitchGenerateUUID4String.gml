@@ -15,7 +15,7 @@ function SnitchGenerateUUID4String(_hyphenate = false)
 
 ////Set up the XORShift32 starting seed
 ////Can throw in a randomize() / random() call here too if you'd like but 1) that might mess up other stuff? 2) feels unnecessary
-//global.__snitchXORShift32State = floor(1000000*date_current_datetime() + display_mouse_get_x() + display_get_width()*display_mouse_get_y());
+//__SnitchState().__XORShift32State = floor(1000000*date_current_datetime() + display_mouse_get_x() + display_get_width()*display_mouse_get_y());
 
 //Basic XORShift32, nothing fancy
 function __SnitchXORShift32Random(_value)

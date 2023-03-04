@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "SnitchNetworkingAsyncEvent",
+  "name": "__SnitchState",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Snitch",
-    "path": "folders/Snitch.yy",
+    "name": "THE SNITCH SEES ALL",
+    "path": "folders/Snitch/(System)/THE SNITCH SEES ALL.yy",
   },
 }

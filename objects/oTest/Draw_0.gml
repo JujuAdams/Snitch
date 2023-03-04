@@ -21,15 +21,16 @@ if (is_struct(crashDump))
     
     try
     {
-        _string += "message = \"" + string(crashDump.message) + "\"\n";
+        var _exception = crashDump.exception
+        _string += "message = \"" + string(_exception.message) + "\"\n";
         _string += "\n";
-        _string += "longMessage = \"" + string(crashDump.longMessage) + "\"\n";
+        _string += "longMessage = \"" + string(_exception.longMessage) + "\"\n";
         _string += "\n";
-        _string += "script = \"" + string(crashDump.script) + "\"\n";
+        _string += "script = \"" + string(_exception.script) + "\"\n";
         _string += "\n";
-        _string += "line = " + string(crashDump.line) + "\n";
+        _string += "line = " + string(_exception.line) + "\n";
         _string += "\n";
-        _string += "stacktrace = " + string(crashDump.stacktrace) + "\n";
+        _string += "stacktrace = " + string(_exception.stacktrace) + "\n";
         _string += "\n";
     }
     catch(_error)
