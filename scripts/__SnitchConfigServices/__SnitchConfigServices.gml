@@ -29,10 +29,10 @@
 
 //Name of the request backup manifest
 //This file records how many request backups exist and where to find them on disk
-#macro SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME  "event_manifest.dat"
+#macro SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME  "eventManifest.dat"
 
 //Name of request backup files. Use a # symbol for UUID position
-#macro SNITCH_REQUEST_BACKUP_FILENAME  "event_#.dat"
+#macro SNITCH_REQUEST_BACKUP_FILENAME  "event#.dat"
 
 //How many request backups to keep
 #macro SNITCH_REQUEST_BACKUP_COUNT  10
