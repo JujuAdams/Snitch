@@ -40,7 +40,7 @@ Pop-up message to show when the game is booted with the `-log` execution paramet
 
 ## `SNITCH_LOG_FILENAME`
 
-*Typical value:* `"log_#.txt"`
+*Typical value:* `"log#.txt"`
 
 Name of the log files to save. Log files are typically saved in `game_save_id`.
 

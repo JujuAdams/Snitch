@@ -46,7 +46,7 @@ Whether to allow backups to be made for HTTP requests. Any requests that fail wi
 
 ## `SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME`
 
-*Typical value:* `"event_manifest.dat"`
+*Typical value:* `"eventManifest.dat"`
 
 Name of the request backup manifest. This file records how many request backups exist and where to find them. The request backup manifest is typically saved in `game_save_id`.
 
@@ -54,7 +54,7 @@ Name of the request backup manifest. This file records how many request backups 
 
 ## `SNITCH_REQUEST_BACKUP_FILENAME`
 
-*Typical value:* `"event_#.dat"`
+*Typical value:* `"event#.dat"`
 
 Name of the request backup files to save. Request backups are typically saved in `game_save_id`.
 
