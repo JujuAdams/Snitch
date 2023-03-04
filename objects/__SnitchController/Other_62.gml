@@ -1,8 +1,8 @@
 var _id = string(async_load[? "id"]);
-if (variable_struct_exists(global.__snitchHTTPRequests, _id))
+if (variable_struct_exists(__SnitchState().__HTTPRequests, _id))
 {
     //Pass the response into the request's response handler
-    global.__snitchHTTPRequests[$ _id].__HTTPResponse(async_load[? "http_status"], async_load[? "status"]);
+    __SnitchState().__HTTPRequests[$ _id].__HTTPResponse(async_load[? "http_status"], async_load[? "status"]);
     
     //Output extra details if there was a failure to submit a request
     if (SNITCH_OUTPUT_HTTP_FAILURE_DETAILS && (async_load[? "http_status"] != 200) && (async_load[? "http_status"] != 204))

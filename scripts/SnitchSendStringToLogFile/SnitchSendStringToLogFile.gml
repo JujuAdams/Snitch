@@ -8,8 +8,8 @@ function SnitchSendStringToLogFile(_data)
     
     if (SnitchLogGet())
     {
-        buffer_write(global.__snitchLogFileBuffer, buffer_text, string(_data));
-        buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
-        buffer_save_ext(global.__snitchLogFileBuffer, global.__snitchZerothLogFile, 0, buffer_tell(global.__snitchLogFileBuffer));
+        buffer_write(__SnitchState().__LogFileBuffer, buffer_text, string(_data));
+        buffer_write(__SnitchState().__LogFileBuffer, buffer_u8, 10);
+        buffer_save_ext(__SnitchState().__LogFileBuffer, __SnitchState().__ZerothLogFile, 0, buffer_tell(__SnitchState().__LogFileBuffer));
     }
 }

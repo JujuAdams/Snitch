@@ -1,17 +1,17 @@
 function __SnitchAttemptTCPConnection()
 {
-    if ((global.__snitchNetworkSocket != undefined) && (global.__snitchNetworkSocket >= 0) && (SNITCH_NETWORK_MODE == 2))
+    if ((__SnitchState().__NetworkSocket != undefined) && (__SnitchState().__NetworkSocket >= 0) && (SNITCH_NETWORK_MODE == 2))
     {
-        network_connect_raw_async(global.__snitchNetworkSocket, global.__snitchNetworkTargetIP ?? "127.0.0.1", global.__snitchNetworkTargetPort);
-        global.__snitchNetworkConnected = false;
+        network_connect_raw_async(__SnitchState().__NetworkSocket, __SnitchState().__NetworkTargetIP ?? "127.0.0.1", __SnitchState().__NetworkTargetPort);
+        __SnitchState().__NetworkConnected = false;
     }
     else if (SNITCH_NETWORK_MODE == 1)
     {
         //UDP is always connected cos we're sending packets blind
-        global.__snitchNetworkConnected = true;
+        __SnitchState().__NetworkConnected = true;
     }
     else
     {
-        global.__snitchNetworkConnected = false;
+        __SnitchState().__NetworkConnected = false;
     }
 }

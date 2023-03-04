@@ -8,12 +8,12 @@ function SnitchSendStringToNetwork(_string)
     
     if (SnitchNetworkGet())
     {
-        if ((SNITCH_NETWORK_MODE == 2) && (!global.__snitchNetworkConnected || (array_length(global.__snitchNetworkPendingMessages) > 0)))
+        if ((SNITCH_NETWORK_MODE == 2) && (!__SnitchState().__NetworkConnected || (array_length(__SnitchState().__NetworkPendingMessages) > 0)))
         {
-            if (!global.__snitchNetworkAbandoned)
+            if (!__SnitchState().__NetworkAbandoned)
             {
-                array_push(global.__snitchNetworkPendingMessages, _string);
-                array_delete(global.__snitchNetworkPendingMessages, 0, max(0, array_length(global.__snitchNetworkPendingMessages) - SNITCH_NETWORK_PENDING_MESSAGE_LIMIT));
+                array_push(__SnitchState().__NetworkPendingMessages, _string);
+                array_delete(__SnitchState().__NetworkPendingMessages, 0, max(0, array_length(__SnitchState().__NetworkPendingMessages) - SNITCH_NETWORK_PENDING_MESSAGE_LIMIT));
             }
         }
         else
@@ -39,18 +39,18 @@ function __SnitchSendStringToNetwork(_string)
         break;
         
         case 1:
-            if (global.__snitchNetworkTargetIP == undefined)
+            if (__SnitchState().__NetworkTargetIP == undefined)
             {
-            	network_send_broadcast(global.__snitchNetworkSocket, global.__snitchNetworkTargetPort, _buffer, buffer_tell(_buffer));
+            	network_send_broadcast(__SnitchState().__NetworkSocket, __SnitchState().__NetworkTargetPort, _buffer, buffer_tell(_buffer));
             }
             else
             {
-            	network_send_udp_raw(global.__snitchNetworkSocket, global.__snitchNetworkTargetIP, global.__snitchNetworkTargetPort, _buffer, buffer_tell(_buffer));
+            	network_send_udp_raw(__SnitchState().__NetworkSocket, __SnitchState().__NetworkTargetIP, __SnitchState().__NetworkTargetPort, _buffer, buffer_tell(_buffer));
             }
         break;
         
         case 2:
-            network_send_raw(global.__snitchNetworkSocket, _buffer, buffer_tell(_buffer));
+            network_send_raw(__SnitchState().__NetworkSocket, _buffer, buffer_tell(_buffer));
         break;
     }
 }

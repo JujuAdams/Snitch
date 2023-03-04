@@ -7,5 +7,5 @@
 
 function __SnitchCrashSetGMHandler(_function)
 {
-    global.__snitchGMExceptionHandler = _function;
+    __SnitchState().__GMExceptionHandler = _function;
 }

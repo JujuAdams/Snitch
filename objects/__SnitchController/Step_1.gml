@@ -1,37 +1,37 @@
-global.__snitchFrames++;
+__SnitchState().__Frames++;
 
 if (!os_is_paused() && window_has_focus())
 {
-    global.__snitchFocusFrames++;
-    global.__snitchFocusTime += delta_time/1000;
+    __SnitchState().__FocusFrames++;
+    __SnitchState().__FocusTime += delta_time/1000;
 }
 
 if (SNITCH_NETWORK_MODE == 2)
 {
-    if (global.__snitchNetworkConnected)
+    if (__SnitchState().__NetworkConnected)
     {
         //Churn through the pending messages and clear them out
-        repeat(ceil(sqrt(array_length(global.__snitchNetworkPendingMessages))))
+        repeat(ceil(sqrt(array_length(__SnitchState().__NetworkPendingMessages))))
         {
-            __SnitchSendStringToNetwork(global.__snitchNetworkPendingMessages[0]);
-            array_delete(global.__snitchNetworkPendingMessages, 0, 1);
+            __SnitchSendStringToNetwork(__SnitchState().__NetworkPendingMessages[0]);
+            array_delete(__SnitchState().__NetworkPendingMessages, 0, 1);
         }
     }
 }
 
-if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
+if (__SnitchState().__RequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAILURES)
 {
-    if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)
+    if (current_time - __SnitchState().__RequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_DELAY)
     {
-        var _backupCount = array_length(global.__snitchRequestBackupOrder);
+        var _backupCount = array_length(__SnitchState().__RequestBackupOrder);
         if (_backupCount > 0)
         {
             //Step round the request backup array
-            global.__snitchRequestBackupResendIndex = (global.__snitchRequestBackupResendIndex + 1) mod _backupCount;
+            __SnitchState().__RequestBackupResendIndex = (__SnitchState().__RequestBackupResendIndex + 1) mod _backupCount;
             
             //Pull out a backup...
-            var _uuid = global.__snitchRequestBackupOrder[global.__snitchRequestBackupResendIndex];
-            with(global.__snitchRequestBackups[$ _uuid])
+            var _uuid = __SnitchState().__RequestBackupOrder[__SnitchState().__RequestBackupResendIndex];
+            with(__SnitchState().__RequestBackups[$ _uuid])
             {
                 //...and if we're not waiting for a response for this particular request, resend it
                 if (asyncID < 0)
@@ -45,7 +45,7 @@ if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAIL
                         case 3: __SnitchBugsnagHTTPRequest(self);       break;
                     }
                     
-                    global.__snitchRequestBackupResendTime = current_time;
+                    __SnitchState().__RequestBackupResendTime = current_time;
                 }
             }
         }
@@ -53,9 +53,9 @@ if (global.__snitchRequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAIL
 }
 else
 {
-    if (current_time - global.__snitchRequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT)
+    if (current_time - __SnitchState().__RequestBackupResendTime > SNITCH_REQUEST_BACKUP_RESEND_FAILURE_TIMEOUT)
     {
-        global.__snitchRequestBackupFailures = 0;
+        __SnitchState().__RequestBackupFailures = 0;
         __SnitchTrace("Retrying backup resending");
     }
 }

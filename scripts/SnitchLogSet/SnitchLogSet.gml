@@ -27,12 +27,12 @@ function SnitchLogSet(_state)
                     __SnitchError("SNITCH_LOG_FILENAME must contain a # character");
                 }
                 
-                global.__snitchLogToFileEnabled = true;
+                __SnitchState().__LogToFileEnabled = true;
                 
-                if (SnitchLogGet() && !global.__snitchWroteLogFileHeader)
+                if (SnitchLogGet() && !__SnitchState().__WroteLogFileHeader)
                 {
                     //If this is first time we've tried to turn logging on for this game instance, we need to create a new log file to write to
-                    global.__snitchWroteLogFileHeader = true;
+                    __SnitchState().__WroteLogFileHeader = true;
                     
                     //Delete the nth log file
                     if (file_exists(string_replace(SNITCH_LOG_FILENAME, "#", SNITCH_LOG_COUNT-1))) file_delete(string_replace(SNITCH_LOG_FILENAME, "#", SNITCH_LOG_COUNT-1));
@@ -65,20 +65,20 @@ function SnitchLogSet(_state)
                             _value = string(_value);
                         }
                         
-                        buffer_write(global.__snitchLogFileBuffer, buffer_text, _name);
-                        buffer_write(global.__snitchLogFileBuffer, buffer_text, " = ");
-                        buffer_write(global.__snitchLogFileBuffer, buffer_text, _value);
-                        buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10); //newline
+                        buffer_write(__SnitchState().__LogFileBuffer, buffer_text, _name);
+                        buffer_write(__SnitchState().__LogFileBuffer, buffer_text, " = ");
+                        buffer_write(__SnitchState().__LogFileBuffer, buffer_text, _value);
+                        buffer_write(__SnitchState().__LogFileBuffer, buffer_u8, 10); //newline
                         ++_i;
                     }
                     
-                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
-                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
-                    buffer_write(global.__snitchLogFileBuffer, buffer_u8, 10);
+                    buffer_write(__SnitchState().__LogFileBuffer, buffer_u8, 10);
+                    buffer_write(__SnitchState().__LogFileBuffer, buffer_u8, 10);
+                    buffer_write(__SnitchState().__LogFileBuffer, buffer_u8, 10);
                     
-                    buffer_save_ext(global.__snitchLogFileBuffer, global.__snitchZerothLogFile, 0, buffer_tell(global.__snitchLogFileBuffer));
+                    buffer_save_ext(__SnitchState().__LogFileBuffer, __SnitchState().__ZerothLogFile, 0, buffer_tell(__SnitchState().__LogFileBuffer));
                     
-                    __SnitchTrace("Opened log file (", game_save_id, global.__snitchZerothLogFile, ")");
+                    __SnitchTrace("Opened log file (", game_save_id, __SnitchState().__ZerothLogFile, ")");
                 }
                 
                 __SnitchTrace("Logging turned on");
@@ -87,7 +87,7 @@ function SnitchLogSet(_state)
         else
         {
             __SnitchTrace("Logging turned off");
-            global.__snitchLogToFileEnabled = false;
+            __SnitchState().__LogToFileEnabled = false;
         }
     }
 }

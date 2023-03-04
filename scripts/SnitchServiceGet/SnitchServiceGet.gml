@@ -3,9 +3,7 @@
 
 function SnitchServiceGet()
 {
-    __SnitchInit();
-    
     if (SNITCH_SERVICE_MODE <= 0) return false;
     
-    return global.__snitchServiceEnabled;
+    return __SnitchState().__ServiceEnabled;
 }

@@ -13,8 +13,8 @@ function SnitchServiceSet(_state)
         {
             if (SNITCH_SERVICE_MODE > 0)
             {
-                global.__snitchServiceEnabled = _state;
-                __SnitchTrace(__SnitchServiceName(), " service turned ", global.__snitchServiceEnabled? "on" : "off");
+                __SnitchState().__ServiceEnabled = _state;
+                __SnitchTrace(__SnitchServiceName(), " service turned ", __SnitchState().__ServiceEnabled? "on" : "off");
             }
             else
             {

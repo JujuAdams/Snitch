@@ -7,5 +7,5 @@ function SnitchLogGet()
     
     if (!SNITCH_LOG_PERMITTED) return false;
     
-    return global.__snitchLogToFileEnabled;
+    return __SnitchState().__LogToFileEnabled;
 }
