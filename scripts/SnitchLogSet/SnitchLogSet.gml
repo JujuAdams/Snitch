@@ -4,7 +4,7 @@
 
 function SnitchLogSet(_state)
 {
-    static _snitchState = _snitchState;
+    static _snitchState = __SnitchState();
     
     //If we've changed state...
     if (_state != SnitchLogGet())
