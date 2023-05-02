@@ -112,7 +112,7 @@ function __SnitchClassError() constructor
         var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
         if (is_array(__rawCallstackArray)) _string += " " + string(__GuaranteeSimpleCallstack());
         
-        show_debug_message(_string);
+        __SnitchShowDebugMessage(_string);
         SnitchSendStringToLogFile(_string);
         SnitchSendStringToNetwork(_string);
     }

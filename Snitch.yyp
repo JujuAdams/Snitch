@@ -3,10 +3,12 @@
   "resourceVersion": "1.6",
   "name": "Snitch",
   "resources": [
+    {"id":{"name":"__SnitchShowDebugMessage","path":"scripts/__SnitchShowDebugMessage/__SnitchShowDebugMessage.yy",},"order":15,},
     {"id":{"name":"SnitchServiceSet","path":"scripts/SnitchServiceSet/SnitchServiceSet.yy",},"order":6,},
     {"id":{"name":"SnitchLogSet","path":"scripts/SnitchLogSet/SnitchLogSet.yy",},"order":0,},
     {"id":{"name":"SnitchSoftError","path":"scripts/SnitchSoftError/SnitchSoftError.yy",},"order":2,},
     {"id":{"name":"__SnitchInitialize","path":"scripts/__SnitchInitialize/__SnitchInitialize.yy",},"order":0,},
+    {"id":{"name":"SnitchLogGetString","path":"scripts/SnitchLogGetString/SnitchLogGetString.yy",},"order":4,},
     {"id":{"name":"SnitchNetworkSet","path":"scripts/SnitchNetworkSet/SnitchNetworkSet.yy",},"order":2,},
     {"id":{"name":"oInvalidObject","path":"objects/oInvalidObject/oInvalidObject.yy",},"order":2,},
     {"id":{"name":"SnitchSendStringToNetwork","path":"scripts/SnitchSendStringToNetwork/SnitchSendStringToNetwork.yy",},"order":3,},

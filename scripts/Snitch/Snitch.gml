@@ -19,7 +19,7 @@ function Snitch()
         ++_i;
     }
     
-    show_debug_message(_string);
+    __SnitchShowDebugMessage(_string);
     SnitchSendStringToLogFile(_string);
     SnitchSendStringToNetwork(_string); //TODO - Format this string for consumption (LogCat?)
 }

@@ -10,5 +10,5 @@ function __SnitchTrace()
     
     SnitchSendStringToLogFile(_string);
     SnitchSendStringToNetwork(_string);
-    show_debug_message(_string);
+    __SnitchShowDebugMessage(_string);
 }

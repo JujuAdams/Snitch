@@ -36,6 +36,7 @@ function __SnitchInitialize()
         __CrashCapture   = __RunningFromIDE? SNITCH_CRASH_CAPTURE_FROM_IDE : SNITCH_CRASH_CAPTURE_COMPILED;
     
         //Log files
+        __logArray           = array_create(SNITCH_IN_GAME_LOG_SIZE, "");
         __WroteLogFileHeader = false;
         __ZerothLogFile      = string_replace(SNITCH_LOG_FILENAME, "#", "0");
         __LogFileBuffer      = buffer_create(SNITCH_LOG_BUFFER_START_SIZE, buffer_grow, 1);
