@@ -64,7 +64,7 @@ function __SnitchExceptionHandler(_struct)
                     case 3: _text = _event.__GetCompressedExceptionString(); break;
                 }
                 
-                clipboard_set_text("#####" + _text + "#####"); break;
+                clipboard_set_text("#####" + _text + "#####");
                 show_message(SNITCH_CRASH_CLIPBOARD_ACCEPT_MESSAGE);
             }
         }
