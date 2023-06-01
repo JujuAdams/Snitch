@@ -37,7 +37,7 @@ function __SnitchConfigPayloadGameAnalytics(_uuid, _message, _longMessage, _call
             google_aid: "",
             */
             
-            //These fields exist but I strongly recommend never using them to protext your players' privacy
+            //These fields exist but I strongly recommend never using them to protect your players' privacy
             /*
             android_id: "",
             googleplus_id: "",
