@@ -4,7 +4,7 @@
 //  3. Do your absolute best to protect the privacy of your players
 //
 //Set this macro to <true> to acknowledge this warning
-#macro SNITCH_SERVICE_WARNING_READ  true
+#macro SNITCH_SERVICE_WARNING_READ  false
 
 //Which service to use
 //There are 4 modes:
