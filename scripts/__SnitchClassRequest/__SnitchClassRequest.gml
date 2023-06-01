@@ -1,6 +1,6 @@
 function __SnitchClassRequest(_uuid, _string) constructor
 {
-    static __snitchState = __snitchState;
+    static __snitchState = __SnitchState();
     
     content     = _string;
     UUID        = _uuid;
