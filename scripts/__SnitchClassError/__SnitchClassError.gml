@@ -1,16 +1,16 @@
-function __SnitchClassError() constructor
+function __SnitchClassSoftError() constructor
 {
-    __message              = undefined;
-    __longMessage          = undefined;
-    __script               = undefined;
-    __line                 = undefined;
-    __fatal                = false;
-    __rawCallstackArray    = undefined;
-    __simpleCallstack      = undefined;
-    __serviceCallstack = undefined;
-    __payload              = undefined;
-    __request              = undefined;
-    __uuid                 = SnitchGenerateUUID4String();
+    __message           = undefined;
+    __longMessage       = undefined;
+    __script            = undefined;
+    __line              = undefined;
+    __fatal             = false;
+    __rawCallstackArray = undefined;
+    __simpleCallstack   = undefined;
+    __serviceCallstack  = undefined;
+    __payload           = undefined;
+    __request           = undefined;
+    __uuid              = SnitchGenerateUUID4String();
     
     static __SetMessage = function(_message)
     {

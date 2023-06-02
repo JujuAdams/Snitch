@@ -1,4 +1,4 @@
-/// Concatenates a series of values into a single string and outputs it
+/// Concatenates a series of values into a single string and outputs it to logging endpoints
 ///
 /// The final string is outputted to three destinations:
 ///   1. The console output (show_debug_message())
