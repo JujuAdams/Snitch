@@ -1,4 +1,4 @@
-/// Poop
+/// Returns all currently collected breadcrumbs
 
 function SnitchSentryBreadcrumbsGet()
 {
