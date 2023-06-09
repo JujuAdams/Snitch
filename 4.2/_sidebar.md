@@ -23,4 +23,4 @@
 - [Utilities](function-utilities)
 - [Crash Dumps](function-crash-dumps)
 - [Direct Logging/Networking](function-direct)
-- [sentry.io Breadcrumb](function-breadcrumbs)
+- [sentry.io Breadcrumbs](function-breadcrumbs)
