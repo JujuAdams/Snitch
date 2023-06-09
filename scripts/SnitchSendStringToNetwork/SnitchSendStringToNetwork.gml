@@ -43,11 +43,11 @@ function __SnitchSendStringToNetwork(_string)
         case 1:
             if (_snitchState.__NetworkTargetIP == undefined)
             {
-            	network_send_broadcast(_snitchState.__NetworkSocket, _snitchState.__NetworkTargetPort, _buffer, buffer_tell(_buffer));
+                network_send_broadcast(_snitchState.__NetworkSocket, _snitchState.__NetworkTargetPort, _buffer, buffer_tell(_buffer));
             }
             else
             {
-            	network_send_udp_raw(_snitchState.__NetworkSocket, _snitchState.__NetworkTargetIP, _snitchState.__NetworkTargetPort, _buffer, buffer_tell(_buffer));
+                network_send_udp_raw(_snitchState.__NetworkSocket, _snitchState.__NetworkTargetIP, _snitchState.__NetworkTargetPort, _buffer, buffer_tell(_buffer));
             }
         break;
         

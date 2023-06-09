@@ -5,5 +5,5 @@
 
 function SnitchSentryBreadcrumbsGet()
 {
-	return __SnitchState().__breadcrumbArray;
+    return __SnitchState().__breadcrumbArray;
 }

@@ -7,21 +7,21 @@
 
 function SnitchSentryBreadcrumbExt(_struct)
 {
-	if (SNITCH_BREADCRUMBS_MAX <= 0) return;
-	
-	static _array = __SnitchState().__breadcrumbArray;
-	
-	array_push(_array, _struct);
-	
-	//Automatically add timestamp if struct doesn't have this member
-	if (not variable_struct_exists(_struct, "timestamp"))
-	{
-		_struct.timestamp = SnitchFormatTimestamp(date_current_datetime());
-	}
-	
-	//Prunes oldest breadcrumb if too many exist
-	if (array_length(_array) > SNITCH_BREADCRUMBS_MAX)
-	{
-		array_delete(_array, 0, 1);
-	}
+    if (SNITCH_BREADCRUMBS_MAX <= 0) return;
+    
+    static _array = __SnitchState().__breadcrumbArray;
+    
+    array_push(_array, _struct);
+    
+    //Automatically add timestamp if struct doesn't have this member
+    if (not variable_struct_exists(_struct, "timestamp"))
+    {
+        _struct.timestamp = SnitchFormatTimestamp(date_current_datetime());
+    }
+    
+    //Prunes oldest breadcrumb if too many exist
+    if (array_length(_array) > SNITCH_BREADCRUMBS_MAX)
+    {
+        array_delete(_array, 0, 1);
+    }
 }

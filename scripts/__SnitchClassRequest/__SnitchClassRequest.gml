@@ -146,8 +146,8 @@ function __SnitchRequestBackupFilename(_uuid)
 
 function __SnitchRequestBackupSaveManifest()
 {
-	static __snitchState = __SnitchState();
-	
+    static __snitchState = __SnitchState();
+    
     static _buffer = buffer_create(1024, buffer_grow, 1);
     buffer_seek(_buffer, buffer_seek_start, 0);
     buffer_write(_buffer, buffer_text, json_stringify(__snitchState.__RequestBackupOrder));
@@ -156,8 +156,8 @@ function __SnitchRequestBackupSaveManifest()
 
 function __SnitchSentryHTTPRequest(_request)
 {
-	static __snitchState = __SnitchState();
-	
+    static __snitchState = __SnitchState();
+    
     //Set up the headers...
     __snitchState.__HTTPHeaderMap[? "Content-Type" ] = "application/json";
     __snitchState.__HTTPHeaderMap[? "X-Sentry-Auth"] = __snitchState.__SentryAuthString + string(SnitchConvertToUnixTime(date_current_datetime()));
@@ -171,8 +171,8 @@ function __SnitchSentryHTTPRequest(_request)
 
 function __SnitchGameAnalyticsHTTPRequest(_request)
 {
-	static __snitchState = __SnitchState();
-	
+    static __snitchState = __SnitchState();
+    
     // "The authentication value is a HMAC SHA-256 digest of the raw body content from the request using the secret key (private key) as the hashing key and then encoding it using base64."
     var _hashArray = __SnitchHMACSHA256(SNITCH_GAMEANALYTICS_SECRET_KEY, _request.content, false);
     
@@ -203,8 +203,8 @@ function __SnitchGameAnalyticsHTTPRequest(_request)
 
 function __SnitchBugsnagHTTPRequest(_request)
 {
-	static __snitchState = __SnitchState();
-	
+    static __snitchState = __SnitchState();
+    
     //Set up the header...
     __snitchState.__HTTPHeaderMap[? "Content-Type"           ] = "application/json";
     __snitchState.__HTTPHeaderMap[? "Bugsnag-Api-Key"        ] = SNITCH_BUGSNAG_NOTIFIER_API_KEY;
