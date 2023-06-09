@@ -61,7 +61,7 @@ function __SnitchConfigPayloadSentry(_uuid, _message, _longMessage, _callstack, 
                 steam:            bool(SnitchSteamInitializedSafe()),
             },
         },
-		
-		breadcrumbs: SnitchSentryBreadcrumbsGet()
+        
+        breadcrumbs: SnitchSentryBreadcrumbsGet()
     };
 }

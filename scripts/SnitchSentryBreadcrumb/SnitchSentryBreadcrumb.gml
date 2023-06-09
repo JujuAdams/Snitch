@@ -1,20 +1,20 @@
-// https://develop.sentry.dev/sdk/event-payloads/breadcrumbs/
+// https://develop.sentry.dev/sdk/event-payloads/breadcrumbs
 
 /// Adds a breadcrumb to an array of breadcrumbs which will be send to Sentry whenever the game crashes
 ///
-/// @param string  human-readable message
-/// @param struct  custom struct with optional extra data
+/// @param string  Human-readable message
+/// @param struct  Custom struct with optional extra data
 
-function SnitchSentryBreadcrumb(_message,_data=undefined)
+function SnitchSentryBreadcrumb(_message, _data=undefined)
 {
-	if SNITCH_BREADCRUMBS_MAX == 0 return;
+	if (SNITCH_BREADCRUMBS_MAX <= 0) return;
 
 	var _struct = {
-		message : _message
+		message : string(_message)
 	}
 	
 	// Add optional data if its defined
-	if _data != undefined
+	if (_data != undefined)
 	{
 		_struct.data = _data;
 	}

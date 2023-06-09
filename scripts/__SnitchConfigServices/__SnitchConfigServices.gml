@@ -62,6 +62,8 @@
 
 //How many breadcrumbs to keep
 //Settings this to 0 will disable breadcrumbs entirely
+//
+//https://develop.sentry.dev/sdk/event-payloads/breadcrumbs
 #macro SNITCH_BREADCRUMBS_MAX 20
 
 #endregion
