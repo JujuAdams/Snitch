@@ -31,7 +31,7 @@ Adds a custom breadcrumb struct to an array of breadcrumbs which will be send to
 
 &nbsp;
 
-## `SnitchSentryBreadcrumb(message, [data])`
+## `SnitchSentryBreadcrumb()`
 
 _Returns:_ Array, the breadcrumbs that are currently stored
 
