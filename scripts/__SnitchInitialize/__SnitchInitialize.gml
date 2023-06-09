@@ -67,7 +67,7 @@ function __SnitchInitialize()
         __GAGameMakerVersion = "gamemaker " + string_delete(string_delete(GM_runtime_version, 5, 1), 1, 3);
         
         //Breadcrumbs
-        __breadcrumbArray = [];
+        __sentryBreadcrumbArray = [];
         
         
         
