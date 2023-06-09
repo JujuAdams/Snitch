@@ -60,6 +60,8 @@ function __SnitchConfigPayloadSentry(_uuid, _message, _longMessage, _callstack, 
                 parameters:       SNITCH_BOOT_PARAMETERS,
                 steam:            bool(SnitchSteamInitializedSafe()),
             },
-        }
+        },
+        
+        breadcrumbs: SnitchSentryBreadcrumbsGet()
     };
 }

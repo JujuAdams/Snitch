@@ -60,4 +60,10 @@
 //   N.B. HTTP warnings/failures will always be reported
 #macro SNITCH_OUTPUT_HTTP_SUCCESS  (SNITCH_RUNNING_FROM_IDE)
 
+//How many breadcrumbs to keep
+//Settings this to 0 will disable breadcrumbs entirely
+//
+//https://develop.sentry.dev/sdk/event-payloads/breadcrumbs
+#macro SNITCH_BREADCRUMBS_MAX 20
+
 #endregion
