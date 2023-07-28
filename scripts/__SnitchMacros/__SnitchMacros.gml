@@ -1,3 +1,4 @@
+// Feather disable all
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 
 #macro SNITCH_VERSION               "4.2.0"

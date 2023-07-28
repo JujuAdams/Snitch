@@ -1,3 +1,4 @@
+// Feather disable all
 //The endpoint to use for the sentry.io service
 //This can be found via Settings -> Client Keys (under the SDK SETUP header on the left-hand side)
 #macro SNITCH_SENTRY_DSN_URL  ""

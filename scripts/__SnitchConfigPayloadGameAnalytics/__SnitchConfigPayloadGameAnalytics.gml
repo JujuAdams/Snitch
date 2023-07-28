@@ -1,3 +1,4 @@
+// Feather disable all
 // https://restapidocs.gameanalytics.com/
 
 function __SnitchConfigPayloadGameAnalytics(_uuid, _message, _longMessage, _callstack, _fatal)

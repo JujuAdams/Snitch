@@ -1,3 +1,4 @@
+// Feather disable all
 function __SnitchClassSoftError() constructor
 {
     __message           = undefined;

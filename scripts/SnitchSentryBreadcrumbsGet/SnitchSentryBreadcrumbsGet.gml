@@ -1,3 +1,4 @@
+// Feather disable all
 /// Returns all currently collected breadcrumbs
 /// This array will be empty if SNITCH_BREADCRUMBS_MAX is less than, or equal to 0
 /// 

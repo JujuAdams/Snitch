@@ -1,3 +1,4 @@
+// Feather disable all
 //Bug tracking services open up potential security risks.
 //  1. Never share access keys with anyone
 //  2. Use .gitignore to ignore __SnitchConfigServiceKeys.gml if hosting your work publicly

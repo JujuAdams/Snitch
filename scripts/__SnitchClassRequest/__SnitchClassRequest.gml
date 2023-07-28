@@ -1,3 +1,4 @@
+// Feather disable all
 function __SnitchClassRequest(_uuid, _string) constructor
 {
     static __snitchState = __SnitchState();

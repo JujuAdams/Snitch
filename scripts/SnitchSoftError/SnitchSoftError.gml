@@ -1,3 +1,4 @@
+// Feather disable all
 /// Concatenates a series of values into a single string and outputs it as a serious (but not fatal) error
 ///
 /// The error message is outputted to four destinations:

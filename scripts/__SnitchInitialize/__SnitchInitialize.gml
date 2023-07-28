@@ -1,3 +1,4 @@
+// Feather disable all
 //Initialize the library
 __SnitchInitialize();
 
