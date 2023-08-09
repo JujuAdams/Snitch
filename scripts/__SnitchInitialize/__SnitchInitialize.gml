@@ -25,6 +25,7 @@ function __SnitchInitialize()
         __GMExceptionHandler = undefined;
         __Frames             = 0;
         __SessionStartTime   = current_time;
+        __SessionID          = SnitchGenerateUUID4String(true);
         __FocusFrames        = 0;
         __FocusTime          = 0;
     
@@ -374,8 +375,6 @@ function __SnitchInitialize()
         
             //GameAnalytics
             case 2:
-                __SessionID = SnitchGenerateUUID4String(true);
-            
                 if ((SNITCH_GAMEANALYTICS_GAME_KEY == "5c6bcb5402204249437fb5a7a80a4959") && (SNITCH_GAMEANALYTICS_SECRET_KEY == "16813a12f718bc5c620f56944e1abc3ea13ccbac"))
                 {
                     __SnitchTrace("Using GameAnalytics' sandbox endpoint");
@@ -389,6 +388,10 @@ function __SnitchInitialize()
         
             //Bugsnag
             case 3:
+            break;
+        
+            //Generic
+            case 4:
             break;
         }
     
