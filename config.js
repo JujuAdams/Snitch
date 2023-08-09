@@ -22,8 +22,8 @@
 const config = {
 	name: 'Snitch',
 	description: 'Logging and crash handling system for GameMaker Studio 2022 LTS',
-	latestVersion: '4.2',
-	otherVersions: ['4.1', '4.0', '3.1'],
+	latestVersion: '4.3',
+	otherVersions: ['4.2', '4.1', '4.0', '3.1'],
 	favicon: 'assets/favicon.ico',
 	themeColor: '#88a3b8',
 };
