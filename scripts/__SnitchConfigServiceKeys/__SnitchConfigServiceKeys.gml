@@ -11,3 +11,7 @@
 //Bugsnag key
 //Found via Settings (top-right on the project page) -> Project Settings - Notifier API key
 #macro SNITCH_BUGSNAG_NOTIFIER_API_KEY  ""
+
+//Generic HTTP
+#macro SNITCH_GENERIC_URL    ""
+#macro SNITCH_GENERIC_METHOD ""

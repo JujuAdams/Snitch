@@ -45,6 +45,7 @@ if (_snitchState.__RequestBackupFailures < SNITCH_REQUEST_BACKUP_RESEND_MAX_FAIL
                         case 1: __SnitchSentryHTTPRequest(self);        break;
                         case 2: __SnitchGameAnalyticsHTTPRequest(self); break;
                         case 3: __SnitchBugsnagHTTPRequest(self);       break;
+                        case 4: __SnitchGenericHTTPRequest(self);       break;
                     }
                     
                     _snitchState.__RequestBackupResendTime = current_time;

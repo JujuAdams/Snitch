@@ -13,6 +13,7 @@
 //   1:  Use the sentry.io service
 //   2:  Use the GameAnalytics service
 //   3:  Use the Bugsnag service
+//   4:  Send payload to a generic HTTP endpoint
 #macro SNITCH_SERVICE_MODE  0
 
 //Whether to boot the game with services turned on or off. Logging can be turned on/off manually by calling SnitchServiceSet()
