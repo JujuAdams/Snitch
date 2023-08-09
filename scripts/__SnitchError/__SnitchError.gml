@@ -1,3 +1,4 @@
+// Feather disable all
 function __SnitchError()
 {
     var _string = "";

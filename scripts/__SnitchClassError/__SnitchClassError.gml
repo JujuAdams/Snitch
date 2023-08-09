@@ -1,3 +1,4 @@
+// Feather disable all
 function __SnitchClassSoftError() constructor
 {
     __message           = undefined;
@@ -107,6 +108,7 @@ function __SnitchClassSoftError() constructor
             case 1: __SendSentry();        break;
             case 2: __SendGameAnalytics(); break;
             case 3: __SendBugsnag();       break;
+            case 4: __SendGeneric();       break;
         }
         
         var _string = "[" + (__fatal? "fatal" : "error") + " " + __uuid + "] " + __message;
@@ -155,6 +157,20 @@ function __SnitchClassSoftError() constructor
         if ((SNITCH_SERVICE_MODE == 3) && SnitchServiceGet())
         {
             __SnitchBugsnagHTTPRequest(__request);
+            __request.__SaveBackup();
+        }
+    }
+    
+    static __SendGeneric = function()
+    {
+        //Make a new request struct
+        __payload = __SnitchConfigPayloadGeneric(__uuid, __message, __longMessage, __GuaranteeServiceCallstack(), __fatal);
+        __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
+        
+        //If we have the generic service mode enabled then actually send the request and make a backup in case the request fails
+        if ((SNITCH_SERVICE_MODE == 4) && SnitchServiceGet())
+        {
+            __SnitchGenericHTTPRequest(__request);
             __request.__SaveBackup();
         }
     }

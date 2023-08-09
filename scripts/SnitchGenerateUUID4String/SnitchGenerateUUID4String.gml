@@ -1,3 +1,4 @@
+// Feather disable all
 function SnitchGenerateUUID4String(_hyphenate = false)
 {
     //As per https://www.cryptosys.net/pki/uuid-rfc4122.html (though without the hyphens)

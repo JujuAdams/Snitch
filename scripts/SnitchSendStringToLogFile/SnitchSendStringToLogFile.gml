@@ -1,3 +1,4 @@
+// Feather disable all
 /// Writes a string to Snitch's log file. Useful for managing the log file manually
 /// 
 /// @param data  Value to write to the log file

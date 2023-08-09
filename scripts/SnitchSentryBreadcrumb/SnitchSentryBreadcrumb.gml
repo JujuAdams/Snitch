@@ -1,3 +1,4 @@
+// Feather disable all
 /// Adds a breadcrumb to an array of breadcrumbs which will be send to Sentry whenever the game crashes
 /// 
 /// https://develop.sentry.dev/sdk/event-payloads/breadcrumbs

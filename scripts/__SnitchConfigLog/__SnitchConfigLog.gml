@@ -1,3 +1,4 @@
+// Feather disable all
 //How many strings to store in the in-game copy of the log
 //You can fetch strings using SnitchLogGetString()
 #macro SNITCH_IN_GAME_LOG_SIZE  20

@@ -1,3 +1,4 @@
+// Feather disable all
 function __SnitchClassRequest(_uuid, _string) constructor
 {
     static __snitchState = __SnitchState();
@@ -211,6 +212,17 @@ function __SnitchBugsnagHTTPRequest(_request)
     __snitchState.__HTTPHeaderMap[? "Bugsnag-Payload-Version"] = "5";
     
     _request.__Send("https://notify.bugsnag.com", "POST", __snitchState.__HTTPHeaderMap, false);
+    
+    ds_map_clear(__snitchState.__HTTPHeaderMap);
+}
+
+function __SnitchGenericHTTPRequest(_request)
+{
+    static __snitchState = __SnitchState();
+    
+    __SnitchConfigGenericHeaderMap(__snitchState.__HTTPHeaderMap);
+    
+    _request.__Send(SNITCH_GENERIC_URL, SNITCH_GENERIC_METHOD, __snitchState.__HTTPHeaderMap, false);
     
     ds_map_clear(__snitchState.__HTTPHeaderMap);
 }

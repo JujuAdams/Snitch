@@ -1,3 +1,4 @@
+// Feather disable all
 /// Returns whether services are enabled
 /// This function will always return <false> if SNITCH_SERVICE_MODE is set to 0
 

@@ -1,3 +1,4 @@
+// Feather disable all
 /// @param index
 
 function SnitchLogGetString(_index)

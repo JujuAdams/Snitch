@@ -1,3 +1,4 @@
+// Feather disable all
 /// Sets whether Snitch should log messages to a file on disk (in the directory given by <game_save_id>)
 /// 
 /// @param state

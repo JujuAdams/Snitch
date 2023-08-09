@@ -1,3 +1,4 @@
+// Feather disable all
 
 
 function __SnitchServiceName()
@@ -8,6 +9,7 @@ function __SnitchServiceName()
         case 1: return "sentry.io";     break;
         case 2: return "GameAnalytics"; break;
         case 3: return "Bugsnag";       break;
+        case 4: return "Generic";       break;
         
         default:
             __SnitchError("SNITCH_SERVICE_MODE value ", SNITCH_SERVICE_MODE, " unsupported");

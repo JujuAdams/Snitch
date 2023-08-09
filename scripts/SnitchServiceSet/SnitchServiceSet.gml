@@ -1,3 +1,4 @@
+// Feather disable all
 /// Sets whether Snitch should enable services
 ///   N.B. Services cannot be enabled unless the relevant macros in __SnitchConfigServices() are set to <true>
 /// 

@@ -1,3 +1,4 @@
+// Feather disable all
 /// Sets whether Snitch should enable network transmission
 ///   N.B. Network transmission cannot be enabled unless the relevant macros in __SnitchConfigNetwork() are set to <true>
 /// 

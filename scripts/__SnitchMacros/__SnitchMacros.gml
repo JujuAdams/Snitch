@@ -1,7 +1,8 @@
+// Feather disable all
 // Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
 
-#macro SNITCH_VERSION               "4.2.0"
-#macro SNITCH_DATE                  "2023-06-09"
+#macro SNITCH_VERSION               "4.3.0"
+#macro SNITCH_DATE                  "2023-08-09"
 #macro SNITCH_OS_NAME               (__SnitchState().__OSName)
 #macro SNITCH_OS_VERSION            (__SnitchState().__OSVersion)
 #macro SNITCH_ENVIRONMENT_NAME      (__SnitchState().__EnvironmentName)

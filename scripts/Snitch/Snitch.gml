@@ -1,3 +1,4 @@
+// Feather disable all
 /// Concatenates a series of values into a single string and outputs it to logging endpoints
 ///
 /// The final string is outputted to three destinations:

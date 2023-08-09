@@ -1,3 +1,4 @@
+// Feather disable all
 /// Adds a custom breadcrumb struct to an array of breadcrumbs which will be send to Sentry whenever the game crashes
 /// Read the sentry event payload documentation to find out more about what kind of data this struct can contain
 /// 

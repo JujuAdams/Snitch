@@ -1,3 +1,4 @@
+// Feather disable all
 /// Returns whether networking transmission is enabled
 /// This function will always return <false> is SNITCH_NETWORK_MODE is set to 0
 

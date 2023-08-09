@@ -1,3 +1,4 @@
+// Feather disable all
 // https://develop.sentry.dev/sdk/overview/
 // https://develop.sentry.dev/sdk/event-payloads/
 

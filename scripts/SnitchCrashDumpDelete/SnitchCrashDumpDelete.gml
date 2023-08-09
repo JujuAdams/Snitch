@@ -1,3 +1,4 @@
+// Feather disable all
 /// Deletes the crash dump from disk, if one exists
 
 function SnitchCrashDumpDelete()

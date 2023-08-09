@@ -1,3 +1,4 @@
+// Feather disable all
 function __SnitchAttemptTCPConnection()
 {
     static _snitchState = __SnitchState();
