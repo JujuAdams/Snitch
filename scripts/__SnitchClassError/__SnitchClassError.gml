@@ -167,7 +167,7 @@ function __SnitchClassSoftError() constructor
         __payload = __SnitchConfigPayloadGeneric(__uuid, __message, __longMessage, __GuaranteeServiceCallstack(), __fatal);
         __request = new __SnitchClassRequest(__uuid, json_stringify(__payload));
         
-        //If we have Bugsnag enabled then actually send the request and make a backup in case the request fails
+        //If we have the generic service mode enabled then actually send the request and make a backup in case the request fails
         if ((SNITCH_SERVICE_MODE == 4) && SnitchServiceGet())
         {
             __SnitchGenericHTTPRequest(__request);
