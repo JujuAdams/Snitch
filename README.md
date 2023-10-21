@@ -2,7 +2,7 @@
 
 <h1 align="center">Snitch 4.3.0</h1>
 
-<p align="center">Logging and crash handling system for GameMaker by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
+<p align="center">Logging and crash handling system for GameMaker LTS 2022</p>
 
 &nbsp;
 
