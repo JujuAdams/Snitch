@@ -10,5 +10,4 @@
 
 - ### [Download the .yymps](https://github.com/JujuAdams/Snitch/releases/)
 - ### Read the [documentation](http://jujuadams.github.io/Snitch)
-- ### Talk about Snitch on the [Discord server](https://discord.gg/8krYCqr)
 - ### You may also like [GMSentry](https://marketplace.yoyogames.com/assets/7917/gmsentry), [gmlogging-suite](https://github.com/meseta/gmlogging-suite), and [YoYoGames' Firebase Crashlytics Extension](https://marketplace.yoyogames.com/assets/10448/firebase-crashlytics-ext)
