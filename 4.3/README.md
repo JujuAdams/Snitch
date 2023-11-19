@@ -3,7 +3,7 @@
 <p align="center">Logging and crash handling system for GameMaker Studio 2022 LTS by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
 
 <p align="center"><a href="https://github.com/JujuAdams/Snitch/releases/">Download the .yymps</a></p>
-<p align="center">Chat about Snitch on the <a href="https://discord.gg/8krYCqr">Discord server</a></p>
+<p align="center">Chat about Snitch on the <a href="https://discord.gg/CuPYwhm8J9">Discord server</a></p>
 
 &nbsp;
 
