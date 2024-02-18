@@ -3,13 +3,12 @@
 <p align="center">Logging and crash handling system for GameMaker Studio 2022 LTS by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
 
 <p align="center"><a href="https://github.com/JujuAdams/Snitch/releases/">Download the .yymps</a></p>
-<p align="center">Chat about Snitch on the <a href="https://discord.gg/CuPYwhm8J9">Discord server</a></p>
 
 &nbsp;
 
 **What platforms does Snitch support?**
 
-In principle, everything! I've not tested outside of Windows but Snitch relies exclusively on native GameMaker functions so whatever GameMaker supports Snitch should too. You might run into edge cases on other platforms; please [report any bugs](https://github.com/JujuAdams/Snitch/issues) if and when you find them.
+Everything apart from HTML5! I've not tested outside of Windows but Snitch relies exclusively on native GameMaker functions so whatever GameMaker supports Snitch should too. You might run into edge cases on other platforms; please [report any bugs](https://github.com/JujuAdams/Snitch/issues) if and when you find them.
 
 &nbsp;
 
@@ -27,7 +26,7 @@ Great! Please make a [feature request](https://github.com/JujuAdams/Snitch/issue
 
 **I found a bug, and it both scares and mildly annoys me. What is the best way to get the problem solved?**
 
-Please make a [bug report](https://github.com/JujuAdams/Snitch/issues). I check GitHub every day and bug fixes usually go out a couple days after that. You can also grab me on the [Discord server](https://discord.gg/8krYCqr), but that's not a replacement for a nice clear bug report.
+Please make a [bug report](https://github.com/JujuAdams/Snitch/issues). I check GitHub every day and bug fixes usually go out a couple days after that.
 
 &nbsp;
 
