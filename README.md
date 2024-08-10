@@ -9,6 +9,7 @@
 &nbsp;
 
 - ### Got questions? [Make a new issue!](https://github.com/JujuAdams/Snitch/issues/new)
+- ### There is also a [Discord server](https://discord.gg/hwgWpnsNw2) (but GitHub issues are preferred)
 - ### [Download the .yymps](https://github.com/JujuAdams/Snitch/releases/)
 - ### Read the [documentation](http://jujuadams.github.io/Snitch)
 - ### You may also like [GMSentry](https://marketplace.yoyogames.com/assets/7917/gmsentry), [gmlogging-suite](https://github.com/meseta/gmlogging-suite), and [YoYoGames' Firebase Crashlytics Extension](https://marketplace.yoyogames.com/assets/10448/firebase-crashlytics-ext)
