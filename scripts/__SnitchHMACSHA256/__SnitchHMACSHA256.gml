@@ -1,6 +1,5 @@
 // Feather disable all
-/// @jujuadams 2021-09-16
-///
+
 /// @param keyString
 /// @param message
 /// @param [returnString=true]
@@ -83,8 +82,6 @@ function __SnitchHMACSHA256(_key, _message, _returnString = true)
     return __SnitchBufferSHA256(_outer_pad_buffer, 0, buffer_tell(_outer_pad_buffer), true, _returnString);
 }
 
-///  @jujuadams 2021-09-16
-/// 
 /// @param buffer
 /// @param [offset]
 /// @param [size]

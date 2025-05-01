@@ -225,7 +225,7 @@ function __SnitchInitialize()
     
         if (SNITCH_LOG_ON_BOOT) SnitchLogSet(true);
         if (SNITCH_NETWORK_ON_BOOT) SnitchNetworkSet(true);
-        __SnitchTrace("Welcome to Snitch by @jujuadams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
+        __SnitchTrace("Welcome to Snitch by Juju Adams! This is version " + string(SNITCH_VERSION) + ", " + string(SNITCH_DATE));
         __SnitchTrace("Running ", __RunningFromIDE? "from IDE" : "compiled executable", ", crash capture turned ", __CrashCapture? "on" : "off");
     
     
@@ -264,12 +264,12 @@ function __SnitchInitialize()
             try
             {
                 var _buffer = buffer_load(SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME);
-                _loadedManifest = true;
             
                 var _json = buffer_read(_buffer, buffer_string);
                 __RequestBackupOrder = json_parse(_json);
             
                 if (!is_array(__RequestBackupOrder)) throw "Not an array";
+                _loadedManifest = true;
             }
             catch(_error)
             {
