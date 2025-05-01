@@ -63,14 +63,10 @@
     {"name":"iOS","path":"options/ios/options_ios.yy",},
     {"name":"Linux","path":"options/linux/options_linux.yy",},
     {"name":"macOS","path":"options/mac/options_mac.yy",},
-    {"name":"Main","path":"options/main/options_main.yy",},
-    {"name":"PlayStation 4","path":"options/ps4/options_ps4.yy",},
-    {"name":"Switch","path":"options/switch/options_switch.yy",},
     {"name":"tvOS","path":"options/tvos/options_tvos.yy",},
     {"name":"Windows","path":"options/windows/options_windows.yy",},
-    {"name":"PlayStation 5","path":"options/ps5/options_ps5.yy",},
-    {"name":"Xbox Series XS","path":"options/xboxseriesxs/options_xboxseriesxs.yy",},
     {"name":"operagx","path":"options/operagx/options_operagx.yy",},
+    {"name":"Main","path":"options/main/options_main.yy",},
   ],
   "defaultScriptType": 1,
   "isEcma": false,
@@ -98,6 +94,6 @@
   ],
   "IncludedFiles": [],
   "MetaData": {
-    "IDEVersion": "2022.0.0.19",
+    "IDEVersion": "2022.0.3.85",
   },
 }
