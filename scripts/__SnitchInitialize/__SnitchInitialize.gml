@@ -264,12 +264,12 @@ function __SnitchInitialize()
             try
             {
                 var _buffer = buffer_load(SNITCH_REQUEST_BACKUP_MANIFEST_FILENAME);
-                _loadedManifest = true;
             
                 var _json = buffer_read(_buffer, buffer_string);
                 __RequestBackupOrder = json_parse(_json);
             
                 if (!is_array(__RequestBackupOrder)) throw "Not an array";
+                _loadedManifest = true;
             }
             catch(_error)
             {
