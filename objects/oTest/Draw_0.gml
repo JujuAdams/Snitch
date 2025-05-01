@@ -1,5 +1,5 @@
 var _string = "";
-_string += "Snitch by @jujuadams " + SNITCH_VERSION + ", " + SNITCH_DATE + "\n";
+_string += "Snitch by Juju Adams " + SNITCH_VERSION + ", " + SNITCH_DATE + "\n";
 _string += "Log files can be found in " + game_save_id + "\n";
 _string += "\n";
 _string += "Press 1 to log a message\n";

@@ -1,11 +1,10 @@
 // Feather disable all
+
 /// @return JSON string that encodes the struct/array nested data
 /// 
 /// @param struct/array          The data to be encoded. Can contain structs, arrays, strings, and numbers.   N.B. Will not encode ds_list, ds_map etc.
 /// @param [pretty]              (bool) Whether to format the string to be human readable. Defaults to <false>
 /// @param [alphabetizeStructs]  (bool) Sorts struct variable names is ascending alphabetical order as per ds_list_sort(). Defaults to <false>
-/// 
-/// @jujuadams 2022-07-03
 
 function __SnitchSNAPtoJSON()
 {
