@@ -12,7 +12,7 @@ Everything apart from HTML5! I've not tested outside of Windows but Snitch relie
 
 &nbsp;
 
-## Does this library support GMRT / "new runtime"?
+**Does this library support GMRT / "new runtime"?**
 
 No, GMRT is not supported by this library.
 
