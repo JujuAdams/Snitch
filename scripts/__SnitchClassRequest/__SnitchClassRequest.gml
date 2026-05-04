@@ -142,7 +142,7 @@ function __SnitchSentryHTTPRequest(_request)
     //Custom "envelope" format that sentry.io requires
     // https://develop.sentry.dev/sdk/foundations/transport/envelopes/
     // https://develop.sentry.dev/sdk/foundations/transport/envelope-items/
-    var _envelopeString = "{\"event_id\":\"" + string(_request.UUID) + "\",\"dsn\":\"" + string(SNITCH_SENTRY_DSN_URL) + "\"}\n";
+    var _envelopeString = "{\"event_id\":\"" + string(_request.UUID) + "\",\"dsn\":\"" + string(SNITCH_SENTRY_DSN_URL) + "\",\"sent_at\":\"" + SnitchFormatTimestamp(date_current_datetime()) + "\"}\n";
     _envelopeString += "{\"type\":\"event\",\"length\":" + string(string_byte_length(_request.content)) + ",\"content_type\":\"application/json\"}\n"
     _envelopeString += _request.content + "\n";
     
