@@ -1,4 +1,7 @@
 // Feather disable all
+
+/// Returns a timestamp that is RFC3339-compatible.
+/// 
 /// @param time
 
 function SnitchFormatTimestamp(_time)
@@ -11,7 +14,7 @@ function SnitchFormatTimestamp(_time)
                   string_format(date_get_day(   _time), 2, 0) + "T" +
                   string_format(date_get_hour(  _time), 2, 0) + ":" +
                   string_format(date_get_minute(_time), 2, 0) + ":" +
-                  string_format(date_get_second(_time), 2, 0);
+                  string_format(date_get_second(_time), 2, 0) + "Z";
     _string = string_replace_all(_string, " ", "0");
 
     date_set_timezone(_oldTimezone);
