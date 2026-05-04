@@ -366,7 +366,7 @@ function __SnitchInitialize()
                 var _DSNProject = string_copy(_DSN, _slashPosition + 1, string_length(_DSN) - _slashPosition);
                 if (_DSNProject == "") __SnitchError("No project found in DSN string");
             
-                __Endpoint = _protocol + "://" + _DSNHostPath + "/api/" + _DSNProject + "/store/";
+                __Endpoint = _protocol + "://" + _DSNHostPath + "/api/" + _DSNProject + "/envelope/";
             
                 //Build an auth string for later HTTP requests
                 //We fill in the timestamp later when sending the request
