@@ -10,9 +10,9 @@ function __SnitchConfigPayloadGameAnalytics(_uuid, _message, _longMessage, _call
             v: int64(2),
             user_id: SNITCH_SESSION_ID, //Deliberately randomized so that players can't be tracked across sessions
             sdk_version: "rest api v2",
-            os_version: "windows 10",
+            os_version: SNITCH_GA_OS_VERSION,
             manufacturer: "unknown",
-            platform: "windows",
+            platform: SNITCH_GA_PLATFORM,
             session_id: SNITCH_SESSION_ID,
             session_num: int64(1), //We're not tracking user IDs so this is always 1
             category: "error",

@@ -102,14 +102,14 @@ function __SnitchInitialize()
               
                 switch(os_version)
                 {
-                    case 327680: __OSVersion = "2000";  __GAPlatform = __GAPlatform + " 5.0"  break;
-                    case 327681: __OSVersion = "XP";    __GAPlatform = __GAPlatform + " 5.1"; break;
-                    case 237862: __OSVersion = "XP";    __GAPlatform = __GAPlatform + " 5.2"; break;
-                    case 393216: __OSVersion = "Vista"; __GAPlatform = __GAPlatform + " 6";   break;
-                    case 393217: __OSVersion = "7";     __GAPlatform = __GAPlatform + " 7";   break;
-                    case 393218: __OSVersion = "8";     __GAPlatform = __GAPlatform + " 8";   break;
-                    case 393219: __OSVersion = "8.1";   __GAPlatform = __GAPlatform + " 8.1"; break;
-                    case 655360: __OSVersion = "10";    __GAPlatform = __GAPlatform + " 10";  break;
+                    case 327680: __OSVersion = "2000";  __GAOSVersion = __GAPlatform + " 5.0"  break;
+                    case 327681: __OSVersion = "XP";    __GAOSVersion = __GAPlatform + " 5.1"; break;
+                    case 237862: __OSVersion = "XP";    __GAOSVersion = __GAPlatform + " 5.2"; break;
+                    case 393216: __OSVersion = "Vista"; __GAOSVersion = __GAPlatform + " 6";   break;
+                    case 393217: __OSVersion = "7";     __GAOSVersion = __GAPlatform + " 7";   break;
+                    case 393218: __OSVersion = "8";     __GAOSVersion = __GAPlatform + " 8";   break;
+                    case 393219: __OSVersion = "8.1";   __GAOSVersion = __GAPlatform + " 8.1"; break;
+                    case 655360: __OSVersion = "10";    __GAOSVersion = __GAPlatform + " 10";  break;
                 }
             break;
         
