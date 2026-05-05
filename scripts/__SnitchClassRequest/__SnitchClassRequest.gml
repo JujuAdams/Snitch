@@ -158,7 +158,7 @@ function __SnitchGameAnalyticsHTTPRequest(_request)
     static __snitchState = __SnitchState();
     
     // "The authentication value is a HMAC SHA-256 digest of the raw body content from the request using the secret key (private key) as the hashing key and then encoding it using base64."
-    var _hashArray = __SnitchHMACSHA256(SNITCH_GAMEANALYTICS_SECRET_KEY, _request.content);
+    var _hashArray = __SnitchHMACSHA256(SNITCH_GAMEANALYTICS_SECRET_KEY, _request.content, false);
     
     //Get the base64 encoded version of the digest, whilst also handling endianness conversion
     var _hashBuffer = buffer_create(64, buffer_fixed, 1);
