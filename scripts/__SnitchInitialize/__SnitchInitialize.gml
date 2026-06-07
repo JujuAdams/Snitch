@@ -71,7 +71,21 @@ function __SnitchInitialize()
         //Service-specific
         __GAPlatform  = "";
         __GAOSVersion = "";
-        __GAGameMakerVersion = "gamemaker " + string_delete(string_delete(GM_runtime_version, 5, 1), 1, 3);
+        
+        var _runtimeVersion = GM_runtime_version;
+        var _count = string_count(".", _runtimeVersion);
+        if (_count < 3)
+        {
+            __GAGameMakerVersion = "gamemaker " + _runtimeVersion;
+        }
+        else if (_count == 3)
+        {
+            __GAGameMakerVersion = "gamemaker " + string_delete(_runtimeVersion, string_pos_ext(".", _runtimeVersion, string_pos(".", _runtimeVersion)+1), 1);
+        }
+        else
+        {
+            __GAGameMakerVersion = "gamemaker " + string_replace_all(_runtimeVersion, ".", "-");
+        }
         
         //Breadcrumbs
         __sentryBreadcrumbArray = [];
