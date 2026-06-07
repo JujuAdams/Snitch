@@ -353,14 +353,7 @@ function __SnitchInitialize()
         
             __SnitchRequestBackupSaveManifest();
         }
-    
-    
-        if (SNITCH_SERVICE_MODE > 0)
-        {
-            //Force a network connection if possible
-            os_is_network_connected(true);
-        }
-    
+        
         switch(SNITCH_SERVICE_MODE)
         {
             //sentry.io

@@ -13,21 +13,17 @@ function __SnitchClassRequest(_uuid, _string) constructor
     
     static __Send = function(_url, _method, _headerMap, _content)
     {
-        if (os_is_network_connected(false))
+        //If we don't want to compress our HTTP request, use the raw content
+        asyncID = http_request(_url, _method, _headerMap, _content);
+        if (asyncID >= 0)
         {
-            //If we don't want to compress our HTTP request, use the raw content
-            asyncID = http_request(_url, _method, _headerMap, _content);
-            
-            if (asyncID >= 0)
-            {
-                //If the HTTP request is valid then link the returned ID to this struct for use later
-                __snitchState.__HTTPRequests[$ string(asyncID)] = self;
-            }
-            else
-            {
-                //Otherwise immediately trigger a failed HTTP response
-                __HTTPResponse(-1, -1);
-            }
+            //If the HTTP request is valid then link the returned ID to this struct for use later
+            __snitchState.__HTTPRequests[$ string(asyncID)] = self;
+        }
+        else
+        {
+            //Otherwise immediately trigger a failed HTTP response
+            __HTTPResponse(-1, -1);
         }
     }
     
