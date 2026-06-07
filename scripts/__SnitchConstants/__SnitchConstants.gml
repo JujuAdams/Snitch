@@ -1,7 +1,7 @@
 // Feather disable all
 
 // The version of Snitch being used, as a string.
-#macro SNITCH_VERSION  "5.0.0"
+#macro SNITCH_VERSION  "5.0.1"
 
 // The build date for this version of Snitch, as a string.
 #macro SNITCH_DATE     "2026-06-07"
