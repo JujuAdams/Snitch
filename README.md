@@ -1,8 +1,8 @@
 <p align="center"><img src="https://raw.githubusercontent.com/JujuAdams/Snitch/master/LOGO.png" style="display:block; margin:auto; width:300px"></p>
 
-<h1 align="center">Snitch 4.3.3</h1>
+<h1 align="center">Snitch 5.0.0</h1>
 
-<p align="center">Logging and crash handling system for GameMaker LTS 2022</p>
+<p align="center">Logging and crash handling system for GameMaker LTS 2026</p>
 
 &nbsp;
 
