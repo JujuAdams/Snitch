@@ -1,4 +1,9 @@
 // Feather disable all
+
+// Log4j - https://logging.apache.org/log4j/2.x/manual/layouts.html
+
+#macro __SNITCH_HTTP_TEST_TIMEOUT  5000
+
 //Initialize the library
 __SnitchInitialize();
 

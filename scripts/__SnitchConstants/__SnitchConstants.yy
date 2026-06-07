@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__SnitchConstants",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__SnitchConstants",
+  "parent":{
+    "name":"Snitch",
+    "path":"folders/Snitch.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
