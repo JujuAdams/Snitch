@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "SnitchGenerateUUID4String",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Utility",
-    "path": "folders/Snitch/Utility.yy",
+  "$GMScript":"v1",
+  "%Name":"SnitchGenerateUUID4String",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SnitchGenerateUUID4String",
+  "parent":{
+    "name":"Utility",
+    "path":"folders/Snitch/Utility.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

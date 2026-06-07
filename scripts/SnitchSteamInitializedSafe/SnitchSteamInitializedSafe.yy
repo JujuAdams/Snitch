@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "SnitchSteamInitializedSafe",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Utility",
-    "path": "folders/Snitch/Utility.yy",
+  "$GMScript":"v1",
+  "%Name":"SnitchSteamInitializedSafe",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SnitchSteamInitializedSafe",
+  "parent":{
+    "name":"Utility",
+    "path":"folders/Snitch/Utility.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

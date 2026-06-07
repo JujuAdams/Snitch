@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "Snitch",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Snitch",
-    "path": "folders/Snitch.yy",
+  "$GMScript":"v1",
+  "%Name":"Snitch",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Snitch",
+  "parent":{
+    "name":"Snitch",
+    "path":"folders/Snitch.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

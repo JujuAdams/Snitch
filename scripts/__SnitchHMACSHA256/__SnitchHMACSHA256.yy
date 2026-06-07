@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "__SnitchHMACSHA256",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "THE SNITCH SEES ALL",
-    "path": "folders/Snitch/(System)/THE SNITCH SEES ALL.yy",
+  "$GMScript":"v1",
+  "%Name":"__SnitchHMACSHA256",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__SnitchHMACSHA256",
+  "parent":{
+    "name":"THE SNITCH SEES ALL",
+    "path":"folders/Snitch/(System)/THE SNITCH SEES ALL.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "SnitchSentryBreadcrumbExt",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Advanced",
-    "path": "folders/Snitch/Advanced.yy",
+  "$GMScript":"v1",
+  "%Name":"SnitchSentryBreadcrumbExt",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SnitchSentryBreadcrumbExt",
+  "parent":{
+    "name":"Advanced",
+    "path":"folders/Snitch/Advanced.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

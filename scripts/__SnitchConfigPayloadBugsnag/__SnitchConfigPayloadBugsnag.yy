@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "__SnitchConfigPayloadBugsnag",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Configuration - Please edit these scripts!",
-    "path": "folders/Snitch/Configuration - Please edit these scripts!.yy",
+  "$GMScript":"v1",
+  "%Name":"__SnitchConfigPayloadBugsnag",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__SnitchConfigPayloadBugsnag",
+  "parent":{
+    "name":"Configuration - Please edit these scripts!",
+    "path":"folders/Snitch/Configuration - Please edit these scripts!.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

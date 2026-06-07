@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "SnitchLogSet",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Feature Toggles",
-    "path": "folders/Snitch/Feature Toggles.yy",
+  "$GMScript":"v1",
+  "%Name":"SnitchLogSet",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SnitchLogSet",
+  "parent":{
+    "name":"Feature Toggles",
+    "path":"folders/Snitch/Feature Toggles.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

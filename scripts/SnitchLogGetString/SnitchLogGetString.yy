@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "SnitchLogGetString",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Advanced",
-    "path": "folders/Snitch/Advanced.yy",
+  "$GMScript":"v1",
+  "%Name":"SnitchLogGetString",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SnitchLogGetString",
+  "parent":{
+    "name":"Advanced",
+    "path":"folders/Snitch/Advanced.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }
