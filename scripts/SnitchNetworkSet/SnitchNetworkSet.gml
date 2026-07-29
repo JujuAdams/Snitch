@@ -11,47 +11,51 @@ function SnitchNetworkSet(_state, _outgoingPort = SNITCH_NETWORK_DEFAULT_OUTGOIN
 {
     static _snitchState = __SnitchState();
     
-    if (SnitchNetworkGet() != _state)
+    var _funcCloseSocket = function()
     {
-        var _funcCloseSocket = function()
+        static _snitchState = __SnitchState();
+        
+        if (_snitchState.__NetworkSocket != undefined)
         {
-            if (_snitchState.__NetworkSocket != undefined)
+            __SnitchTrace("Destroying socket ", _snitchState.__NetworkSocket);
+            network_destroy(_snitchState.__NetworkSocket);
+            _snitchState.__NetworkSocket = undefined;
+            _snitchState.__NetworkConnected = false;
+        }
+    }
+    
+    var _funcOpenSocket = function()
+    {
+        static _snitchState = __SnitchState();
+        
+        if (_snitchState.__NetworkSocket == undefined)
+        {
+            var _type = (SNITCH_NETWORK_MODE == 1)? network_socket_udp : network_socket_tcp;
+            if (_snitchState.__NetworkOutgoingPort == undefined)
             {
-                __SnitchTrace("Destroying socket ", _snitchState.__NetworkSocket);
-                network_destroy(_snitchState.__NetworkSocket);
-                _snitchState.__NetworkSocket = undefined;
+                _snitchState.__NetworkSocket = network_create_socket(_type);
+            }
+            else
+            {
+                _snitchState.__NetworkSocket = network_create_socket_ext(_type, _snitchState.__NetworkOutgoingPort);
+            }
+            
+            if (_snitchState.__NetworkSocket >= 0)
+            {
+                __SnitchTrace("Created socket ", _snitchState.__NetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
+                __SnitchTrace("Attempting TCP connection");
+                __SnitchAttemptTCPConnection();
+            }
+            else
+            {
+                __SnitchTrace("Failed to create socket");
                 _snitchState.__NetworkConnected = false;
             }
         }
-        
-        var _funcOpenSocket = function()
-        {
-            if (_snitchState.__NetworkSocket == undefined)
-            {
-                var _type = (SNITCH_NETWORK_MODE == 1)? network_socket_udp : network_socket_tcp;
-                if (_snitchState.__NetworkOutgoingPort == undefined)
-                {
-                    _snitchState.__NetworkSocket = network_create_socket(_type);
-                }
-                else
-                {
-                    _snitchState.__NetworkSocket = network_create_socket_ext(_type, _snitchState.__NetworkOutgoingPort);
-                }
-                
-                if (_snitchState.__NetworkSocket >= 0)
-                {
-                    __SnitchTrace("Created socket ", _snitchState.__NetworkSocket, " for ", (SNITCH_NETWORK_MODE == 1)? "UDP" : "TCP", " traffic");
-                    __SnitchTrace("Attempting TCP connection");
-                    __SnitchAttemptTCPConnection();
-                }
-                else
-                {
-                    __SnitchTrace("Failed to create socket");
-                    _snitchState.__NetworkConnected = false;
-                }
-            }
-        }
-        
+    }
+    
+    if (SnitchNetworkGet() != _state)
+    {
         if (_state)
         {
             if (SNITCH_NETWORK_MODE > 0)
